@@ -1,0 +1,60 @@
+{
+  "fecha_UTC": "2026-10-30T16:17:32Z",
+  "python": "3.13.16 (main, Oct  1 2026, 15:40:24) [GCC 13.3.0]",
+  "plataforma": "Linux-6.6.159+-x86_64-with-glibc2.39",
+  "torch": "2.11.0+cu130",
+  "numpy": "2.1.3",
+  "pandas": "2.2.3",
+  "GPU": "NVIDIA A100-SXM4-40GB",
+  "perfil": "completo",
+  "semillas": [
+    7,
+    17
+  ],
+  "B_anchuras": [
+    32,
+    64,
+    128
+  ],
+  "B_N": 40,
+  "C_config": [
+    [
+      40,
+      64
+    ],
+    [
+      75,
+      128
+    ],
+    [
+      110,
+      192
+    ]
+  ],
+  "A_configs": [
+    [
+      32,
+      40
+    ],
+    [
+      64,
+      75
+    ]
+  ],
+  "A_desde_checkpoints": true,
+  "ADAM_pasos": 900,
+  "LBFGS_etapas": 4,
+  "LBFGS_max_iter": 30,
+  "LBFGS_subset": 512,
+  "holder_pares": 1200,
+  "holder_pares_denso": 4800,
+  "validacion_m": 1024,
+  "prueba_m": 2048,
+  "criterios": "seleccion del mejor por validacion; test usado solo al final",
+  "controles_matematicos": {
+    "max_error_residuo_solucion_exacta": 3.552713678800501e-15,
+    "max_error_dirichlet_red": 0.0,
+    "a_m_m1521": 0.0012321879448447396,
+    "epsilon_r_m1521": 0.6793662204867575
+  }
+}

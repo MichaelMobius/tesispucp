@@ -1,0 +1,385 @@
+\chapter{Redes neuronales}
+\section{Contexto}
+
+Las redes neuronales artificiales son familias parametrizadas de funciones obtenidas mediante composiciones de transformaciones afines y funciones no lineales. Desde el perceptrón de Rosenblatt, estas arquitecturas han evolucionado hacia perceptrones multicapa y redes profundas \cite{rosenblatt1958perceptron}. En los experimentos de esta tesis se emplean perceptrones multicapa totalmente conectados.
+
+En las redes neuronales físicamente informadas (PINNs), la ecuación diferencial y las condiciones auxiliares se incorporan a la función de pérdida \cite{raissi2017physics}. De este modo, el entrenamiento no depende exclusivamente de observaciones de la solución: también penaliza la violación del modelo diferencial. Esta formulación es especialmente atractiva cuando se desea combinar datos y restricciones físicas, aunque su precisión final depende de la capacidad de aproximación de la red, del muestreo y de la optimización no convexa.
+
+Los resultados clásicos de aproximación universal de Cybenko~\cite{cybenko1989approximation} y Hornik~\cite{hornik1991approximation} establecen propiedades de densidad para determinadas familias de redes bajo hipótesis sobre la activación y la clase funcional; Pinkus~\cite{pinkus1999approximation} presenta un panorama de estos resultados desde la teoría de aproximación. Goodfellow et al.~\cite{goodfellow2016deep} ofrecen una exposición moderna. Esta propiedad justifica la capacidad representacional de la arquitectura, pero no garantiza que un algoritmo de entrenamiento encuentre el mejor aproximante ni que una pérdida residual pequeña implique por sí sola un error funcional pequeño. Precisamente esa segunda conexión constituye el objeto del Capítulo~\ref{chap:convergencia}.
+
+El desempeño de una PINN depende de tres componentes distintos: el error de aproximación de la clase de redes, el error de discretización asociado a los puntos de colocación y el error de optimización. La elección de la activación, la arquitectura y el optimizador influye en estos componentes~\cite{bishop2006pattern,adam2015method,liunocedal1989lbfgs}. En esta tesis se separa el análisis de consistencia matemática del comportamiento efectivo del entrenamiento.
+
+\section{Definición y funcionamiento}
+
+Considérese una red totalmente conectada de $L$ capas cuya entrada es
+$x\in\mathbb{R}^{n_0}$. Denotamos por $\sigma$ su activación escalar,
+aplicada componente a componente, y por $\vec n$ el vector de anchos:
+\[
+\vec n=(n_0,n_1,\dots,n_{L-1},n_L).
+\]
+Definimos
+\[
+z_0(x)=x,
+\qquad
+z_\ell(x)=\sigma\!\left(W_\ell z_{\ell-1}(x)+b_\ell\right),
+\quad 1\leq \ell\leq L-1,
+\]
+y tomamos una última capa lineal
+\[
+h_\theta(x)=W_L z_{L-1}(x)+b_L\in\mathbb{R}^{n_L}.
+\]
+Los parámetros son
+\[
+\theta=\{(W_\ell,b_\ell)\}_{\ell=1}^{L},
+\qquad
+W_\ell\in\mathbb{R}^{n_\ell\times n_{\ell-1}},
+\qquad
+b_\ell\in\mathbb{R}^{n_\ell}.
+\]
+La clase asociada a una arquitectura fija se denota por
+\[
+\mathcal{H}^{\mathrm{NN}}_{\vec n}
+=
+\{h_\theta:\mathbb{R}^{n_0}\to\mathbb{R}^{n_L}\,:\,\theta\in\Theta\}.
+\]
+En el análisis teórico principal se seguirá el marco idealizado de Shin et al.: para cada tamaño de muestra se supondrá la existencia de un minimizador global de la pérdida regularizada. Esta hipótesis separa el error de generalización del error de optimización; en la práctica, Adam~\cite{adam2015method} o L--BFGS~\cite{liunocedal1989lbfgs} producen únicamente aproximaciones a dicho minimizador.
+
+
+
+\paragraph{Arquitectura residual utilizada en las reproducciones de Shin.}
+La definición precedente corresponde a una red totalmente conectada sin conexiones de salto. Las reproducciones de Shin et al.~\cite{shin2020convergence} utilizan, en cambio, una conexión residual explícita entre la entrada y la segunda capa oculta. En el caso escalar, con dos capas de anchura $50$ y activación $\tanh$, la representación implementada es
+\[
+ z_1(x)=\tanh(W_1x+b_1),\qquad
+ z_2(x)=\tanh\!\bigl(W_2(z_1(x)+\mathbf{1}x)+b_2\bigr),\qquad
+ N_\theta(x)=W_3z_2(x)+b_3,
+\]
+donde $\mathbf{1}x$ replica la entrada en las $50$ componentes. El término $z_1(x)+\mathbf{1}x$ distingue esta arquitectura de la MLP anterior. En Dirichlet fuerte se compone, además, con $h_\theta(x)=(1-x^2)N_\theta(x)$; la imposición de frontera modifica la clase de funciones aproximantes y no equivale a una capa residual adicional.
+
+\begin{figure}[h!]
+    \centering
+    \begin{tikzpicture}[font=\small,>=stealth]
+
+% Rótulo de las entradas
+\node at (-4,1.4) {\textbf{ENTRADAS}};
+
+% Entradas x_i
+\node (x1) at (-4,0.9) {$x_1$};
+\node (x2) at (-4,0.1) {$x_2$};
+\node (x3) at (-4,-0.7) {$x_3$};
+\node (xm) at (-4,-1.7) {$x_m$};
+
+% Pesos w_i en círculos
+\node[draw,circle,inner sep=2pt] (w1) at (-2.7,0.9) {$w_1^{1}$};
+\node[draw,circle,inner sep=2pt] (w2) at (-2.7,0.1) {$w_2^{1}$};
+\node[draw,circle,inner sep=2pt] (w3) at (-2.7,-0.7) {$w_3^{1}$};
+\node[draw,circle,inner sep=2pt] (wm) at (-2.7,-1.7) {$w_m^{1}$};
+
+% Flechas x_i -> w_i
+\draw[->] (x1) -- (w1);
+\draw[->] (x2) -- (w2);
+\draw[->] (x3) -- (w3);
+\draw[->] (xm) -- (wm);
+
+% Neurona (suma ponderada)
+\node[draw,ellipse,minimum width=5cm,minimum height=1.8cm] (sum) at (0.5,-0.5)
+  {$z^{1} = \displaystyle\sum_{i=1}^{m} w_i^{1} x_i + b^{1}$};
+
+% Flechas w_i -> neurona
+\draw[->] (w1) -- (sum);
+\draw[->] (w2) -- (sum);
+\draw[->] (w3) -- (sum);
+\draw[->] (wm) -- (sum);
+
+% Bias en círculo superior
+\node[draw,circle,inner sep=2pt] (b) at (0.5,1.5) {$b^{1}$};
+\draw[->] (b) -- (sum);
+
+% Texto "FUNCION DE ACTIVACION"
+\node at (4,1.4) {\textbf{FUNCIÓN DE}};
+\node at (4,0.9) {\textbf{ACTIVACIÓN}};
+
+% Nodo de activacion
+\node[draw,circle,minimum size=10mm] (act) at (4,-0.5) {$\sigma(z^{1})$};
+
+% Flecha neurona -> activacion
+\draw[->] (sum) -- (act);
+
+% Puntos suspensivos a la derecha
+\draw[->] (act) -- (5.5,-0.5);
+\node at (6,-0.5) {$\dots$};
+
+\end{tikzpicture}
+    \caption{Esquema de una red neuronal artificial.}
+    \label{fig:esquema_nn}
+\end{figure}
+
+\subsection{Funciones de activación}
+
+La función \( \sigma \) se llama función de activación y es crucial para introducir no linealidad en el modelo. Algunas funciones de activación comunes son:
+\begin{itemize}
+    \item \textbf{Sigmoide:} \(\sigma(x) = \frac{1}{1 + e^{-x}}\)
+    \item \textbf{Tangente hiperbólica (tanh):} \(\sigma(x) = \tanh(x) = \frac{e^x - e^{-x}}{e^x + e^{-x}}\)
+    \item \textbf{ReLU (Rectified Linear Unit):} \(\sigma(x) = \max(0, x)\)
+    \item \textbf{Leaky ReLU:} \(\sigma(x) = \max(\alpha x, x)\), con \(0 < \alpha < 1\)
+\end{itemize}
+
+La elección de la función de activación depende del problema específico y de la arquitectura de la red neuronal.
+
+\paragraph{Nota.} En los problemas de Poisson emplearemos principalmente $\tanh$, pues el residuo contiene derivadas segundas. Las activaciones no suaves por tramos, como ReLU, no son adecuadas para evaluar ese residuo de manera clásica. Otras activaciones suaves pueden utilizarse siempre que sus derivadas requeridas estén controladas en el rango de preactivaciones; véase la Subsección~\ref{sec:reg-ad-pinns}.
+
+
+\subsection{Función de pérdida}
+
+La función de pérdida cuantifica la discrepancia entre la salida de la red neuronal y el valor esperado. Para el caso más simple de una red neuronal utilizada para regresión, la función de pérdida más común es el error cuadrático medio (MSE):
+
+\[
+L(\theta) = \frac{1}{N} \sum_{i=1}^{N} (y_i - \hat{y}_i)^2
+\]
+
+donde \(y_i\) es el valor real, \(\hat{y}_i\) es la predicción de la red neuronal y \(N\) es el número de muestras en el conjunto de datos.
+
+
+\section{Redes neuronales físicamente informadas (PINNs)}
+
+Sea $U\subset\mathbb{R}^d$ un dominio y sea $\Gamma\subseteq\partial U$ la porción de frontera donde se imponen las condiciones de contorno (y donde se muestrean los puntos de frontera durante el entrenamiento).
+Consideremos la EDP:
+\begin{align*}
+    \mathcal{L}[u](x) &= f(x), \quad \text{con } x \in U \subset \mathbb{R}^{d}, \\
+    \mathcal{B}[u](x) &= g(x), \quad \text{con } x \in \Gamma \subseteq \partial U,
+\end{align*}
+
+\noindent\textbf{Caso Dirichlet.} Se toma $\mathcal{B}[u]=u|_{\Gamma}$. En el problema de Dirichlet completo, utilizado para las estimaciones de estabilidad del Capítulo~\ref{chap:convergencia}, se fija $\Gamma=\partial U$.
+
+
+Para la formulación de los conjuntos de entrenamiento seguimos el planteamiento de Shin et al.~\cite{shin2020convergence}, distinguiendo entre los puntos de colocación utilizados para evaluar el residuo de la ecuación diferencial y los puntos empleados para imponer las condiciones de frontera. Esta distinción permite formular la pérdida empírica de manera consistente con el marco teórico de convergencia desarrollado en el Capítulo III.
+
+El objetivo es hallar una red neuronal \( h^{L}(x; \overrightarrow{n}, \theta_{L}) \) que aproxime la solución de la EDP a partir de un conjunto de datos de entrenamiento. Los datos puntuales de la EDP se toman como muestras i.i.d.:
+\begin{itemize}
+    \item Datos residuales: \( (x^{i}_{r}, f(x^{i}_{r})) \), donde \( x^{i}_{r} \in U \)
+    \item Datos de frontera: \( (x^{i}_{b}, g(x^{i}_{b})) \), donde \( x^{i}_{b} \in \Gamma \)
+\end{itemize}
+
+La ecuación física se expresa como:
+\[
+\mathcal{L}[u] - f = 0 \quad \text{y} \quad \mathcal{B}[u] - g = 0.
+\]
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[every node/.style={font=\small}, node distance=1.5cm and 1.5cm]
+
+  % Bloque de la red neuronal
+  \node[draw, dashed, rounded corners, inner sep=10pt, label=above:{\textbf{Red neuronal: $u(x; \theta)$}}] (nn) {
+    \begin{tikzpicture}[every node/.style={circle, draw, minimum size=6mm, inner sep=1pt}]
+      % Input layer
+      \node[fill=blue!20] (x) at (0,-1) {$x$};
+      % Hidden layer 1
+      \foreach \i in {1,2,3,4} {
+        \node[fill=gray!20] (h1\i) at (1.5,1.5-\i) {$\sigma$};
+        \draw[->] (x) -- (h1\i);
+      }
+      % Hidden layer 2
+      \foreach \i in {1,2,3,4} {
+        \node[fill=gray!20] (h2\i) at (3,1.5-\i) {$\sigma$};
+        \foreach \j in {1,2,3,4} {
+          \draw[->] (h1\j) -- (h2\i);
+        }
+      }
+      % Output layer
+      \node[fill=blue!20] (u) at (4.5,-1) {$u$};
+      \foreach \i in {1,2,3,4} {
+        \draw[->] (h2\i) -- (u);
+      }
+    \end{tikzpicture}
+  };
+
+  % Bloque de la EDP
+  \node[draw, thick, rounded corners, right=0.5cm of nn, minimum height=3.5cm, minimum width=6cm, label=above:{\textbf{EDP}}] (pde) {};
+
+  % Inside PDE
+  \node[circle, draw] (L) at ($(pde.west)+(-2.5,0)!0.3!(pde.east)+(0,1)$) {$\mathcal{L}[\cdot]$};
+  \node[circle, draw] (B) at ($(pde.west)+(-2.5,0)!0.3!(pde.east)-(0,1)$) {$\mathcal{B}[\cdot]$};
+
+  \node[rectangle, draw, fill=orange!20, minimum width=1.5cm, minimum height=1cm] (res) at ($(pde.east)+(-1.4,0)$) {
+    \begin{tabular}{c}
+    $\mathcal{L}[u] - f$ \\
+    $\mathcal{B}[u] - g$
+    \end{tabular}
+  };
+
+  % Midpoints for arrow targets
+  \coordinate (midLres) at ($(L)!0.5!(res)$);
+  \coordinate (midBres) at ($(B)!0.5!(res)$);
+
+  % Loss and minimization
+  \node[rectangle, draw, fill=pink!30, right=1cm of res] (loss) {Pérdida};
+  \node[rectangle, draw, fill=green!30, right=1cm of loss] (theta) {$\theta^*$};
+  \node[above=0.1cm of loss] {\small minimizar};
+
+  % External sources f and g
+  \node[circle, draw] (f) [above right=-0.37cm and 1.22cm of L] {$f$};
+  \node[circle, draw] (g) [below right=-0.37cm and 1.22cm of B] {$g$};
+
+  \coordinate (u) at ($(nn.east)+(-0.4,0)$);
+
+  % Connections
+  \draw[->] (u) -- (L);
+  \draw[->] (u) -- (B);
+  \draw[->] (L) -- (res);
+  \draw[->] (B) -- (res);
+  \draw[->] (f) -- (midLres);
+  \draw[->] (g) -- (midBres);
+  \draw[->] (res) -- (loss);
+  \draw[->] (loss) -- (theta);
+
+\end{tikzpicture}
+\caption{Arquitectura esquemática de una PINN utilizada en este estudio. El modelo consta de dos bloques principales: un bloque de aproximación (izquierda) constituido por una red neuronal de propagación hacia adelante, totalmente conectada parametrizada por $\theta$, y un bloque de regularización física (derecha) que evalúa los residuales de la EDP y las condiciones de frontera mediante diferenciación automática.}
+\vspace{0.1cm}
+    \small{Fuente: Elaboración propia, diagrama conceptual adaptado de Shin et al.~\cite{shin2020convergence}.}
+\end{figure}
+
+\subsection{Codificación de ecuaciones físicas en redes neuronales}
+
+La idea es incorporar las ecuaciones físicas y los datos en una red neuronal. Para abreviar,
+denotaremos su salida por $h^L_\theta(x)$. Sea $m=(m_r,m_b)$ el vector de tamaños de muestra, donde:
+\begin{align*}
+    m_{r} &= \text{\# puntos residuales}, \\
+    m_{b} &= \text{\# puntos de frontera}.
+\end{align*}
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.5\linewidth]{imagenes/residual.png}
+    \caption{Discretización del dominio: Puntos residuales y de frontera.}
+    \label{fig:discretizacion_dominio}
+\end{figure}
+
+Definimos los residuos
+\[
+r_h(x):=\mathcal{L}[h](x)-f(x),\qquad x\in U,
+\]
+\[
+b_h(y):=\mathcal{B}[h](y)-g(y),\qquad y\in\Gamma.
+\]
+Sean $\mu_r$ y $\mu_b$ las medidas de muestreo en el interior y en la frontera, respectivamente. La pérdida poblacional sin regularización es
+\[
+\operatorname{Loss}^{\mathrm{PINN}}(h;\lambda)
+=
+\lambda_r\|r_h\|^2_{L^2(U;\mu_r)}
++
+\lambda_b\|b_h\|^2_{L^2(\Gamma;\mu_b)},
+\]
+mientras que, para muestras
+$X_r=\{x_r^i\}_{i=1}^{m_r}$ y
+$X_b=\{x_b^j\}_{j=1}^{m_b}$, la pérdida empírica es
+\[
+\operatorname{Loss}^{\mathrm{PINN}}_m(h;\lambda)
+=
+\frac{\lambda_r}{m_r}\sum_{i=1}^{m_r}|r_h(x_r^i)|^2
++
+\frac{\lambda_b}{m_b}\sum_{j=1}^{m_b}|b_h(x_b^j)|^2.
+\]
+Al añadir funcionales de regularización $\mathcal{R}_r$ y $\mathcal{R}_b$ se obtiene
+\[
+\operatorname{Loss}_m(h;\lambda,\lambda_m^{\mathcal R})
+=
+\operatorname{Loss}^{\mathrm{PINN}}_m(h;\lambda)
++
+\lambda_{r,m}^{\mathcal R}\mathcal{R}_r(h)
++
+\lambda_{b,m}^{\mathcal R}\mathcal{R}_b(h).
+\]
+Para abreviar, escribimos
+\[
+\mathcal{E}(h):=\operatorname{Loss}(h;\lambda,\lambda^{\mathcal R}),
+\qquad
+\widehat{\mathcal{E}}_m(h):=\operatorname{Loss}_m(h;\lambda,\lambda_m^{\mathcal R}).
+\]
+
+Siguiendo a Shin et al., el análisis del Capítulo~\ref{chap:convergencia} considera el problema idealizado
+\[
+h_m\in\operatorname*{arg\,min}_{h\in\mathcal H_m}
+\operatorname{Loss}_m(h;\lambda,\lambda_m^{\mathcal R}).
+\]
+Es decir, los teoremas se formulan para minimizadores globales exactos. Esta elección no afirma que un algoritmo de descenso de gradiente los encuentre: el error de optimización queda fuera del resultado principal y se discute como una limitación al comparar la teoría con los experimentos.
+
+\subsection{Requisitos de regularidad y diferenciación automática en PINNs elípticas}
+\label{sec:reg-ad-pinns}
+
+El residuo de Poisson $r_\theta(x)=\Delta h_\theta(x)-f(x)$, con la convención $\mathcal L=\Delta$ del capítulo teórico, involucra derivadas de segundo orden. La convención equivalente $-\Delta$ requiere cambiar también el signo del término fuente. Para interpretarlo punto a punto se requiere, al menos, $h_\theta\in C^2(U)$. En esta tesis se utiliza $\tanh$, que es suave y posee derivadas acotadas. Las activaciones no suaves por tramos, como ReLU, tienen segunda derivada nula casi en todas partes y singular en los puntos de quiebre, por lo que no representan adecuadamente un residuo clásico de segundo orden. La diferenciación automática calcula las derivadas de la función implementada, pero no reemplaza las hipótesis de regularidad exigidas por el análisis.
+
+
+\subsection{Pérdida regularizada de Hölder}
+
+Para impedir que el residuo presente picos entre puntos de colocación, introducimos seminormas Hölder. La formulación más directa es
+\[
+\operatorname{Loss}^{\mathrm{Hold}}_m(h)
+=
+\operatorname{Loss}^{\mathrm{PINN}}_m(h;\lambda)
++
+\lambda^{\mathcal R}_{r,m}[r_h]^2_{\alpha;U}
++
+\lambda^{\mathcal R}_{b,m}[b_h]^2_{\alpha;\Gamma},
+\]
+donde
+\[
+[v]_{\alpha;A}
+=
+\sup_{\substack{x,y\in A\\x\neq y}}
+\frac{|v(x)-v(y)|}{\|x-y\|^\alpha},
+\qquad 0<\alpha\leq1.
+\]
+También puede regularizarse $\mathcal{L}[h]$ y $\mathcal{B}[h]$, como en el desarrollo del Capítulo~\ref{chap:convergencia}, porque
+\[
+[r_h]_{\alpha;U}
+\leq
+[\mathcal{L}[h]]_{\alpha;U}+[f]_{\alpha;U},
+\qquad
+[b_h]_{\alpha;\Gamma}
+\leq
+[\mathcal{B}[h]]_{\alpha;\Gamma}+[g]_{\alpha;\Gamma}.
+\]
+Por tanto, cuando $f$ y $g$ son Hölder, ambas formulaciones proporcionan el mismo tipo de control uniforme, aunque con constantes diferentes.
+
+\subsection{Funci\'on de pérdida de Raissi}
+\label{sec:raissi-loss}
+
+Además de la definición general de la función de pérdida PINN proporcionada anteriormente, introducimos explícitamente la función de pérdida original definida por Raissi et al. en \cite{raissi2017physics}, frecuentemente empleada en la práctica para entrenar redes neuronales físicamente informadas (PINNs).
+
+Sea \(\{t_u^i, x_u^i, u^i\}_{i=1}^{N_u}\) un conjunto de datos observados correspondientes a la solución exacta \(u\), y sean \(\{t_f^i, x_f^i\}_{i=1}^{N_f}\) los puntos residuales seleccionados en el dominio de la ecuación diferencial parcial (EDP). Consideramos una red neuronal parametrizada por \(\theta\), denotada como \(u_{\theta}(t, x)\), y definimos el operador residual como:
+
+\[
+f_{\theta}(t, x) = \frac{\partial}{\partial t}u_{\theta}(t,x) + \mathcal{N}[u_{\theta}(t,x)],
+\]
+
+donde \(\mathcal{N}\) es el operador diferencial no lineal que representa la EDP del problema específico.
+
+La función de pérdida propuesta por Raissi et al. \cite{raissi2017physics} se define como la suma del error cuadrático medio en los datos observacionales (\(MSE_u\)) y el error cuadrático medio residual correspondiente a las restricciones físicas (\(MSE_f\)):
+
+\[
+\text{Loss}(\theta) = MSE = MSE_u + MSE_f,
+\]
+
+donde
+
+\[
+MSE_u = \frac{1}{N_u}\sum_{i=1}^{N_u}\left|u_{\theta}(t_u^i, x_u^i)-u^i\right|^2,
+\]
+
+y
+
+\[
+MSE_f = \frac{1}{N_f}\sum_{i=1}^{N_f}\left|f_{\theta}(t_f^i, x_f^i)\right|^2.
+\]
+
+Aquí, el término \(MSE_u\) cuantifica el error respecto a los datos observados (condiciones iniciales y/o de frontera), mientras que el término \(MSE_f\) mide la violación de la ecuación diferencial parcial en los puntos residuales seleccionados. Esta formulación penaliza simultáneamente el desajuste con los datos disponibles y la violación de la ecuación en los puntos residuales. Que ambas penalizaciones sean pequeñas durante el entrenamiento no garantiza por sí solo convergencia global; esa inferencia requiere hipótesis de muestreo, regularidad y estabilidad.
+
+
+\subsubsection*{Caso estacionario}
+En nuestro trabajo nos centramos en el caso estacionario, donde no hay dependencia temporal.
+La función de pérdida se reduce a:
+\[
+MSE_u=\frac{1}{N_b}\sum_{j=1}^{N_b}\big|h_\theta(x_b^j)-g(x_b^j)\big|^2,\qquad
+MSE_f=\frac{1}{N_r}\sum_{i=1}^{N_r}\big|-\Delta h_\theta(x_r^i)-f(x_r^i)\big|^2.
+\]
+Con $\lambda_r=\lambda_b=1$ y medidas empíricas uniformes, esta pérdida coincide con $\operatorname{Loss}^{\mathrm{PINN}}_m$ del Capítulo~\ref{chap:convergencia}.

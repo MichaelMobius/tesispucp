@@ -1,0 +1,314 @@
+\chapter{Preliminares matem\'aticos}
+
+\section{Introducci\'on}
+
+Las ecuaciones diferenciales parciales (EDPs) constituyen una herramienta central para modelar fenómenos físicos, biológicos y de ingeniería. Dentro de la clase de ecuaciones elípticas, la ecuación de Poisson ocupa un lugar prototípico por su aparición en electrostática, conducción de calor y mecánica de fluidos, y porque permite estudiar con claridad cuestiones de existencia, regularidad, estabilidad y aproximación numérica.
+
+Los métodos de diferencias finitas, elementos finitos y volúmenes finitos poseen una teoría de convergencia ampliamente desarrollada y son particularmente eficaces en problemas de dimensión baja o moderada \cite{strang1973, leveque2007, babuska1994}. Su aplicación requiere, sin embargo, una discretización del dominio y, según la geometría y la dimensión, puede demandar una construcción de malla o una estrategia de integración no trivial.
+
+Las redes neuronales físicamente informadas (PINNs) ofrecen una formulación alternativa: representan la solución mediante una red neuronal y entrenan sus parámetros penalizando el residuo diferencial y el defecto en las condiciones de contorno. La metodología fue popularizada por Raissi, Perdikaris y Karniadakis \cite{raissi2019}. Su interés no reside en una superioridad universal frente a los métodos clásicos, sino en la posibilidad de combinar ecuaciones, condiciones de contorno y datos observacionales dentro de un mismo problema de optimización.
+
+Esta tesis se concentra en una pregunta más específica: bajo qué hipótesis una pérdida PINN pequeña, evaluada en un conjunto finito de puntos de colocación, permite controlar el residuo continuo y el error funcional de la aproximación. La ecuación de Poisson se emplea como banco de pruebas porque dispone de una teoría elíptica bien establecida y de soluciones de referencia con las que es posible contrastar los resultados computacionales.
+
+\section{EDPs elípticas lineales}
+
+Sea $U\subset\mathbb{R}^d$ un dominio acotado y sea $\Gamma\subseteq\partial U$ una porción de la frontera. En el marco probabilístico del Capítulo~\ref{chap:convergencia} se supondrá, siguiendo a Shin et al., que $\Gamma$ es un subconjunto cerrado de $\partial U$. Consideramos el problema lineal
+\[
+\begin{cases}
+    \mathcal{L}[u] = f & \text{en } U, \\
+    \mathcal{B}[u] = g & \text{en } \Gamma,
+\end{cases}
+\]
+donde $f:U\to\mathbb{R}$, $g:\Gamma\to\mathbb{R}$ y, para condiciones de Dirichlet,
+$\mathcal{B}[u]=u|_{\Gamma}$. Cuando el dato se prescribe en toda la frontera se escribirá explícitamente
+$\Gamma=\partial U$.
+
+Siguiendo la formulación elíptica utilizada por Shin, Darbon y
+Karniadakis~\cite{shin2020convergence}, escribimos el operador de modo
+consistente con su expresión en forma no divergente:
+\begin{equation}\label{eq:operador_eliptico_corregido}
+\begin{aligned}
+\mathcal{L}[u]
+={}&\sum_{i,j=1}^{d}D_i\!\left(a^{ij}(x)D_j u\right)
+ +\sum_{i=1}^{d}D_i\!\left(b^i(x)u\right)\\
+ &+\sum_{i=1}^{d}c^i(x)D_i u+d(x)u.
+\end{aligned}
+\end{equation}
+Aquí $D_i=\partial/\partial x_i$ y $d(x)$ es el coeficiente de orden
+cero, que no debe confundirse con la dimensión espacial $d$.
+La diferenciación mediante la regla del producto da
+\[
+\begin{aligned}
+\sum_{i,j}D_i(a^{ij}D_j u)
+&=\sum_{i,j}a^{ij}D_{ij}u
+ +\sum_j\!\left(\sum_i D_i a^{ij}\right)D_j u,\\
+\sum_i D_i(b^i u)&=\sum_i b^iD_i u
+ +\left(\sum_iD_i b^i\right)u.
+\end{aligned}
+\]
+En consecuencia, si $a^{ij},b^i\in C^1(U)$, la forma no divergente es
+\begin{equation}\label{eq:operador_eliptico_no_divergente}
+\mathcal{L}[u]
+=\sum_{i,j=1}^{d}a^{ij}(x)D_{ij}u
+ +\sum_{j=1}^{d}\widetilde b^{\,j}(x)D_j u
+ +\widetilde c(x)u,
+\end{equation}
+con
+\[
+\widetilde b^{\,j}=\sum_{i=1}^{d}D_i a^{ij}+b^j+c^j,
+\qquad
+\widetilde c=\sum_{i=1}^{d}D_i b^i+d.
+\]
+La expresión \eqref{eq:operador_eliptico_corregido} fija la convención
+de índices empleada en esta tesis y es la que se utilizará en la
+Hipótesis~3 y en las estimaciones de estabilidad. Se trata de una
+precisión de notación, no de una contribución matemática reivindicada.
+En particular, el principio del máximo exige la condición de signo
+$\widetilde c\leq0$ cuando se aplique a este operador. Las estimaciones de
+Schauder requieren además regularidad suficiente de $\widetilde b$ y
+$\widetilde c$ \cite{gilbarg2001elliptic}.
+
+En los experimentos de Poisson se toma $\mathcal L=\Delta$; cuando se usa
+$-\Delta$ por conveniencia en alguna formulación numérica, el término
+fuente se cambia de signo de manera explícita. Esta convención no modifica
+las demostraciones abstractas del presente capítulo.
+
+El operador es uniformemente elíptico si existe $\lambda_0>0$ tal que
+\[
+\sum_{i,j=1}^{d}a^{ij}(x)\xi_i\xi_j
+\geq
+\lambda_0|\xi|^2,
+\qquad
+\forall\xi\in\mathbb{R}^d,\quad \forall x\in U.
+\]
+
+\section{Espacios de funciones}
+
+Las estimaciones que emplearemos para analizar la convergencia de las PINNs
+involucran tres tipos de normas: las de H\"older, las de integrabilidad
+cuadr\'atica y las de Sobolev. Introducimos primero la regularidad de H\"older,
+porque permite relacionar la informaci\'on disponible en los puntos de
+entrenamiento con el comportamiento de una funci\'on en el dominio completo.
+
+\subsection*{Espacios de H\"older}
+
+Sea $U\subset\mathbb R^d$ un dominio acotado y $0<\alpha\leq 1$. Para una
+funci\'on $v:U\to\mathbb R$, consideramos la seminorma
+\[
+[v]_{\alpha;U}
+:=\sup_{\substack{x,y\in U\\x\neq y}}
+\frac{|v(x)-v(y)|}{\|x-y\|^\alpha}.
+\]
+Su finitud expresa que las variaciones de $v$ est\'an controladas por una
+potencia de la distancia:
+\[
+|v(x)-v(y)|\leq[v]_{\alpha;U}\,\|x-y\|^\alpha,
+\qquad x,y\in U.
+\]
+El caso $\alpha=1$ corresponde a la continuidad Lipschitz; para
+$0<\alpha<1$ se obtiene una condici\'on de regularidad m\'as d\'ebil.
+
+Para extender esta noci\'on a las derivadas, utilizamos multi\'indices
+$\beta=(\beta_1,\ldots,\beta_d)\in\mathbb N_0^d$, con
+$|\beta|=\beta_1+\cdots+\beta_d$, y escribimos
+\[
+D^\beta u
+=\frac{\partial^{|\beta|}u}
+{\partial x_1^{\beta_1}\cdots\partial x_d^{\beta_d}}.
+\]
+Si $u\in C^k(U)$, definimos, para $0\leq j\leq k$,
+\[
+[u]_{j,0;U}:=
+\max_{|\beta|=j}\sup_{x\in U}|D^\beta u(x)|,
+\qquad
+[u]_{k,\alpha;U}:=
+\max_{|\beta|=k}[D^\beta u]_{\alpha;U}.
+\]
+El espacio $C^{k,\alpha}(\overline U)$ est\'a formado por las funciones de
+$C^k(\overline U)$ cuyas derivadas de orden $k$ son uniformemente
+H\"older continuas. Lo equipamos con la norma
+\[
+\|u\|_{C^{k,\alpha}(\overline U)}
+:=\sum_{j=0}^{k}[u]_{j,0;U}+[u]_{k,\alpha;U}.
+\]
+En particular, para $k=0$ escribimos tambi\'en $C^\alpha(\overline U)$.
+Con la norma anterior, $C^{k,\alpha}(\overline U)$ es un espacio de
+Banach. La notaci\'on $C^{k,\alpha}_{\mathrm{loc}}(U)$ se reservar\'a
+para funciones que poseen esta regularidad sobre cada compacto contenido
+en $U$, sin exigir el mismo control hasta la frontera.
+
+Esta distinci\'on tendr\'a un papel concreto en el Cap\'itulo III. Para una
+aproximaci\'on $h$ de la soluci\'on de $\mathcal L[u]=f$,
+sea $r_h=\mathcal L[h]-f$ su residuo. Si $x_i$ es un punto de colocaci\'on,
+entonces
+\[
+|r_h(x)|\leq |r_h(x_i)|+
+\bigl([\mathcal L[h]]_{\alpha;U}+[f]_{\alpha;U}\bigr)
+\|x-x_i\|^\alpha,
+\qquad x\in U.
+\]
+La desigualdad permite distinguir el residuo evaluado en los puntos de
+entrenamiento del control que se necesita entre esos puntos. En este
+sentido se emplean las seminormas de H\"older en la regularizaci\'on y
+en las cotas de generalizaci\'on estudiadas posteriormente.
+La notaci\'on y su aplicaci\'on a PINNs se relacionan con la secci\'on 2.1
+de Shin et al.~\cite{shin2020convergence}; el marco cl\'asico de regularidad
+el\'iptica puede consultarse en \cite{gilbarg2001elliptic}.
+
+\subsection*{Espacios \(L^2\)}
+
+Sea \(U \subseteq \mathbb{R}^d\) un dominio acotado. El espacio \(L^2(U)\) se define como el conjunto de funciones reales medibles \(f: U \rightarrow \mathbb{R}\) tales que el cuadrado de su valor absoluto es integrable en \(U\). Más formalmente,
+
+\[
+L^2(U) = \left\{ f : U \rightarrow \mathbb{R} \,\Big|\, \int_U |f(x)|^2\,dx < \infty \right\}.
+\]
+
+El espacio \(L^2(U)\) es un espacio de Hilbert equipado con el producto interno dado por:
+
+\[
+\langle f,g \rangle_{L^2(U)} = \int_U f(x)g(x)\,dx, \quad f,g \in L^2(U),
+\]
+
+y con la norma inducida correspondiente definida por:
+
+\[
+\|f\|_{L^2(U)} = \left(\int_U |f(x)|^2\,dx\right)^{1/2}.
+\]
+
+Esta estructura dota al espacio \(L^2(U)\) de propiedades útiles, incluyendo la completitud respecto a esta norma, lo que resulta esencial para diversos análisis matemáticos, particularmente en el estudio de ecuaciones diferenciales parciales y teoría de aproximación.
+
+\subsection*{Espacios de Sobolev}
+
+Sea $U\subset\mathbb{R}^d$ acotado y de frontera Lipschitz. Para $k\in\mathbb{N}$ definimos
+
+\[
+H^k(U)=\big\{u\in L^2(U): D^\beta u\in L^2(U)\ \text{para todo multiíndice }|\beta|\le k\big\},
+\]
+
+con norma
+
+\[
+\|u\|_{H^k(U)}^2=\sum_{|\beta|\le k}\|D^\beta u\|_{L^2(U)}^2.
+\]
+
+En particular,
+
+\[
+H^1(U)=\{u\in L^2(U): \nabla u\in (L^2(U))^d\},\qquad
+\|u\|_{H^1(U)}^2=\|u\|_{L^2(U)}^2+\|\nabla u\|_{L^2(U)}^2.
+\]
+
+Definimos $H_0^1(U)$ como el cierre de $C_c^\infty(U)$ en $H^1(U)$; para dominios Lipschitz, coincide con el subespacio de funciones cuya traza se anula en toda $\partial U$. Cuando solo se prescribe traza nula en una porción $\Gamma\subseteq\partial U$, emplearemos la notación $H^1_{0,\Gamma}(U)$.
+
+\section{Principio del máximo}
+
+El principio del máximo proporciona unicidad y estimaciones \emph{a priori} para problemas elípticos. En una formulación típica, si $\mathcal{L}$ es uniformemente elíptico, el coeficiente de orden cero satisface la condición de signo requerida y $\mathcal{L}[u]\geq 0$ en $U$, entonces
+\[
+\max_{\overline U}u\leq \max\bigl\{0,\max_{\partial U}u\bigr\}.
+\]
+En particular, cuando $u$ es armónica o subarmónica bajo las hipótesis usuales, el máximo se controla por el dato prescrito en la frontera completa $\partial U$. No debe sustituirse $\partial U$ por una porción propia $\Gamma$ sin imponer condiciones adicionales sobre el resto de la frontera. Véase \cite{gilbarg2001elliptic}.
+
+En esta tesis, el principio del máximo se utiliza no solo como herramienta teórica clásica, sino como mecanismo para \emph{acotar el error de una solución aproximada}. Sea $u$ la solución exacta del problema de Poisson y sea $h_\theta$ la aproximación obtenida mediante una PINN. Definimos el error
+\[
+e := u - h_\theta.
+\]
+Entonces $e$ satisface un problema elíptico con datos ``pequeños'' dados por el error en la frontera y el residuo de la EDP. De manera esquemática, podemos escribir
+\[
+L[e] = f - L[h_\theta] \quad \text{en } U, \qquad
+e = g - h_\theta \quad \text{en } \partial U,
+\]
+donde $f$ y $g$ son los datos exactos del problema.
+
+El principio del máximo permite mostrar que, bajo hipótesis de elipticidad uniforme y regularidad adecuadas, el error global $\|e\|_{C^0(\overline{U})}$ está controlado por:
+\begin{itemize}
+  \item qué tan bien la PINN satisface las condiciones de frontera, es decir, el tamaño de $g-h_\theta$ en $\partial U$, y
+  \item qué tan bien minimiza el residuo de la EDP en el dominio, es decir, el tamaño de $f - L[h_\theta]$ en $U$.
+\end{itemize}
+En particular, si
+\begin{enumerate}
+  \item la PINN aproxima bien las condiciones de frontera (el error $|g-h_\theta|$ en $\partial U$ es pequeño), y
+  \item el residuo $|L[h_\theta] - f|$ es pequeño en $U$ (la física se respeta en el interior),
+\end{enumerate}
+entonces el principio del máximo, junto con estimaciones elípticas estándar, permite concluir que el \emph{error global} $|u - h_\theta|$ está controlado en todo el dominio. Esta idea es central en los resultados de convergencia que se desarrollan en el Capítulo~III, donde se formaliza el paso desde la minimización de la pérdida PINN (residuo + error de frontera) hasta estimaciones de convergencia en normas $C^0$ y $H^1$.
+
+
+\section{Celdas de Voronoi}
+
+Sea \( U \subseteq \mathbb{R}^d \) un dominio acotado y considérese un conjunto finito de puntos distintos \( X = \{ x_i \}_{i=1}^{n} \subset U \). A cada punto \( x_i \) del conjunto \( X \) se le asocia una región denominada \emph{celda de Voronoi}, que se define formalmente a continuación.
+
+\textbf{Definición.} La celda de Voronoi asociada a un punto \( x_i \in X \), denotada por \( V_i \), se define como el conjunto de puntos del dominio \( U \) que se encuentran más cerca del punto \( x_i \) que de cualquier otro punto del conjunto \( X \). Matemáticamente, esta definición se expresa como:
+\[
+V_i := \{ x \in U : \| x - x_i \| \leq \| x - x_j \|, \; \forall j \neq i, j=1,\dots,n \}.
+\]
+
+Las celdas cubren $U$, pero con la definición mediante ``$\leq$'' pueden compartir puntos equidistantes. Para obtener una partición medible se fija una regla determinista de desempate. Con esa convención,
+\[
+U=\bigcup_{i=1}^{n}V_i,
+\qquad
+V_i\cap V_j=\varnothing\quad(i\neq j),
+\]
+salvo, equivalentemente, conjuntos de frontera de medida nula.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.43\linewidth]{imagenes/voronoi.png}
+    \caption{Celdas de Voronoi en un dominio bidimensional.}
+    \label{fig:voronoi}
+\end{figure}
+
+Si \(\mu\) es una medida de probabilidad en \(U\), la medida de una celda de Voronoi se define como
+
+\[
+\mu(V_i) = \int_{V_i} d\mu(x).
+\]
+
+Para una muestra empírica \(T_{m} = \{ z_k \}_{k=1}^{m} \subset U\), la medida empírica de \(V_i\) es
+
+\[
+\mu_{m}(V_i) = \frac{1}{m} \sum_{k=1}^{m} \delta_{z_k}(V_i),
+\]
+
+donde \(\delta_{z_k}(V_i)=1\) si \(z_k \in V_i\) y \(0\) en caso contrario.
+
+\section{Existencia y regularidad de Schauder}
+
+\textbf{Teorema.}
+Sea $U\subset\mathbb{R}^d$ un dominio acotado con frontera $C^{2,\alpha}$, $0<\alpha<1$, y sea
+\[
+\mathcal{L}u
+=
+\sum_{i,j=1}^{d}a^{ij}(x)D_{ij}u
++
+\sum_{i=1}^{d}b^i(x)D_i u
++
+c(x)u
+\]
+un operador uniformemente elíptico con $a^{ij}=a^{ji}$ y coeficientes
+$a^{ij},b^i,c\in C^{0,\alpha}(\overline U)$. Supóngase además que la condición de signo necesaria para unicidad, por ejemplo $c\leq 0$, se cumple. Entonces, para todo
+$f\in C^{0,\alpha}(\overline U)$ y $g\in C^{2,\alpha}(\partial U)$, el problema
+\[
+\begin{cases}
+\mathcal{L}u=f & \text{en }U,\\
+u=g & \text{en }\partial U
+\end{cases}
+\]
+admite una única solución $u\in C^{2,\alpha}(\overline U)$. Además, existe una constante $C$, dependiente del dominio, de la elipticidad y de las normas de los coeficientes, tal que
+\[
+\|u\|_{C^{2,\alpha}(\overline U)}
+\leq
+C\Bigl(
+\|f\|_{C^{0,\alpha}(\overline U)}
++
+\|g\|_{C^{2,\alpha}(\partial U)}
+\Bigr).
+\]
+
+\paragraph{Comentario.}
+La demostración estándar combina estimaciones de Schauder, el principio del máximo y el método de continuidad; remitimos a \cite{gilbarg2001elliptic} para el enunciado preciso y su prueba. Este es un resultado de \emph{regularidad global} para fronteras suaves.
+No se aplica literalmente al cuadrado $(-1,1)^2$, cuya frontera tiene esquinas.
+En el Capítulo~III, para el problema de Dirichlet en dominios que admiten
+esferas exteriores, se emplea en cambio un resultado de existencia y
+regularidad \emph{interior} con continuidad hasta la frontera; no se
+identifican las hipótesis de ambos teoremas.
+
+

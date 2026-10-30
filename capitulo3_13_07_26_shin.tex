@@ -1,0 +1,1786 @@
+\chapter{Análisis de convergencia}
+\label{chap:convergencia}
+
+\noindent
+En este capítulo se analiza la convergencia de redes neuronales físicamente informadas (PINNs) para el
+\emph{problema de Dirichlet elíptico} y la \emph{formulación de pérdida} introducidos en los Capítulos~1 y~2
+(véase, en particular, la definición de la pérdida PINN en la Sección~\ref{sec:raissi-loss} y los requisitos
+de regularidad en la Sección~\ref{sec:reg-ad-pinns}). El objetivo es conectar rigurosamente tres niveles:
+(i) la pérdida empírica computable a partir de puntos de colocación, (ii) la pérdida teórica asociada a normas
+$L^2$ respecto de medidas de muestreo, y (iii) el error $h-u^*$ en normas funcionales (primero $C^0$ y luego,
+bajo imposición fuerte de la frontera, $H^1$).
+
+
+\medskip
+\noindent\textbf{Observación (Dependencia bibliográfica y aporte del capítulo).}
+El paso de \emph{generalización} que conecta la pérdida empírica $\widehat{\mathcal{E}}_m$ con la pérdida teórica $\mathcal{E}$
+(Teorema~1 y lemas de control determinista y de cobertura probabilística) sigue la estrategia de cobertura de Shin et al.~\cite{shin2020convergence}.
+Un enfoque complementario de estimaciones del error de generalización mediante estabilidad de la EDP y error de entrenamiento es el de Mishra y Molinaro~\cite{mishra2023generalization}. Se cita como contexto y no como fundamento de las demostraciones que siguen.
+Las intervenciones se distinguen según su naturaleza: precisiones de
+notación, reparaciones de pasos demostrativos y consecuencias derivadas
+bajo las hipótesis. La escritura coherente del operador elíptico del
+Capítulo~1 no se presenta como aporte original. La elección de pesos
+iguales del Teorema~2 evita una comparabilidad no garantizada por
+las condiciones generales del artículo. Los argumentos de cobertura
+proceden de \cite{shin2020convergence}, mientras que la interpolación
+cuantitativa $L^2$--H\"older, la tasa de error y la barrera explícita del
+Teorema~3 son desarrollos detallados de consecuencias condicionales,
+no afirmaciones sobre optimización numérica ni refutaciones globales del
+artículo.
+El aporte de esta sección consiste en \emph{desarrollar explícitamente los argumentos de cobertura y sus hipótesis}: (i) mantenemos separadas las medidas
+de muestreo $\mu_r$ (interior) y $\mu_b$ (borde) y la posibilidad de muestrear únicamente sobre un subconjunto
+$\Gamma\subseteq\partial U$; (ii) desarrollamos el paso determinista ``continuo--discreto'' bajo un evento de $\varepsilon$-cobertura,
+incluyendo el cierre interior--borde; y (iii) rastreamos con precisión qué términos dependen de la regularidad Hölder del residuo y
+cuáles dependen solo de los datos $f$ y $g$.
+\medskip
+\noindent\textbf{Alcance lógico de las demostraciones.}
+Los Teoremas~1--4 constituyen una cadena \emph{condicional}: la Hipótesis~1
+controla el muestreo aleatorio; la Hipótesis~2 exige comparadores con
+interpolación exacta y regularidad uniforme, además de la existencia de
+minimizadores globales mensurables en el Teorema~2 original; la Sección~\ref{sec:comparadores_aproximados}
+permite sustituir ambas exigencias de exactitud por tolerancias cuantitativas; y la Hipótesis~3 añade las condiciones
+elípticas necesarias para estabilidad y existencia. El Teorema~4 restringe
+adicionalmente la familia de aproximantes a un espacio con condición de
+Dirichlet impuesta exactamente. En los experimentos se usan también mallas
+deterministas y optimizadores iterativos: tales ensayos no verifican por sí
+solos las hipótesis probabilísticas ni la minimización global.
+
+\medskip
+\noindent\textbf{Convención de notación.}
+Sea $u^*$ la solución exacta del problema elíptico (Capítulo~1) y sea $h$ una aproximación tipo PINN.
+Denotamos por
+\[
+r_h:=\mathcal{L}[h]-f\quad\text{en }U,
+\qquad
+b_h:=\mathcal{B}[h]-g\quad\text{en }\Gamma
+\]
+los residuos interior y de frontera (Dirichlet), respectivamente. Para abreviar, escribimos
+$\mathcal{E}(h)$ para la \emph{pérdida teórica} y $\widehat{\mathcal{E}}_m(h)$ para la \emph{pérdida empírica}
+(en el sentido del Capítulo~2, es decir, $\mathcal{E}(h)=\text{Loss}(h;\lambda,\lambda^{\mathcal{R}})$ y
+$\widehat{\mathcal{E}}_m(h)=\text{Loss}_m(h;\lambda,\lambda^{\mathcal{R}})$; véase la Sección~\ref{sec:raissi-loss}), con medidas de muestreo $\mu_r$ en $U$ y $\mu_b$ en $\Gamma$,
+y tamaño de muestreo $m=(m_r,m_b)$.
+
+En coherencia con el planteamiento abstracto de \cite{shin2020convergence}, consideraremos un problema de contorno de la forma
+\begin{equation}\label{eq:planteamiento_abstracto}
+\mathcal{L}[u](x)=f(x)\quad (x\in U),\qquad \mathcal{B}[u](x)=g(x)\quad (x\in\Gamma\subseteq\partial U).
+\end{equation}
+En particular, $\Gamma$ representa la porción de frontera en la que se impone la condición (y el soporte geométrico de la medida $\mu_b$ usada para muestrear datos de frontera). A lo largo del capítulo, se controlará $\mathcal{E}(h)$ en términos de
+$\widehat{\mathcal{E}}_m(h)$ más un término geométrico–probabilístico de cobertura; siguiendo
+\cite{shin2020convergence}, se desarrollan aquí las pruebas en detalle y se explicitan los pasos omitidos.
+
+\medskip
+\paragraph{Interpretación de los resultados principales.}
+El hilo lógico del capítulo puede sintetizarse como la cadena
+\[
+\widehat{\mathcal{E}}_m(h)\ (\text{discreto}) \;\Rightarrow\; \mathcal{E}(h)\ (\text{continuo})
+\;\Rightarrow\; \|r_h\|_{C^0(\overline U)}+\|b_h\|_{C^0(\Gamma)}
+\;\Rightarrow\; \|h-u^*\|_{C^0(\overline U)}.
+\]
+La primera flecha es el contenido del Teorema~1 (control probabilístico vía cobertura).
+La segunda se obtiene en el Teorema~2, donde la regularización Hölder permite pasar de control $L^2$ a control uniforme de los residuos.
+En la segunda parte del capítulo, desde la Sección~\ref{sec:existencia_dirichlet}, identificamos $\Gamma=\partial U$ para tratar el problema de Dirichlet clásico.
+La tercera es un paso puramente elíptico: una estimación de estabilidad transforma el residuo interior y el defecto de contorno en
+control del error (estimación de estabilidad de la Sección~\ref{sec:estabilidad_dirichlet}), concluyendo el Teorema~3. El Teorema~4 añade, en el caso de Poisson con Dirichlet fuerte,
+convergencia en la norma de energía $H^1$.
+
+\section{Regularidad y precompacidad de redes neuronales (Lema 1)}
+
+
+\medskip
+\noindent\textbf{Observación (Fuente y uso en el capítulo).}
+Este lema fija la hipótesis de suavidad mínima para que $\mathcal{L}[h]$ y $\mathcal{B}[h]$ puedan evaluarse punto a punto,
+y para que los residuos admitan cotas uniformes de derivadas y seminormas Hölder. El planteamiento es afín al de
+\cite[Lema~2.1]{shin2020convergence}, pero aquí se explicita qué requerimos de la activación $\sigma$ y cómo las cotas sobre
+parámetros se traducen en equicontinuidad y precompacidad en $C^{k-1}(\overline U)$.
+\medskip
+
+Consideremos $U$ un dominio acotado y $\mathcal{H}^{\mathrm{NN}}_{\vec n}$ una clase de redes neuronales de propagación hacia adelante y totalmente conectadas con arquitectura $\vec n=(n_0,\dots,n_L)$, entrada en $\mathbb{R}^{n_0}$ y salida escalar.
+Supondremos que la activación $\sigma\in C^{k'}(\mathbb{R})$ para algún $k'>k\ge 1$ y que, para cada
+$s\in\{0,\dots,k\}$, la derivada $\sigma^{(s)}$ es acotada y Lipschitz.
+
+\medskip
+\noindent\textbf{Enunciado (regularidad y precompacidad).}
+Sea $h_\theta\in\mathcal{H}^{\mathrm{NN}}_{\vec n}$, donde $\theta$ denota el conjunto de pesos y sesgos.
+\begin{enumerate}
+\item Si $\sigma\in C^{k'}$ con $k'>k$, entonces $h_\theta\in C^k(\mathbb{R}^{n_0})$. Además, si los pesos y
+sesgos satisfacen $\|\theta\|_2\le M$ (norma euclídea del vector obtenido al concatenar todos los parámetros), entonces existe una
+constante $C=C(\vec n,k,M,\sigma)$ tal que $\|D^\beta h_\theta\|_{L^\infty(\overline U)}\le C$ para todo
+multiíndice $\beta$ con $|\beta|\le k$.
+\item (Precompacidad) Sea $\{h_j\}_{j\ge 1}\subset\mathcal{H}^{\mathrm{NN}}_{\vec n}$ una sucesión con
+parámetros uniformemente acotados por $M$ y restringida a $\overline U$. Entonces $\{h_j\}$ es equicontinua
+en $\overline U$ y, para cada $\ell\le k-1$, la familia $\{D^\beta h_j:|\beta|\le \ell\}$ es equicontinua.
+En particular, existe una subsucesión (no relabelada) tal que $h_j\to h_\infty$ en $C^{k-1}(\overline U)$.
+\end{enumerate}
+
+\medskip
+\noindent\textbf{Demostración.}
+
+(i) \emph{Regularidad $C^k$ y cotas uniformes: inducción explícita por capas.}
+Para hacer completamente verificable el argumento, escribimos la red mediante variables intermedias.
+Definimos $z_0(x)=x$ y, para $\ell=1,\dots,L-1$,
+\[
+a_\ell(x):=W_\ell z_{\ell-1}(x)+b_\ell,\qquad
+z_\ell(x):=\sigma(a_\ell(x))\ \ \text{(aplicada componente a componente)}.
+\]
+Suponemos la última capa lineal, es decir
+\[
+h_\theta(x)=W_L z_{L-1}(x)+b_L.
+\]
+
+\smallskip
+\noindent\textit{Paso base ($\ell=0$).}
+Se tiene $z_0\in C^\infty$ y
+$Dz_0\equiv I$ mientras que $D^\beta z_0\equiv 0$ para todo multiíndice $\beta$ con $|\beta|\ge 2$.
+En particular, para cada $s\le k$ existe una constante $M_{0,s}$ (de hecho $M_{0,0}=\sup_{x\in U}\|x\|$, $M_{0,1}=1$ y $M_{0,s}=0$ si
+$s\ge 2$) tal que
+\[
+\sup_{|\beta|=s}\|D^\beta z_0\|_{L^\infty(\overline U)}\le M_{0,s}.
+\]
+
+\smallskip
+\noindent\textit{Hipótesis inductiva.}
+Fijemos $\ell\in\{1,\dots,L-1\}$ y supongamos que $z_{\ell-1}\in C^k(\mathbb{R}^{n_0})$ y que, para cada
+$s\in\{0,1,\dots,k\}$, existen constantes $M_{\ell-1,s}$ tales que
+\begin{equation}\label{eq:lemma1_ind_hyp}
+\sup_{|\beta|=s}\|D^\beta z_{\ell-1}\|_{L^\infty(\overline U)}\le M_{\ell-1,s}.
+\end{equation}
+
+\smallskip
+\noindent\textit{Paso inductivo: derivadas de la parte afín.}
+Como $a_\ell=W_\ell z_{\ell-1}+b_\ell$ y $W_\ell$ es lineal, para todo multiíndice $\beta\neq 0$ se cumple
+\[
+D^\beta a_\ell(x)=W_\ell\,D^\beta z_{\ell-1}(x),
+\]
+y por tanto
+\begin{equation}\label{eq:lemma1_affine_bound}
+\sup_{|\beta|=s}\|D^\beta a_\ell\|_{L^\infty(\overline U)}\le \|W_\ell\|\,M_{\ell-1,s}\qquad (1\le s\le k).
+\end{equation}
+
+\smallskip
+\noindent\textit{Paso inductivo: derivadas tras la activación.}
+Para cada componente $(z_\ell)_j=\sigma((a_\ell)_j)$, la regla de la cadena y su extensión multivariada
+(Faà di Bruno) dan, para $s=1$ y $s=2$, las identidades (a nivel tensorial)
+\[
+D z_\ell=\mathrm{Diag}(\sigma'(a_\ell))\,D a_\ell,
+\qquad
+D^2 z_\ell=\mathrm{Diag}(\sigma''(a_\ell))\,[Da_\ell,Da_\ell]
+\,+\,\mathrm{Diag}(\sigma'(a_\ell))\,D^2 a_\ell,
+\]
+y, para orden general $s\le k$, que $D^s z_\ell$ es suma finita de términos de la forma
+\begin{equation}\label{eq:lemma1_fdb_form}
+\sigma^{(t)}(a_\ell)\,\big[ D^{s_1}a_\ell,\dots,D^{s_t}a_\ell\big],
+\qquad
+1\le t\le s,\quad s_1+\cdots+s_t=s,\quad s_i\ge 1,
+\end{equation}
+donde los corchetes representan una contracción multilineal universal (dependiente solo de $s,n_0$).
+
+Tomando norma supremo en $\overline U$, usando que $\sigma^{(t)}$ es acotada para $t\le k$ y aplicando
+\eqref{eq:lemma1_affine_bound} en cada factor, se obtiene una cota inductiva de la forma
+\begin{equation}\label{eq:lemma1_ind_step_bound}
+\sup_{|\beta|=s}\|D^\beta z_\ell\|_{L^\infty(\overline U)}
+\le
+P_{s}\Big(\|W_\ell\|,\;M_{\ell-1,1},\dots,M_{\ell-1,s}\Big)
+\qquad (1\le s\le k),
+\end{equation}
+para ciertos polinomios $P_s$ con coeficientes que dependen solo de $s,n_0$ y de las cotas
+$\|\sigma^{(t)}\|_{L^\infty}$, $t\le s$. En particular, si $\|\theta\|\le M$, entonces
+$\|W_\ell\|\le M$ para todo $\ell$ y, por iteración en $\ell$, existen constantes $M_{\ell,s}$ (dependientes
+solo de $\vec n,k,M,\sigma$) tales que
+\[\sup_{|\beta|=s}\|D^\beta z_\ell\|_{L^\infty(\overline U)}\le M_{\ell,s}\quad\text{para todo }s\le k.
+\]
+Finalmente, como $h_\theta=W_L z_{L-1}+b_L$ es combinación lineal de $z_{L-1}$, el mismo argumento que en
+\eqref{eq:lemma1_affine_bound} transfiere las cotas a $D^\beta h_\theta$ para $|\beta|\le k$.
+
+(ii) En este caso las derivadas se obtienen de redes definidas en todo
+$\mathbb R^{n_0}$ y las cotas de parámetros dan las mismas estimaciones
+sobre la envolvente convexa compacta de $\overline U$. Por ello,
+$\{h_j\}$ es equi-Lipschitz en $\overline U$, luego equicontinua. De manera análoga, las cotas uniformes sobre derivadas hasta orden
+$k$ implican equicontinuidad de derivadas hasta orden $k-1$ (pues $D^\beta h_j$ es Lipschitz si
+$D^{\beta+e_i}h_j$ es acotada). Aplicando el teorema de Arzelà--Ascoli de manera iterada a la familia
+$\{D^\beta h_j\}_{|\beta|\le k-1}$ se obtiene una subsucesión convergente en $C^{k-1}(\overline U)$.
+
+\hfill $\square$
+
+\medskip
+\noindent\textbf{Comentario técnico.}
+En las secciones siguientes no usaremos este lema para deducir convergencia de derivadas a partir de la minimización (eso sería, en general,
+demasiado fuerte), sino para justificar que las clases $\mathcal{H}_m$ se eligen dentro de espacios donde los residuos
+$\mathcal{L}[h]-f$ y $\mathcal{B}[h]-g$ están bien definidos y admiten controles de regularidad (por ejemplo, seminormas Hölder finitas).
+En particular, la precompacidad en $C^{k-1}(\overline U)$ es la base para pasar al límite en argumentos de estabilidad elíptica.
+
+
+\section{Muestreo y condiciones geométricas de cobertura (Hipótesis 1)}
+
+Fijamos el esquema de muestreo i.i.d. y las hipótesis geométricas de cubrimiento utilizadas en
+el argumento probabilístico. El contenido sigue, con notación adaptada,
+\cite[Assumption~3.1]{shin2020convergence}, distinguiendo explícitamente la medida volumétrica
+$\mu_r$ en $U$ y la medida superficial $\mu_b$ en $\Gamma\subseteq\partial U$. Las cotas
+inferiores de masa en bolas que se emplearán más adelante no se incorporan como una hipótesis
+independiente: se deducen de las particiones postuladas por Shin et al.; esta consecuencia se
+formula en el lema auxiliar de no degeneración local.
+
+\medskip
+\noindent\textbf{Hipótesis 1 (muestreo i.i.d. y cubrimiento probabilístico).}
+Sea $U\subset\mathbb R^d$ un dominio acotado de clase, al menos, $C^{0,1}$ y sea
+$\Gamma\subseteq\partial U$ un subconjunto cerrado. Sea $\mu_r$ una medida de probabilidad
+en $U$, absolutamente continua con respecto a la medida de Lebesgue y con densidad $\rho_r$;
+sea $\mu_b$ una medida de probabilidad en $\Gamma$, absolutamente continua con respecto a la
+medida de Hausdorff de dimensión $d-1$ y con densidad $\rho_b$. Supondremos que las densidades
+están soportadas en $U$ y $\Gamma$, respectivamente, y que
+\[
+\operatorname*{ess\,inf}_{x\in U}\rho_r(x)>0,
+\qquad
+\operatorname*{ess\,inf}_{y\in\Gamma}\rho_b(y)>0.
+\]
+Las muestras $X_r=\{x_r^i\}_{i=1}^{m_r}$ y $X_b=\{x_b^j\}_{j=1}^{m_b}$ son i.i.d. con
+leyes $\mu_r$ y $\mu_b$, respectivamente, e independientes entre sí.
+
+Además, existen constantes $c_r,C_r,c_b,C_b>0$ y $\varepsilon_0>0$ tales que, para todo
+$0<\varepsilon\leq\varepsilon_0$, existen particiones finitas
+$\{U_k^{\varepsilon}\}_{k=1}^{K_{r,\varepsilon}}$ de $U$ y
+$\{\Gamma_\ell^{\varepsilon}\}_{\ell=1}^{K_{b,\varepsilon}}$ de $\Gamma$ que verifican
+\[
+\operatorname{diam}(U_k^{\varepsilon})\leq \sqrt d\,\varepsilon,
+\qquad
+\mu_r(U_k^{\varepsilon})\geq c_r\varepsilon^d,
+\]
+\[
+\operatorname{diam}(\Gamma_\ell^{\varepsilon})\leq \sqrt d\,\varepsilon,
+\qquad
+\mu_b(\Gamma_\ell^{\varepsilon})\geq c_b\varepsilon^{d-1}.
+\]
+Asimismo, para todo $x\in U$ y $y\in\Gamma$,
+\[
+\mu_r\bigl(B(x,\varepsilon)\cap U\bigr)\leq C_r\varepsilon^d,
+\qquad
+\mu_b\bigl(B(y,\varepsilon)\cap\Gamma\bigr)\leq C_b\varepsilon^{d-1}.
+\]
+En particular,
+\[
+K_{r,\varepsilon}\leq(c_r\varepsilon^d)^{-1},
+\qquad
+K_{b,\varepsilon}\leq(c_b\varepsilon^{d-1})^{-1}.
+\]
+Cuando $d=1$, siguiendo a Shin et al., se supone que todos los puntos de la frontera están
+disponibles y no se requiere un muestreo aleatorio de borde.
+
+\medskip
+\noindent
+Fijamos además $\alpha\in(0,1]$ y suponemos que, para los candidatos $h$ relevantes,
+\[
+[r_h]_{\alpha;U}<\infty,
+\qquad
+[b_h]_{\alpha;\Gamma}<\infty,
+\]
+lo cual será garantizado por la elección de la clase de redes y por los términos de
+regularización $\mathcal R_r$ y $\mathcal R_b$.
+
+\medskip
+\noindent\textbf{Lema auxiliar (No degeneración local deducida de las particiones).}
+Supóngase $d\geq2$ y que se cumple la Hipótesis~1. Entonces existen constantes
+$\underline c_r,\underline c_b>0$ tales que, para todo radio
+$0<r\leq2\sqrt d\,\varepsilon_0$,
+\[
+\mu_r\bigl(B(x,r)\cap U\bigr)\geq \underline c_r r^d,
+\qquad x\in U,
+\]
+y
+\[
+\mu_b\bigl(B(y,r)\cap\Gamma\bigr)\geq \underline c_b r^{d-1},
+\qquad y\in\Gamma.
+\]
+Puede tomarse
+\[
+\underline c_r=c_r(2\sqrt d)^{-d},
+\qquad
+\underline c_b=c_b(2\sqrt d)^{-(d-1)}.
+\]
+\medskip
+
+\noindent\textit{Demostración.}
+Sea $x\in U$ y tome $\varepsilon=r/(2\sqrt d)\leq\varepsilon_0$.
+Como $\{U_k^\varepsilon\}$ es una partición, existe una celda
+$U_k^\varepsilon$ que contiene a $x$. Para todo $z\in U_k^\varepsilon$,
+\[
+\|z-x\|\leq\operatorname{diam}(U_k^\varepsilon)
+\leq\sqrt d\,\varepsilon=r/2<r.
+\]
+Luego $U_k^\varepsilon\subset B(x,r)\cap U$ y
+\[
+\mu_r(B(x,r)\cap U)\geq\mu_r(U_k^\varepsilon)
+\geq c_r\varepsilon^d=c_r(2\sqrt d)^{-d}r^d.
+\]
+El mismo argumento con la partición de $\Gamma$ da
+$\mu_b(B(y,r)\cap\Gamma)\geq c_b(2\sqrt d)^{-(d-1)}r^{d-1}$.
+Se ha elegido deliberadamente un diámetro $r/2$ para evitar identificar
+bolas abiertas con bolas cerradas en el paso de inclusión.
+\hfill$\square$
+
+\medskip
+\noindent\textbf{Ejemplo verificable (muestreo uniforme sobre un cuadrado).}
+Para $d=2$, $U=(-1,1)^2$ y $\Gamma=\partial U$, tomemos las
+probabilidades uniformes $d\mu_r=\tfrac14\,dx$ y
+$d\mu_b=\tfrac18\,d\mathcal H^1$. Si $0<\varepsilon\le1$,
+particionemos cada lado del cuadrado en
+$n=\lceil2/\varepsilon\rceil$ segmentos iguales y el interior en
+$n^2$ cuadrados de lado $\ell=2/n$. Se cumple
+$\tfrac23\varepsilon\le\ell\le\varepsilon$, de modo que el
+diámetro de las celdas interiores es a lo sumo $\sqrt2\varepsilon$
+y cada una tiene masa $\ell^2/4\ge\varepsilon^2/9$.
+En el borde, las celdas tienen diámetro a lo sumo
+$\varepsilon$ y masa $\ell/8\ge\varepsilon/12$.
+Asimismo, para $0<r\le1$,
+\[
+\mu_r(B(x,r)\cap U)\le\tfrac\pi4 r^2,\qquad
+\mu_b(B(y,r)\cap\Gamma)\le r.
+\]
+Por tanto, la Hipótesis~1 se cumple en este ejemplo con
+$\varepsilon_0=1$, $c_r=1/9$, $C_r=\pi/4$,
+$c_b=1/12$ y $C_b=1$. Estas constantes no son óptimas.
+Se trata de una verificación de la \emph{geometría y la distribución}
+de muestreo, no de la Hipótesis~2 sobre comparadores neuronales.
+
+\medskip
+\noindent\textbf{Observación (Relación con Shin et al.).}
+Las cotas inferiores de masa local del lema auxiliar de no degeneración local no son una hipótesis adicional
+frente a \cite[Assumption~3.1]{shin2020convergence}. Shin et al. formulan la no degeneración
+mediante una masa mínima para cada celda de las particiones de escala $\varepsilon$; el lema
+anterior muestra que esa formulación implica las cotas inferiores en bolas empleadas en esta
+tesis. Se conserva así el marco geométrico original y solo se hace explícita una de sus
+consecuencias.
+
+La prueba de Shin et al. obtiene la convergencia uniforme mediante equicontinuidad,
+Arzelà--Ascoli e identificación del límite. Aquí se utiliza la consecuencia local anterior para
+presentar un paso directo de $L^2(\mu)$ a $L^\infty$: una función Hölder que es grande en un
+punto permanece grande en una bola de radio controlado, y esa bola posee una masa mínima.
+Este cambio afecta a la ruta de demostración, no a las hipótesis ni a la conclusión del
+resultado de partida.
+\medskip
+
+\medskip
+\noindent\textbf{Comentario técnico (geometría de muestreo).}
+Las cotas inferiores de las celdas controlan la probabilidad de que la muestra cubra el dominio;
+las cotas superiores de masa de bolas intervienen en la comparación entre la integral y el
+promedio discreto. El lema auxiliar de no degeneración local se utilizará únicamente para convertir el control
+$L^2(\mu)$, junto con una cota Hölder uniforme, en control uniforme.
+
+\section{Generalización probabilística (Teorema 1)}
+\label{thm:generalizacion_shin}
+
+\noindent\textbf{Fuente, alcance y formulación.}
+El argumento sigue \cite[Theorem~3.1 y Appendix~B]{shin2020convergence} y compara la pérdida
+poblacional con la empírica mediante una cobertura simultánea del dominio y
+la porción de frontera muestreada. La desigualdad es \emph{uniforme respecto del
+candidato}: el evento aleatorio depende exclusivamente de los puntos de muestra,
+no de la red que se elija después de observarlos. Se presentan por separado las
+constantes, los pesos y el caso unidimensional para que el enunciado sea completo.
+
+\medskip
+\noindent\textbf{Enunciado (cota de generalización uniforme por cobertura).}
+Supóngase la Hipótesis~1, $d\geq2$, y fíjense $\lambda_r,\lambda_b>0$ y
+$0<\alpha\leq1$. Sean $m_r,m_b$ suficientemente grandes para que los radios
+\begin{equation}\label{eq:thm1_radii}
+\begin{aligned}
+\varepsilon_r&:=\sqrt d\,c_r^{-1/d}m_r^{-1/(2d)},\\
+\varepsilon_b&:=\sqrt d\,c_b^{-1/(d-1)}m_b^{-1/(2(d-1))}
+\end{aligned}
+\end{equation}
+pertenezcan ambos a $(0,\varepsilon_0]$. Esta exigencia sobre los
+\emph{radios finales}, y no únicamente sobre las escalas auxiliares
+$\eta_r=\varepsilon_r/\sqrt d$ y $\eta_b=\varepsilon_b/\sqrt d$,
+garantiza que las cotas superiores de masa de bolas de la Hipótesis~1
+puedan utilizarse en el lema determinista.
+
+Supóngase que $f\in C^{0,\alpha}(\overline U)$ y
+$g\in C^{0,\alpha}(\Gamma)$. Consideremos candidatos $h$ tales que
+$\mathcal L[h]\in C^{0,\alpha}(\overline U)$ y
+$\mathcal B[h]\in C^{0,\alpha}(\Gamma)$; en particular, pueden tomarse
+las redes suficientemente regulares de las clases de los teoremas
+siguientes. Aquí empleamos los regularizadores \emph{exactos}
+\[
+\mathcal R_r(h):=[\mathcal L[h]]_{\alpha;U}^{2},\qquad
+\mathcal R_b(h):=[\mathcal B[h]]_{\alpha;\Gamma}^{2}.
+\]
+También se admiten regularizadores mayores que estas seminormas, siempre
+que se reemplace coherentemente su definición en la pérdida empírica.
+
+Definimos primero el factor de cobertura
+\begin{equation}\label{eq:thm1_Cm}
+C_m:=3\max\left\{
+\frac{C_r}{c_r}(\sqrt d)^d m_r^{1/2},\;
+\frac{C_b}{c_b}(\sqrt d)^{d-1}m_b^{1/2}\right\}>0
+\end{equation}
+y los pesos residuales de regularización
+\begin{equation}\label{eq:thm1_hatlambda}
+\begin{aligned}
+\hat\lambda^{\mathcal R}_{r,m}
+&:=\frac{3\lambda_r\varepsilon_r^{2\alpha}}{C_m}
+=\frac{3\lambda_r(\sqrt d)^{2\alpha}c_r^{-2\alpha/d}}{C_m}
+ m_r^{-\alpha/d},\\
+\hat\lambda^{\mathcal R}_{b,m}
+&:=\frac{3\lambda_b\varepsilon_b^{2\alpha}}{C_m}
+=\frac{3\lambda_b(\sqrt d)^{2\alpha}c_b^{-2\alpha/(d-1)}}{C_m}
+ m_b^{-\alpha/(d-1)}.
+\end{aligned}
+\end{equation}
+Para dichos pesos, la pérdida regularizada es
+\begin{equation}\label{eq:loss_holder}
+\begin{aligned}
+\operatorname{Loss}_m(h;\lambda,\hat\lambda_m^{\mathcal R})
+:=\;&\frac{\lambda_r}{m_r}\sum_{i=1}^{m_r}
+\|\mathcal L[h](x_r^i)-f(x_r^i)\|^2
++\frac{\lambda_b}{m_b}\sum_{j=1}^{m_b}
+\|\mathcal B[h](x_b^j)-g(x_b^j)\|^2\\
+&+\hat\lambda_{r,m}^{\mathcal R}\mathcal R_r(h)
++\hat\lambda_{b,m}^{\mathcal R}\mathcal R_b(h).
+\end{aligned}
+\end{equation}
+Sea, finalmente, la constante \emph{no negativa}
+\begin{equation}\label{eq:thm1_Cprime}
+C':=3(\sqrt d)^{2\alpha}
+\max\left\{
+\lambda_r c_r^{-2\alpha/d}[f]_{\alpha;U}^{2},\;
+\lambda_b c_b^{-2\alpha/(d-1)}[g]_{\alpha;\Gamma}^{2}
+\right\}.
+\end{equation}
+
+Si las muestras interior y de frontera son independientes, existe un evento
+$\Omega_m$, determinado solo por ellas, con
+\begin{equation}\label{eq:thm1_prob}
+\mathbb P(\Omega_m)\geq
+\left(1-\sqrt{m_r}\left(1-\frac1{\sqrt{m_r}}\right)^{m_r}\right)
+\left(1-\sqrt{m_b}\left(1-\frac1{\sqrt{m_b}}\right)^{m_b}\right),
+\end{equation}
+y \emph{para todo candidato admisible $h$, simultáneamente} en
+$\Omega_m$ se cumple
+\begin{equation}\label{eq:thm1_main}
+\boxed{
+\operatorname{Loss}^{\mathrm{PINN}}(h;\lambda)
+\leq C_m\operatorname{Loss}_m(h;\lambda,\hat\lambda_m^{\mathcal R})
++C'\left(m_r^{-\alpha/d}+m_b^{-\alpha/(d-1)}\right).}
+\end{equation}
+En particular, el enunciado permite sustituir $h$ por cualquier
+minimizador empírico mensurable, aunque dependa de la muestra.
+No se afirma que los radios de cobertura sean óptimos ni que el evento de
+cobertura imponga por sí solo la regularidad Hölder.
+
+\medskip
+\noindent\textbf{Caso unidimensional ($d=1$, frontera completamente observada).}
+Sea $U=(a,b)$ y supóngase que los datos de Dirichlet están disponibles en
+ambos extremos. Definimos la contribución de frontera determinista
+\[
+E_{\partial U}(h):=\frac{\lambda_b}{2}
+\left(|\mathcal B[h](a)-g(a)|^2+|\mathcal B[h](b)-g(b)|^2\right).
+\]
+La pérdida empírica no regularizada y la poblacional son, respectivamente,
+\[
+\begin{aligned}
+\operatorname{Loss}^{\mathrm{PINN}}_{m_r,1}(h)
+&:=\frac{\lambda_r}{m_r}\sum_{i=1}^{m_r}
+|\mathcal L[h](x_i)-f(x_i)|^2+E_{\partial U}(h),\\
+\operatorname{Loss}^{\mathrm{PINN}}_{1}(h)
+&:=\lambda_r\int_U|\mathcal L[h]-f|^2\,d\mu_r+E_{\partial U}(h).
+\end{aligned}
+\]
+Tomamos $m_r$ suficientemente grande para que
+$\varepsilon_r:=c_r^{-1}m_r^{-1/2}\leq\varepsilon_0$.
+El lema probabilístico implica cobertura con probabilidad al menos
+$1-\sqrt{m_r}(1-m_r^{-1/2})^{m_r}$ y la parte interior del lema
+determinista proporciona
+\[
+\begin{aligned}
+\operatorname{Loss}^{\mathrm{PINN}}_{1}(h)
+\leq{}&3\lambda_r C_r m_r\varepsilon_r
+\frac1{m_r}\sum_{i=1}^{m_r}|\mathcal L[h](x_i)-f(x_i)|^2
++E_{\partial U}(h)\\
+&+3\lambda_r\varepsilon_r^{2\alpha}
+\bigl([\mathcal L[h]]_{\alpha;U}^2+[f]_{\alpha;U}^2\bigr).
+\end{aligned}
+\]
+Con
+\[
+C_{m_r}^{(1)}:=\max\{1,3C_r m_r\varepsilon_r\},\qquad
+\widehat\lambda_{r,m_r}^{\mathcal R}
+:=\frac{3\lambda_r\varepsilon_r^{2\alpha}}{C_{m_r}^{(1)}},
+\]
+se obtiene, \emph{simultáneamente para todo candidato admisible},
+\begin{equation}\label{eq:thm1_1d}
+\begin{split}
+\operatorname{Loss}^{\mathrm{PINN}}_{1}(h)
+\leq{}&C_{m_r}^{(1)}\Bigl(
+\operatorname{Loss}^{\mathrm{PINN}}_{m_r,1}(h)
++\widehat\lambda_{r,m_r}^{\mathcal R}
+[\mathcal L[h]]_{\alpha;U}^{2}\Bigr)\\
+&+3\lambda_r c_r^{-2\alpha}[f]_{\alpha;U}^2m_r^{-\alpha}.
+\end{split}
+\end{equation}
+Asimismo,
+$C_{m_r}^{(1)}=O(m_r^{1/2})$ y
+$C_{m_r}^{(1)}\widehat\lambda_{r,m_r}^{\mathcal R}
+=3\lambda_r c_r^{-2\alpha}m_r^{-\alpha}$.
+No se regulariza la frontera en este caso, puesto que sus dos valores se
+conocen exactamente; esta es la excepción unidimensional empleada por
+\cite[Theorem~3.1]{shin2020convergence}.
+
+\medskip
+\noindent\textbf{Comentario técnico (regularización Hölder).}
+El paso de la pérdida empírica a la pérdida teórica requiere controlar la variación del residuo entre puntos de muestreo; de lo contrario,
+una pérdida pequeña en promedio no excluye picos localizados. Por eso se introduce regularización en seminormas Hölder.
+Para la desigualdad de cobertura puede trabajarse tanto con seminormas de
+$\mathcal L[h],\mathcal B[h]$ como con seminormas de los residuos
+$r_h,b_h$, ajustando las constantes. No son penalizaciones idénticas:
+pueden dar lugar a minimizadores distintos. En la formulación adoptada aquí
+se regularizan los operadores y la regularidad de los datos $f,g$ aparece
+separadamente en $C'$ de \eqref{eq:thm1_main}.
+
+
+\medskip
+\noindent\textbf{Demostración.}
+Para hacer transparente la cadena lógica, separamos el argumento en dos piezas.
+Primero, bajo un \emph{evento de cobertura} (la muestra es suficientemente densa en $U$ y en $\Gamma$),
+demostramos una desigualdad determinista que compara la pérdida continua con la pérdida empírica y con los
+términos Hölder. Segundo, probamos que dicho evento ocurre con probabilidad alta cuando $m_r,m_b$ crecen,
+usando una estimación estándar de ocupación de celdas.
+
+
+\medskip
+\noindent\textbf{Lema de control determinista bajo un evento de cobertura (adaptado de \cite[Lemma~B.1]{shin2020convergence}).}
+Sean $0<\varepsilon_r,\varepsilon_b\leq\varepsilon_0$ y suponga que las muestras satisfacen el siguiente \emph{evento de cobertura}:
+\begin{itemize}
+\item para todo $x\in U$ existe $x'\in T_r$ tal que $\|x-x'\|\le \varepsilon_r$;
+\item para todo $y\in\Gamma$ existe $y'\in T_b$ tal que $\|y-y'\|\le \varepsilon_b$.
+\end{itemize}
+Entonces, para todo $h$ para el cual $\mathcal L[h]$ y $\mathcal B[h]$ poseen las seminormas H\"older finitas indicadas en el enunciado se cumple
+\begin{equation}\label{eq:lemB1}
+\begin{aligned}
+\text{\rm Loss}^{\text{\rm PINN}}(h;\lambda)
+\le\; C_m\Big[
+\text{\rm Loss}^{\text{\rm PINN}}_m(h;\lambda)
++\frac{3\lambda_r\varepsilon_r^{2\alpha}}{C_m}\,[\mathcal L[h]]_{\alpha;U}^2
++\frac{3\lambda_b\varepsilon_b^{2\alpha}}{C_m}\,[\mathcal B[h]]_{\alpha;\Gamma}^2
+\Big]
+\\
+\quad + 3\lambda_r\varepsilon_r^{2\alpha}[f]_{\alpha;U}^2
++3\lambda_b\varepsilon_b^{2\alpha}[g]_{\alpha;\Gamma}^2,
+\end{aligned}
+\end{equation}
+donde
+\[
+C_m \;=\; 3\max\{\,C_r\,m_r\,\varepsilon_r^d,\;C_b\,m_b\,\varepsilon_b^{d-1}\,\}.
+\]
+
+\noindent\emph{Comentario.}
+El valor de $C_m$ crece cuando la cubierta inducida por la muestra se ``degrada'' (celdas grandes);
+por eso aparece multiplicando a la pérdida empírica. En el cierre del Teorema~1 se escoge
+$\varepsilon_r,\varepsilon_b$ como funciones de $m_r,m_b$ de modo que $C_m$ sea del orden $m^{1/2}$.
+
+\medskip
+
+
+\noindent\emph{Prueba.}
+\emph{Nota de fuente.}
+La demostración sigue el argumento de \cite[Lemma~B.1]{shin2020convergence}, adaptado a nuestra notación y al caso
+$\Gamma\subseteq\partial U$. El ingrediente esencial es determinista: si las muestras forman una $\varepsilon$-red en $U$ y en $\Gamma$,
+entonces los residuos en puntos arbitrarios se controlan por los residuos en los puntos muestreados más cercanos, con un error de orden Hölder.
+
+\smallskip
+\textit{Paso 1: selección de vecinos cercanos y particiones inducidas.}
+Bajo la hipótesis de cobertura, para cada $x\in U$ escogemos un punto $\pi_r(x)\in T_r$ tal que $\|x-\pi_r(x)\|\le \varepsilon_r$.
+De modo análogo, para cada $y\in\Gamma$ escogemos $\pi_b(y)\in T_b$ con $\|y-\pi_b(y)\|\le \varepsilon_b$.
+Una elección canónica es el vecino más cercano con una regla determinista de desempate, lo que produce una partición tipo Voronoi.
+
+Definimos las celdas
+\[
+A_{r,i}:=\{x\in U:\ \pi_r(x)=x_r^i\},\qquad
+A_{b,j}:=\{y\in\Gamma:\ \pi_b(y)=x_b^j\},
+\]
+y los pesos
+\[
+\gamma_{r,i}:=\mu_r(A_{r,i}),\qquad \gamma_{b,j}:=\mu_b(A_{b,j}).
+\]
+Entonces $\{A_{r,i}\}_{i=1}^{m_r}$ es una partición medible de $U$ y $\{A_{b,j}\}_{j=1}^{m_b}$ es una partición medible de $\Gamma$.
+
+\smallskip
+\noindent\textit{Paso 2: estimación puntual a partir de Hölder.}
+Para $x\in U$ escribimos el residuo interior $r_h(x):=\mathcal L[h](x)-f(x)$ y descomponemos
+\[
+r_h(x)=\big(\mathcal L[h](x)-\mathcal L[h](\pi_r(x))\big)+\big(\mathcal L[h](\pi_r(x))-f(\pi_r(x))\big)+\big(f(\pi_r(x))-f(x)\big).
+\]
+Por Cauchy--Schwarz en el producto de tres copias del espacio euclídeo se obtiene
+\begin{equation}\label{eq:abc_ineq}
+\|a+b+c\|^2\le 3\big(\|a\|^2+\|b\|^2+\|c\|^2\big)\qquad(a,b,c\in\mathbb{R}^q).
+\end{equation}
+Aplicando \eqref{eq:abc_ineq} y usando las cotas Hölder,
+\[
+\|\mathcal L[h](x)-\mathcal L[h](\pi_r(x))\|\le [\mathcal L[h]]_{\alpha;U}\,\|x-\pi_r(x)\|^\alpha\le [\mathcal L[h]]_{\alpha;U}\,\varepsilon_r^\alpha,
+\]
+\[
+\|f(x)-f(\pi_r(x))\|\le [f]_{\alpha;U}\,\|x-\pi_r(x)\|^\alpha\le [f]_{\alpha;U}\,\varepsilon_r^\alpha,
+\]
+obtenemos para todo $x\in U$:
+\begin{equation}\label{eq:b1_pointwise_int}
+\|r_h(x)\|^2
+\le 3\|\mathcal L[h](\pi_r(x))-f(\pi_r(x))\|^2
++3\varepsilon_r^{2\alpha}[\mathcal L[h]]_{\alpha;U}^2
++3\varepsilon_r^{2\alpha}[f]_{\alpha;U}^2.
+\end{equation}
+De forma completamente análoga, para $y\in\Gamma$ y $b_h(y):=\mathcal B[h](y)-g(y)$,
+\begin{equation}\label{eq:b1_pointwise_bd}
+\|b_h(y)\|^2
+\le 3\|\mathcal B[h](\pi_b(y))-g(\pi_b(y))\|^2
++3\varepsilon_b^{2\alpha}[\mathcal B[h]]_{\alpha;\Gamma}^2
++3\varepsilon_b^{2\alpha}[g]_{\alpha;\Gamma}^2.
+\end{equation}
+
+\smallskip
+\noindent\textit{Paso 3: integración y reescritura como suma ponderada.}
+Integramos \eqref{eq:b1_pointwise_int} respecto a $\mu_r$ y multiplicamos por $\lambda_r$:
+\begin{align*}
+\lambda_r\int_U \|r_h(x)\|^2\,d\mu_r(x)
+&\le 3\lambda_r\int_U \|\mathcal L[h](\pi_r(x))-f(\pi_r(x))\|^2\,d\mu_r(x) \\
+&\quad +3\lambda_r\varepsilon_r^{2\alpha}[\mathcal L[h]]_{\alpha;U}^2
+ +3\lambda_r\varepsilon_r^{2\alpha}[f]_{\alpha;U}^2.
+\end{align*}
+Como $\pi_r$ es constante en cada celda $A_{r,i}$,
+\[
+\int_U \|\mathcal L[h](\pi_r(x))-f(\pi_r(x))\|^2\,d\mu_r(x)
+=\sum_{i=1}^{m_r}\gamma_{r,i}\,\|\mathcal L[h](x_r^i)-f(x_r^i)\|^2.
+\]
+Análogamente, integrando \eqref{eq:b1_pointwise_bd} en $\Gamma$ respecto a $\mu_b$,
+\[
+\lambda_b\int_\Gamma \|b_h(y)\|^2\,d\mu_b(y)
+\le 3\lambda_b\sum_{j=1}^{m_b}\gamma_{b,j}\,\|\mathcal B[h](x_b^j)-g(x_b^j)\|^2
++3\lambda_b\varepsilon_b^{2\alpha}[\mathcal B[h]]_{\alpha;\Gamma}^2
++3\lambda_b\varepsilon_b^{2\alpha}[g]_{\alpha;\Gamma}^2.
+\]
+
+\smallskip
+\noindent\textit{Paso 4: cota uniforme de pesos y paso a promedios.}
+Si $x\in A_{r,i}$ entonces $\|x-x_r^i\|=\|x-\pi_r(x)\|\le \varepsilon_r$, de modo que $A_{r,i}\subset B(x_r^i,\varepsilon_r)$. Por tanto
+\[
+\gamma_{r,i}\le \mu_r(B(x_r^i,\varepsilon_r))\le P_r^*:=\sup_{z\in U}\mu_r(B(z,\varepsilon_r)).
+\]
+Del mismo modo, $\gamma_{b,j}\le P_b^*:=\sup_{z\in\Gamma}\mu_b(B(z,\varepsilon_b))$.
+La Hipótesis~1 provee las cotas
+\[
+P_r^*\le C_r\varepsilon_r^d,\qquad P_b^*\le C_b\varepsilon_b^{d-1}.
+\]
+En consecuencia,
+\[
+\sum_{i=1}^{m_r}\gamma_{r,i}\,\|\mathcal L[h](x_r^i)-f(x_r^i)\|^2
+\le C_r\varepsilon_r^d\,m_r\cdot \frac{1}{m_r}\sum_{i=1}^{m_r}\|\mathcal L[h](x_r^i)-f(x_r^i)\|^2,
+\]
+y análogamente para el término de borde.
+Sumando las contribuciones interior y de frontera y recordando la definición de $\text{\rm Loss}^{\text{\rm PINN}}_m(h;\lambda)$, se obtiene
+\begin{align*}
+\text{\rm Loss}^{\text{\rm PINN}}(h;\lambda)
+&\le 3C_r m_r\varepsilon_r^d\,\frac{\lambda_r}{m_r}\sum_{i=1}^{m_r}\|\mathcal L[h](x_r^i)-f(x_r^i)\|^2 \\
+&\quad +3C_b m_b\varepsilon_b^{d-1}\,\frac{\lambda_b}{m_b}\sum_{j=1}^{m_b}\|\mathcal B[h](x_b^j)-g(x_b^j)\|^2 \\
+&\quad +\mathcal{R}_\alpha.
+\end{align*}
+donde $\mathcal{R}_\alpha$ es exactamente la suma de los cuatro términos Hölder (dos dependientes de $h$ y dos de los datos $f,g$) que aparecen en \eqref{eq:lemB1}.
+Tomando $C_m=3\max\{C_r m_r\varepsilon_r^d,\;C_b m_b\varepsilon_b^{d-1}\}$ y reescribiendo $\mathcal{R}_\alpha$ de la forma indicada en \eqref{eq:lemB1}, se concluye el resultado. \hfill $\square$
+
+
+\medskip
+\noindent\textbf{Lema de cobertura con probabilidad alta (adaptado de \cite[Lemma~B.2]{shin2020convergence}).}
+Sea $X\subset\mathbb{R}^d$ un conjunto acotado y medible y sea $\mu$ una medida de probabilidad concentrada en $X$.
+No se exige que $X$ sea cerrado: el argumento solo utiliza las particiones medibles indicadas a continuación.
+Supongamos que existe $\varepsilon_0>0$ tal que para
+cada $\varepsilon\in(0,\varepsilon_0]$ se puede elegir una partición medible finita
+$\{X_k^\varepsilon\}_{k=1}^{K_\varepsilon}$ de $X$, cuyos miembros son disjuntos
+salvo conjuntos de $\mu$-medida nula, verificando:
+\begin{enumerate}
+\item[(i)] $X=\bigcup_{k=1}^{K_\varepsilon}X_k^\varepsilon$,
+$\mu(X_k^\varepsilon\cap X_\ell^\varepsilon)=0$ para $k\neq\ell$, y
+$\operatorname{diam}(X_k^\varepsilon)\le \sqrt d\,\varepsilon$ para todo $k$;
+\item[(ii)] existen constantes $c>0$ y $s>0$ tales que $\mu(X_k^\varepsilon)\ge c\,\varepsilon^s$ para todo $k$.
+\end{enumerate}
+Sean $x_1,\dots,x_n$ muestras iid con ley $\mu$ y definamos el evento de cobertura
+\[
+A_{n,\varepsilon}:=\Big\{\forall k\in\{1,\dots,K_\varepsilon\}\ \exists i\in\{1,\dots,n\}\text{ tal que }x_i\in X_k^\varepsilon\Big\}.
+\]
+Entonces
+\begin{equation}\label{eq:cover_prob_general}
+\mathbb{P}(A_{n,\varepsilon})\ \ge\ 1-K_\varepsilon(1-c\varepsilon^s)^n\ \ge\ 1-K_\varepsilon e^{-n c\varepsilon^s}.
+\end{equation}
+Además, en el evento $A_{n,\varepsilon}$ se cumple que para todo $x\in X$ existe $x_j$ con
+\[
+\|x-x_j\|\le \sqrt d\,\varepsilon.
+\]
+En particular, para $n$ suficientemente grande, de modo que
+$\varepsilon=c^{-1/s}n^{-1/(2s)}\leq\varepsilon_0$, se obtiene el radio
+\[
+\sup_{x\in X}\min_{1\le j\le n}\|x-x_j\|\le \sqrt d\,c^{-1/s}\,n^{-1/(2s)}
+\]
+con probabilidad al menos $1-\sqrt{n}(1-1/\sqrt n)^n$.
+
+\noindent\emph{Prueba.}
+\emph{Nota de fuente.}
+La demostración sigue el argumento de cobertura de \cite[Lemma~B.2]{shin2020convergence}. La idea es estimar, vía unión de eventos,
+la probabilidad de que alguna celda de una partición finita de $X$ no reciba ninguna muestra; de allí se deduce una cota para el radio de la
+$\varepsilon$-red inducida por puntos i.i.d.
+
+\smallskip
+\textit{Paso 1: cota para $K_\varepsilon$.}
+Por (i)--(ii),
+\[
+1=\mu(X)=\sum_{k=1}^{K_\varepsilon}\mu(X_k^\varepsilon)\ \ge\ K_\varepsilon\,c\,\varepsilon^s,
+\]
+de donde
+\begin{equation}\label{eq:Kb2_bound}
+K_\varepsilon\le (c\varepsilon^s)^{-1}.
+\end{equation}
+
+\smallskip
+\noindent\textit{Paso 2: estimación del evento de fallo.}
+Sea $E_k:=\{x_1,\dots,x_n\notin X_k^\varepsilon\}$ el evento ``la celda $k$ queda vacía''.
+Si $p_k:=\mu(X_k^\varepsilon)$, por independencia
+\[
+\mathbb{P}(E_k)=(1-p_k)^n\le (1-c\varepsilon^s)^n\le e^{-n c\varepsilon^s}.
+\]
+Como $A_{n,\varepsilon}^c=\bigcup_{k=1}^{K_\varepsilon}E_k$, la desigualdad de Boole (unión) da
+\[
+\mathbb{P}(A_{n,\varepsilon}^c)\le \sum_{k=1}^{K_\varepsilon}\mathbb{P}(E_k)\le K_\varepsilon(1-c\varepsilon^s)^n,
+\]
+lo cual prueba \eqref{eq:cover_prob_general}.
+
+\smallskip
+\noindent\textit{Paso 3: del evento $A_{n,\varepsilon}$ a una cota geométrica.}
+Sea $x\in X$. Elija $k$ tal que $x\in X_k^\varepsilon$. En el evento $A_{n,\varepsilon}$ existe $j$ con $x_j\in X_k^\varepsilon$.
+Entonces, por (i),
+\[
+\|x-x_j\|\le \operatorname{diam}(X_k^\varepsilon)\le \sqrt d\,\varepsilon.
+\]
+
+\smallskip
+\noindent\textit{Paso 4: elección explícita de $\varepsilon$.}
+Para $n$ suficientemente grande se tiene $\varepsilon=c^{-1/s}n^{-1/(2s)}\leq\varepsilon_0$.
+Con esta elección $c\varepsilon^s=n^{-1/2}$ y por \eqref{eq:Kb2_bound} se tiene $K_\varepsilon\le \sqrt n$.
+Sustituyendo en \eqref{eq:cover_prob_general} obtenemos
+\[
+\mathbb{P}(A_{n,\varepsilon}^c)\le K_\varepsilon(1-n^{-1/2})^n\le \sqrt n\,(1-1/\sqrt n)^n,
+\]
+y por el Paso 3 resulta la cota del radio. \hfill $\square$
+
+
+\medskip
+\noindent\textbf{Cierre de la demostración del Teorema 1.}
+
+El lema de cobertura determinista proporciona una cota \emph{determinista} entre la pérdida poblacional y la pérdida empírica
+cuando los conjuntos de muestreo $T_r$ y $T_b$ son densos en $U$ y en $\Gamma$, respectivamente,
+con radios $\varepsilon_r$ y $\varepsilon_b$.
+La parte probabilística del Teorema~1 consiste, por tanto, en justificar que dicha densidad ocurre con alta probabilidad.
+
+\medskip
+\noindent\emph{Comentario sobre el borde.}
+En \cite{shin2020convergence} el conjunto de muestreo de borde se toma sobre un subconjunto cerrado
+$\Gamma\subseteq\partial U$. En esta tesis seguimos la misma convención: $\Gamma$ no se identifica con $\partial U$ en general; por ello, los términos de borde se integran y se muestrean
+sobre $\Gamma$.
+
+\smallskip
+\noindent\textit{(i) Evento de cobertura en el interior.}
+Aplicamos el lema probabilístico de cobertura con $X=U$, $s=d$ y $\mu=\mu_r$.
+Aunque $U$ es abierto, es un conjunto acotado y medible y las particiones de la Hipótesis~1 cumplen todas las hipótesis del lema; la compacidad de $U$ no se necesita para esta estimación. Aplicamos el lema probabilístico de cobertura a la escala auxiliar $\eta_r=c_r^{-1/d}m_r^{-1/(2d)}\leq\varepsilon_0$.
+El radio de cobertura resultante es
+\[
+\varepsilon_r=\sqrt d\,c_r^{-1/d}\,m_r^{-1/(2d)},
+\]
+se tiene que $T_r=\{x_r^i\}_{i=1}^{m_r}$ es $\varepsilon_r$--denso en $U$ con probabilidad al menos
+$1-\sqrt{m_r}(1-1/\sqrt{m_r})^{m_r}$.
+
+\smallskip
+\noindent\textit{(ii) Evento de cobertura en el borde.}
+De manera análoga, aplicamos el lema probabilístico de cobertura con $X=\Gamma$, $s=d-1$ y $\mu=\mu_b$ (medida soportada en $\Gamma$), usando la partición de borde de la Hipótesis~1 y la escala auxiliar
+$\eta_b=c_b^{-1/(d-1)}m_b^{-1/(2(d-1))}\leq\varepsilon_0$.
+El radio resultante es
+\[
+\varepsilon_b=\sqrt d\,c_b^{-1/(d-1)}\,m_b^{-1/(2(d-1))},
+\]
+se obtiene que $T_b=\{x_b^j\}_{j=1}^{m_b}$ es $\varepsilon_b$--denso en $\Gamma$ con probabilidad al menos
+$1-\sqrt{m_b}(1-1/\sqrt{m_b})^{m_b}$.
+
+\smallskip
+\noindent\textit{(iii) Sustitución en la cota determinista.}
+En la intersección de los dos eventos de cobertura anteriores, el lema de cobertura determinista da la desigualdad \eqref{eq:lemB1}.
+Multiplicando los términos dentro del corchete por $C_m$ e introduciendo los pesos
+$\hat{\lambda}^{\mathcal{R}}_{r,m}:=\frac{3\lambda_r}{C_m}\varepsilon_r^{2\alpha}$ y
+$\hat{\lambda}^{\mathcal{R}}_{b,m}:=\frac{3\lambda_b}{C_m}\varepsilon_b^{2\alpha}$, la expresión entre corchetes coincide con
+$\text{Loss}_m(h;\lambda,\hat\lambda_m^{\mathcal{R}})$ (ver \eqref{eq:loss_holder}). Además, los términos dependientes de los datos
+$f$ y $g$ son exactamente
+$3\lambda_r[f]_{\alpha;U}^{2}\varepsilon_r^{2\alpha}
++3\lambda_b[g]_{\alpha;\Gamma}^{2}\varepsilon_b^{2\alpha}$.
+Al sustituir los radios de (i)--(ii), este sumando es menor o igual a
+$C'\big(m_r^{-\alpha/d}+m_b^{-\alpha/(d-1)}\big)$ con el valor de
+$C'$ fijado en el enunciado del Teorema~1. De este modo las constantes
+geométricas no se contabilizan dos veces y se obtiene
+\eqref{eq:thm1_main}.
+
+\hfill $\square$
+
+\medskip
+\noindent\textbf{Uniformidad del evento.}\par
+Las particiones, las ocupaciones de celdas y los radios dependen de las
+muestras y de las constantes de la Hipótesis~1; no dependen de $h$.
+El lema determinista, una vez fijada la cobertura, se demuestra para un
+$h$ arbitrario sin imponerle restricciones adicionales de probabilidad.
+Por lo tanto, la misma realización de $\Omega_m$ permite aplicar
+\eqref{eq:thm1_main} a todos los $h$ admisibles, incluso a aquellos
+elegidos a partir de los datos de entrenamiento.
+
+\medskip
+\noindent\textbf{Pesos de regularización para el resultado de convergencia.}
+Sea $\lambda_m^{\mathcal R}=(\lambda_{r,m}^{\mathcal R},\lambda_{b,m}^{\mathcal R})$ un vector de pesos que satisface, componente a componente,
+\begin{equation}\label{eq:shin_weight_condition}
+\lambda_m^{\mathcal R}\geq \hat\lambda_m^{\mathcal R},
+\qquad
+\|\lambda_m^{\mathcal R}\|_\infty
+=O\!\left(\|\hat\lambda_m^{\mathcal R}\|_\infty\right),
+\end{equation}
+donde $\hat\lambda_m^{\mathcal R}$ es el vector definido en el Teorema~1. En particular,
+$\lambda_m^{\mathcal R}\to0$ cuando $m_r,m_b\to\infty$.
+Para $d\geq2$ definimos
+\begin{equation}\label{eq:shin_holder_loss}
+\operatorname{Loss}_m(h;\lambda,\lambda_m^{\mathcal R})
+=
+\operatorname{Loss}^{\mathrm{PINN}}_m(h;\lambda)
++
+\lambda_{r,m}^{\mathcal R}[\mathcal L[h]]_{\alpha;U}^{2}
++
+\lambda_{b,m}^{\mathcal R}[\mathcal B[h]]_{\alpha;\Gamma}^{2}.
+\end{equation}
+Para el Teorema~2 fijaremos una elección concreta dentro de la familia permitida por
+\eqref{eq:shin_weight_condition}. Para $d\geq2$, sea
+\begin{equation}\label{eq:shin_equal_weights}
+a_m:=\max\{\hat\lambda_{r,m}^{\mathcal R},\hat\lambda_{b,m}^{\mathcal R}\},
+\qquad
+\lambda_{r,m}^{\mathcal R}=\lambda_{b,m}^{\mathcal R}=a_m.
+\end{equation}
+Estos pesos cumplen $\lambda_m^{\mathcal R}\geq\hat\lambda_m^{\mathcal R}$ componente a componente y
+$\|\lambda_m^{\mathcal R}\|_\infty=\|\hat\lambda_m^{\mathcal R}\|_\infty$; además, su cociente
+máximo/mínimo es igual a uno. Para $d=1$ los puntos de frontera se consideran disponibles,
+se omite el regularizador de borde y se toma
+$\lambda_{r,m}^{\mathcal R}=\hat\lambda_{r,m}^{\mathcal R}>0$.
+
+\medskip
+\noindent\textbf{Hipótesis 2 (clases de redes; adaptación de \cite[Assumption~3.2]{shin2020convergence}).}
+Sea $k$ el mayor orden de derivación que aparece en la ecuación y sea $0<\alpha\leq1$.
+Supóngase que $f\in C^{0,\alpha}(\overline U)$ y $g\in C^{0,\alpha}(\Gamma)$. Para cada tamaño de muestra $m=(m_r,m_b)$, sea $\mathcal H_m$ una clase de redes neuronales tal que:
+\begin{enumerate}
+\item $\mathcal H_m\subset C^{k,\alpha}(\overline U)$ y, para todo $h\in\mathcal H_m$,
+\[
+\mathcal L[h]\in C^{0,\alpha}(\overline U),
+\qquad
+\mathcal B[h]\in C^{0,\alpha}(\Gamma).
+\]
+
+\item Existe $u_m^*\in\mathcal H_m$ que interpola exactamente los datos de entrenamiento, en el sentido de que
+\begin{equation}\label{eq:shin_zero_empirical}
+\operatorname{Loss}^{\mathrm{PINN}}_m(u_m^*;\lambda)=0.
+\end{equation}
+
+\item Los operadores aplicados a esos comparadores poseen seminormas Hölder uniformemente acotadas:
+\begin{equation}\label{eq:shin_comparator_regular}
+\sup_m[\mathcal L[u_m^*]]_{\alpha;U}<\infty,
+\qquad
+\sup_m[\mathcal B[u_m^*]]_{\alpha;\Gamma}<\infty.
+\end{equation}
+\end{enumerate}
+
+\medskip
+\noindent\textbf{Observación (alcance de la Hipótesis 2).}
+Esta es la hipótesis utilizada por Shin et al. en su resultado principal.
+Los comparadores pueden depender de la muestra, pero la cota de sus
+seminormas utilizada en la demostración debe ser uniforme a lo largo
+de la sucesión considerada (con constante determinista o, si se adopta
+una formulación casi segura, con constante finita en el evento correspondiente).
+No se deduce de una aproximación universal sin una construcción adicional. No exige que $u_m^*$ coincida con la solución exacta $u^*$ ni que converja a ella en $C^2$; exige que la clase $\mathcal H_m$ contenga un interpolante exacto de los datos finitos con regularidad Hölder controlada. Si $u^*\in\mathcal H_m$ para todo $m$, las condiciones anteriores se satisfacen tomando $u_m^*=u^*$. El artículo señala además la posibilidad de relajar cuantitativamente la condición \eqref{eq:shin_zero_empirical}. En la Sección~\ref{sec:comparadores_aproximados} desarrollamos y demostramos una formulación explícita de esa relajación, incluida la suboptimalidad del entrenamiento; no la atribuimos como un resultado de originalidad establecida.
+
+\section{Convergencia de la pérdida y de los residuos (Teorema 2)}
+
+\noindent\textbf{Enunciado (pérdida poblacional y convergencia uniforme de los operadores).}
+Supónganse las Hipótesis~1 y~2 y fíjense pesos residuales
+$\lambda_r,\lambda_b>0$, independientes de $m$. Para $d\geq2$, sean $m_r,m_b$ los números de muestras
+independientes e i.i.d. en el interior y el borde, respectivamente, con
+\[
+m_r=O\!\left(m_b^{d/(d-1)}\right).
+\]
+Elijamos los pesos de regularización \emph{iguales} dados por
+\eqref{eq:shin_equal_weights}, y sea
+\[
+h_m\in\operatorname*{arg\,min}_{h\in\mathcal H_m}
+\operatorname{Loss}_m(h;\lambda,\lambda_m^{\mathcal R})
+\]
+un minimizador global de \eqref{eq:shin_holder_loss}.
+Se presupone la existencia de una elección mensurable de minimizadores y
+se interpreta el muestreo para todos los tamaños sobre un mismo espacio
+de probabilidad (por ejemplo, mediante dos sucesiones infinitas de muestras
+i.i.d., interior y de frontera). Las conclusiones casi seguras se consideran
+a lo largo de una sucesión
+$(m_r(n),m_b(n))$ de tamaños de muestra que satisface
+$m_r(n),m_b(n)\geq n$ para $n$ suficientemente grande.
+Entonces:
+\begin{enumerate}
+\item en el evento de cobertura del Teorema~1,
+\begin{equation}\label{eq:shin_expected_rate}
+\operatorname{Loss}^{\mathrm{PINN}}(h_m;\lambda)
+=O\!\left(m_r^{-\alpha/d}\right);
+\end{equation}
+\item con probabilidad uno respecto del muestreo i.i.d.,
+\begin{equation}\label{eq:shin_uniform_operators}
+\mathcal L[h_m]\longrightarrow f
+\quad\text{en }C^0(\overline U),
+\qquad
+\mathcal B[h_m]\longrightarrow g
+\quad\text{en }C^0(\Gamma).
+\end{equation}
+En el mismo evento, la demostración proporciona además las cotas
+\begin{equation}\label{eq:shin_sup_rates}
+\begin{aligned}
+\|\mathcal L[h_m]-f\|_{C^0(\overline U)}
+&=O\!\left(m_r^{-\alpha^2/[d(2\alpha+d)]}\right),\\
+\|\mathcal B[h_m]-g\|_{C^0(\Gamma)}
+&=O\!\left(m_r^{-\alpha^2/[d(2\alpha+d-1)]}\right).
+\end{aligned}
+\end{equation}
+Estas tasas son consecuencias de la desigualdad de pérdida y de la
+regularidad Hölder uniforme; no son tasas de aproximación óptimas ni
+tasas de entrenamiento de los optimizadores numéricos.
+\end{enumerate}
+Para $d=1$, a lo largo de tamaños $m_r(n)\geq n$ y con el único peso
+$\lambda_{r,m}^{\mathcal R}=\hat\lambda_{r,m}^{\mathcal R}$, se obtienen las
+conclusiones correspondientes, con tasa $O(m_r^{-\alpha})$ y con todos los datos de
+frontera disponibles. El argumento unidimensional se detalla al final de la demostración.
+
+\noindent\emph{Alcance del enunciado.}
+Esta es una versión con elección explícita de pesos del resultado de
+\cite[Theorem~3.2]{shin2020convergence}; no se afirma aquí el resultado para
+\emph{todos} los vectores que satisfacen \eqref{eq:shin_weight_condition}.
+
+\medskip
+\noindent\textbf{Demostración.}
+La primera parte reproduce el argumento del Apéndice~C de Shin et al.; la última etapa, que mejora la convergencia $L^2$ a convergencia uniforme, se presenta mediante el lema de no degeneración local deducido de las particiones.
+
+\smallskip
+\noindent\emph{Paso 1: control uniforme de las seminormas regularizadas.}
+Para $d\geq2$, definamos
+\[
+R_r(h):=[\mathcal L[h]]_{\alpha;U}^{2},
+\qquad
+R_b(h):=[\mathcal B[h]]_{\alpha;\Gamma}^{2},
+\]
+y
+\[
+R^*:=\sup_m\bigl(R_r(u_m^*)+R_b(u_m^*)\bigr)<\infty,
+\]
+por \eqref{eq:shin_comparator_regular}. Como $h_m$ minimiza la pérdida regularizada,
+$u_m^*\in\mathcal H_m$ interpola los datos y los pesos son iguales a $a_m>0$,
+\begin{align*}
+a_m\bigl(R_r(h_m)+R_b(h_m)\bigr)
+&\leq \operatorname{Loss}_m(h_m;\lambda,\lambda_m^{\mathcal R})\\
+&\leq \operatorname{Loss}_m(u_m^*;\lambda,\lambda_m^{\mathcal R})\\
+&=a_m\bigl(R_r(u_m^*)+R_b(u_m^*)\bigr)\\
+&\leq a_m R^*.
+\end{align*}
+Dividiendo por $a_m$, obtenemos directamente
+\begin{equation}\label{eq:shin_uniform_regularizers}
+R_r(h_m)+R_b(h_m)\leq R^*,
+\end{equation}
+sin presuponer la comparabilidad de dos pesos distintos. En particular,
+\begin{equation}\label{eq:shin_empirical_loss_rate}
+\operatorname{Loss}_m(h_m;\lambda,\lambda_m^{\mathcal R})\leq a_mR^*.
+\end{equation}
+
+\smallskip
+\noindent\emph{Paso 2: tasa para la pérdida poblacional.}
+Escribamos
+\[
+A_r:=3\lambda_r(\sqrt d)^{2\alpha}c_r^{-2\alpha/d},
+\qquad
+A_b:=3\lambda_b(\sqrt d)^{2\alpha}c_b^{-2\alpha/(d-1)}.
+\]
+Por la definición de $\hat\lambda_m^{\mathcal R}$ en el Teorema~1 y
+la elección \eqref{eq:shin_equal_weights},
+\begin{equation}\label{eq:shin_Cmam_rate}
+C_ma_m=\max\{A_rm_r^{-\alpha/d},\,A_bm_b^{-\alpha/(d-1)}\}.
+\end{equation}
+De $m_r=O(m_b^{d/(d-1)})$ se deduce
+$m_b^{-\alpha/(d-1)}=O(m_r^{-\alpha/d})$; en consecuencia
+\[
+C_ma_m=O(m_r^{-\alpha/d}).
+\]
+Además, $C_m\geq c\sqrt{m_r}$ para cierta constante $c>0$ independiente de $m$,
+lo que, combinado con la cota anterior, da
+$a_m=O(m_r^{-1/2-\alpha/d})$. Por
+\eqref{eq:shin_empirical_loss_rate}, esta es también una cota superior para la
+pérdida regularizada empírica (multiplicada por $R^*$).
+
+El evento de cobertura del Teorema~1 depende exclusivamente de las muestras,
+y no de la función candidata $h$. Por ello, la desigualdad probabilística
+vale \emph{simultáneamente} para todas las funciones con seminormas finitas,
+incluido el minimizador aleatorio $h_m$ elegido a partir de esas mismas
+muestras. En dicho evento, puesto que
+$\lambda_m^{\mathcal R}\geq\hat\lambda_m^{\mathcal R}$ componente a componente,
+\begin{align*}
+\operatorname{Loss}^{\mathrm{PINN}}(h_m;\lambda)
+&\leq C_m\operatorname{Loss}_m(h_m;\lambda,\hat\lambda_m^{\mathcal R})
+ +C'\bigl(m_r^{-\alpha/d}+m_b^{-\alpha/(d-1)}\bigr)\\
+&\leq C_ma_mR^*
+ +C'\bigl(m_r^{-\alpha/d}+m_b^{-\alpha/(d-1)}\bigr)\\
+&=O(m_r^{-\alpha/d}),
+\end{align*}
+lo que demuestra \eqref{eq:shin_expected_rate}. Consideremos una sucesión de pares de tamaños muestrales enteros
+$(m_r(n),m_b(n))$ con $m_r(n)\geq n$ y $m_b(n)\geq n$ para $n$
+suficientemente grande, que satisfaga la relación anterior. Las cotas de fallo
+del Teorema~1 son sumables a lo largo de esta sucesión: cada una es de orden
+$\sqrt m\,(1-m^{-1/2})^m\leq\sqrt m\,e^{-\sqrt m}$,
+una función decreciente y sumable sobre los enteros grandes. Por Borel--Cantelli, con probabilidad uno la estimación vale finalmente y, como
+$\lambda_r,\lambda_b>0$ son constantes fijas, se sigue que
+\begin{equation}\label{eq:shin_L2_convergence}
+\|\mathcal L[h_m]-f\|_{L^2(U;\mu_r)}\to0,
+\qquad
+\|\mathcal B[h_m]-g\|_{L^2(\Gamma;\mu_b)}\to0.
+\end{equation}
+
+\smallskip
+\noindent\emph{Paso 3: control cuantitativo de $L^2(\mu)$ a $C^0$.}
+De \eqref{eq:shin_uniform_regularizers} y de la desigualdad triangular
+para seminormas Hölder se obtiene
+\begin{equation}\label{eq:uniform_holder_residual}
+[\mathcal L[h_m]-f]_{\alpha;U}
+\leq\sqrt{R^*}+[f]_{\alpha;U}=:K_r,
+\qquad
+[\mathcal B[h_m]-g]_{\alpha;\Gamma}
+\leq\sqrt{R^*}+[g]_{\alpha;\Gamma}=:K_b.
+\end{equation}
+Estas constantes no dependen del tamaño de la muestra.
+
+\medskip
+\noindent\textit{Lema auxiliar (interpolación local Hölder--$L^2$).}
+Sea $(X,\mathrm{dist},\mu)$ un espacio métrico de medida de probabilidad
+con $\mu(B(x,\rho))\geq c\rho^s$ para $x\in X$ y
+$0<\rho\leq\rho_0$, donde $c,\rho_0,s>0$. Si $v:X\to\mathbb R$
+es acotada y $[v]_{C^{0,\alpha}(X)}\leq K$, entonces existe una
+constante $C=C(c,\rho_0,s,\alpha,K)$ tal que
+\begin{equation}\label{eq:holder_L2_interpolacion}
+\|v\|_{L^\infty(X)}\leq
+C\left(\|v\|_{L^2(X;\mu)}+
+\|v\|_{L^2(X;\mu)}^{\frac{2\alpha}{2\alpha+s}}\right).
+\end{equation}
+\emph{Demostración del lema.}
+Pongamos $M=\|v\|_\infty$. Si $M=0$ no hay nada que probar.
+El caso $K=0$ corresponde a funciones constantes y da
+$M=\|v\|_{L^2(\mu)}$. Si $K>0$, escogemos $x\in X$ tal que
+$|v(x)|\geq3M/4$, y definimos
+\[
+\rho:=\min\!\left\{\rho_0/2,\left(\frac{M}{4K}\right)^{1/\alpha}\right\}.
+\]
+Para $z\in B(x,\rho)$, la condición Hölder implica
+$|v(z)|\geq M/2$. Por la cota inferior de masa,
+\begin{equation}\label{eq:holder_L2_mass}
+\|v\|_{L^2(\mu)}^2\geq
+\frac{cM^2}{4}\min\!\left\{(\rho_0/2)^s,
+\left(\frac{M}{4K}\right)^{s/\alpha}\right\}.
+\end{equation}
+Si el primer término es el mínimo, obtenemos
+$M\leq C_1\|v\|_{L^2(\mu)}$. Si lo es el segundo,
+$M^{2+s/\alpha}\leq C_2\|v\|_{L^2(\mu)}^2$, de donde
+$M\leq C_3\|v\|_{L^2(\mu)}^{2\alpha/(2\alpha+s)}$.
+La combinación de ambos casos da \eqref{eq:holder_L2_interpolacion}.
+\hfill$\square$
+
+\medskip
+Aplicamos el lema a $X=U$, $\mu=\mu_r$, $s=d$, $v=\mathcal L[h_m]-f$;
+y a $X=\Gamma$, $\mu=\mu_b$, $s=d-1$,
+$v=\mathcal B[h_m]-g$. La hipótesis sobre las masas se sigue del
+lema auxiliar de no degeneración local y las cotas Hölder uniformes son
+\eqref{eq:uniform_holder_residual}. Por
+\eqref{eq:shin_L2_convergence}, ambas normas supremas tienden a cero.
+Como los operadores y los datos poseen extensiones continuas al cierre,
+esto demuestra \eqref{eq:shin_uniform_operators}.
+
+Para obtener las tasas anunciadas, la no negatividad de los dos términos
+de la pérdida poblacional y $\lambda_r,\lambda_b>0$ dan
+\[
+\|\mathcal L[h_m]-f\|_{L^2(\mu_r)}^2,
+\ \|\mathcal B[h_m]-g\|_{L^2(\mu_b)}^2
+=O(m_r^{-\alpha/d}),
+\]
+con constantes que pueden depender de los pesos residuales fijos.
+Sustituyendo en \eqref{eq:holder_L2_interpolacion} con
+$s=d$ y $s=d-1$, respectivamente, obtenemos
+\eqref{eq:shin_sup_rates}. En particular, las conclusiones son casi
+seguras a lo largo de la sucesión fijada, pues el argumento
+probabilístico del Paso~2 ya produjo un único evento de probabilidad uno.
+\hfill$\square$
+
+\medskip
+\noindent\emph{Caso $d=1$: pérdida, cota y convergencia uniforme.}
+Aquí $U=(a,b)$ y los dos valores de frontera se evalúan sin muestreo. Utilizamos
+exactamente las pérdidas y el peso $\widehat\lambda_{r,m_r}^{\mathcal R}$
+definidos en \eqref{eq:thm1_1d}; la pérdida regularizada es
+\[
+\operatorname{Loss}^{\mathcal R}_{m_r,1}(h)
+:=\operatorname{Loss}^{\mathrm{PINN}}_{m_r,1}(h)
+ +\widehat\lambda_{r,m_r}^{\mathcal R}
+  [\mathcal L[h]]_{\alpha;U}^2.
+\]
+Sea $R_r^*:=\sup_{m_r}[\mathcal L[u_{m_r}^*]]_{\alpha;U}^2<\infty$.
+Por minimalidad e interpolación exacta,
+\[
+\begin{aligned}
+\widehat\lambda_{r,m_r}^{\mathcal R}
+ [\mathcal L[h_{m_r}]]_{\alpha;U}^2
+&\leq \operatorname{Loss}^{\mathcal R}_{m_r,1}(h_{m_r})\\
+&\leq \operatorname{Loss}^{\mathcal R}_{m_r,1}(u_{m_r}^*)
+\leq \widehat\lambda_{r,m_r}^{\mathcal R}R_r^*.
+\end{aligned}
+\]
+En consecuencia,
+$[\mathcal L[h_{m_r}]]_{\alpha;U}^2\leq R_r^*$ y
+$\operatorname{Loss}^{\mathcal R}_{m_r,1}(h_{m_r})
+\leq\widehat\lambda_{r,m_r}^{\mathcal R}R_r^*$.
+Aplicando \eqref{eq:thm1_1d} en el evento de cobertura obtenemos
+\[
+\begin{aligned}
+\operatorname{Loss}^{\mathrm{PINN}}_{1}(h_{m_r})
+&\leq C_{m_r}^{(1)}\operatorname{Loss}^{\mathcal R}_{m_r,1}(h_{m_r})
++3\lambda_r c_r^{-2\alpha}[f]_{\alpha;U}^{2}m_r^{-\alpha}\\
+&\leq 3\lambda_r c_r^{-2\alpha}
+\bigl(R_r^*+[f]_{\alpha;U}^{2}\bigr)m_r^{-\alpha}.
+\end{aligned}
+\]
+Por tanto el término interior poblacional converge a cero en $L^2(\mu_r)$
+y la contribución $E_{\partial U}(h_{m_r})$ también tiende a cero.
+Como $\lambda_b>0$, cada uno de los dos defectos de frontera converge a cero.
+
+Para completar el paso de $L^2$ a uniforme sin invocar el lema auxiliar,
+que arriba se formuló para $d\geq2$, observamos que las particiones de
+la Hipótesis~1 con $d=1$ implican, para todo $x\in U$ y
+$0<\rho\leq\varepsilon_0$, la cota local
+\[
+\mu_r(B(x,\rho)\cap U)\geq \tfrac12c_r\rho.
+\]
+En efecto, basta escoger una celda de la partición de escala $\rho/2$
+que contenga a $x$; toda esa celda tiene diámetro a lo sumo $\rho/2$
+y masa al menos $c_r\rho/2$. Por otro lado,
+\[
+[\mathcal L[h_{m_r}]-f]_{\alpha;U}
+\leq \sqrt{R_r^*}+[f]_{\alpha;U}.
+\]
+Si el residuo fuese mayor que un $\delta>0$ en algún punto de una
+subsucesión, esta cota Hölder lo mantendría mayor que $\delta/2$ en
+$B(x,\rho)\cap U$ para un $\rho>0$ independiente de $m_r$.
+La cota inferior de masa daría entonces una cota positiva para su norma
+$L^2(\mu_r)$, en contradicción con la convergencia anterior.
+Así, $\mathcal L[h_{m_r}]\to f$ uniformemente en $\overline U$.
+
+Finalmente, para una sucesión de tamaños $m_r(n)\geq n$, las probabilidades
+de fallo $\sqrt{m_r}(1-m_r^{-1/2})^{m_r}$ son sumables. El lema de
+Borel--Cantelli convierte las cotas obtenidas en conclusiones casi seguras
+a lo largo de esa sucesión.
+
+\medskip
+\noindent\textbf{Observación (qué tasa se demuestra).}
+La expresión $O(m_r^{-\alpha/d})$ corresponde a una pérdida residual
+\emph{cuadrática}, no a la norma uniforme del residuo ni al error
+$\|h_m-u^*\|$. La cota \eqref{eq:shin_sup_rates} es una consecuencia
+adicional, más débil, del control Hölder uniforme y de las masas de bolas.
+No se extrapola de estas estimaciones una pendiente $-1$ para errores
+numéricos ni se afirma convergencia de los procedimientos Adam o L-BFGS.
+
+\medskip
+\noindent\textbf{Observación (alcance de la condición sobre pesos).}
+La condición \eqref{eq:shin_weight_condition}, por sí sola, no garantiza que
+$\max\{\lambda_{r,m}^{\mathcal R},\lambda_{b,m}^{\mathcal R}\}/
+\min\{\lambda_{r,m}^{\mathcal R},\lambda_{b,m}^{\mathcal R}\}$ permanezca
+acotado. Por ejemplo, si $d=2$ y $m_r=m_b=n$, los pesos mínimos del
+Teorema~1 verifican, salvo constantes independientes de $n$,
+$\hat\lambda_{r,m}^{\mathcal R}\asymp n^{-1/2-\alpha/2}$ y
+$\hat\lambda_{b,m}^{\mathcal R}\asymp n^{-1/2-\alpha}$;
+su cociente crece como $n^{\alpha/2}$. La elección
+\eqref{eq:shin_equal_weights} evita esa dificultad. De este modo se prueba
+la conclusión para una familia particular de pesos permitida por Shin, sin
+atribuir a las condiciones generales una consecuencia que no se desprende de ellas.
+
+\medskip
+\par\medskip
+\noindent\textbf{Observación (minimizadores exactos y entrenamiento práctico).}
+El Teorema~2 adapta el marco de Shin et al. con la elección explícita de pesos \eqref{eq:shin_equal_weights} (para $d\geq2$) y supone minimizadores globales exactos. El propio artículo contempla aproximaciones a la minimización y la posibilidad de relajar la interpolación exacta. La Sección~\ref{sec:comparadores_aproximados} determina una escala suficiente para ambas tolerancias sin modificar el enunciado precedente, que sigue siendo la reconstrucción del resultado de Shin para pesos iguales.
+\par\medskip
+\noindent\textbf{Observación (Paso al problema de Dirichlet clásico).}
+En los resultados que siguen fijamos $\Gamma=\partial U$; es decir, el dato de contorno $g$ se prescribe en toda la frontera.
+Esta identificación es necesaria para la unicidad del problema de Dirichlet y para las estimaciones de estabilidad que
+convierten el control del residuo en control del error $h-u^*$.
+\medskip
+
+
+\section{Extensión condicional: comparadores y minimizadores aproximados}
+\label{sec:comparadores_aproximados}
+
+La Hipótesis~2 impone un comparador que anula exactamente la pérdida
+empírica. Esta exigencia es distinta de la mera capacidad de aproximación de
+una clase neuronal. El argumento anterior permite formular una variante que
+acepta pérdida residual empírica positiva y minimización subóptima, siempre
+que ambas tolerancias sean controladas en relación con el peso regularizador.
+La posibilidad de considerar soluciones subóptimas y comparadores de pérdida
+no nula ya se discute en el marco de \cite{shin2020convergence}; el propósito
+de la siguiente proposición es explicitar una condición cuantitativa
+\emph{suficiente} y demostrar su compatibilidad con las estimaciones de este
+capítulo. No se afirma originalidad bibliográfica de la idea general.
+
+\medskip
+\noindent\textbf{Proposición (comparadores aproximados y tolerancia de optimización).}
+Supónganse las condiciones de muestreo y regularidad de la Hipótesis~1,
+con $d\geq2$ y $0<\alpha\leq1$, $f\in C^{0,\alpha}(\overline U)$,
+$g\in C^{0,\alpha}(\Gamma)$ y pesos residuales fijos
+$\lambda_r,\lambda_b>0$; se requieren asimismo las condiciones del
+apartado 1 de la Hipótesis~2 para las clases $\mathcal H_m$. Sean $m_r,m_b$ los tamaños
+muestrales del Teorema~2, con
+$m_r=O(m_b^{d/(d-1)})$, y elíjanse los pesos iguales
+$a_m>0$ de \eqref{eq:shin_equal_weights}. Para cada par $m$, sean
+$v_m,h_m\in\mathcal H_m$ elecciones mensurables, eventualmente
+aleatorias, tales que
+\begin{align}
+\operatorname{Loss}^{\mathrm{PINN}}_m(v_m;\lambda)
+ &\leq\varepsilon_m, \label{eq:aprox_comparador_loss}\\
+R_r(v_m)+R_b(v_m)&\leq R^*,\label{eq:aprox_comparador_holder}\\
+\operatorname{Loss}_m(h_m;\lambda,(a_m,a_m))
+ &\leq \inf_{h\in\mathcal H_m}
+ \operatorname{Loss}_m(h;\lambda,(a_m,a_m))+\delta_m.
+ \label{eq:aprox_minimizador}
+\end{align}
+Aquí $\varepsilon_m,\delta_m\geq0$ son cotas deterministas,
+$R^*<\infty$ no depende de $m$, y las desigualdades se suponen
+válidas casi seguramente, al menos para todos los índices suficientemente
+grandes de la sucesión de tamaños. Los regularizadores son
+$R_r(h)=[\mathcal L[h]]_{\alpha;U}^2$ y
+$R_b(h)=[\mathcal B[h]]_{\alpha;\Gamma}^2$.
+
+Entonces, con $\kappa_m:=(\varepsilon_m+\delta_m)/a_m$, se tiene
+\begin{align}
+R_r(h_m)+R_b(h_m)&\leq R^*+\kappa_m,
+\label{eq:aprox_regularidad_resultado}\\
+\operatorname{Loss}_m(h_m;\lambda,(a_m,a_m))
+ &\leq a_m(R^*+\kappa_m),
+\label{eq:aprox_loss_empirica}\\
+\operatorname{Loss}^{\mathrm{PINN}}(h_m;\lambda)
+ &\leq C_ma_m(R^*+\kappa_m)
+ +C'\bigl(m_r^{-\alpha/d}+m_b^{-\alpha/(d-1)}\bigr)
+\label{eq:aprox_loss_poblacional}
+\end{align}
+en el evento de cobertura del Teorema~1. En particular, si
+\begin{equation}\label{eq:aprox_escala_suficiente}
+\boxed{\qquad\varepsilon_m+\delta_m\leq K a_m
+\quad\text{para todo $m$ suficientemente grande,}\qquad}
+\end{equation}
+con una constante determinista $K<\infty$, entonces, con probabilidad
+uno a lo largo de la sucesión muestral del Teorema~2,
+\begin{equation}\label{eq:aprox_tasa_poblacional}
+\operatorname{Loss}^{\mathrm{PINN}}(h_m;\lambda)
+=O(m_r^{-\alpha/d}),
+\end{equation}
+y se mantienen las convergencias uniformes y las tasas de
+\eqref{eq:shin_uniform_operators}--\eqref{eq:shin_sup_rates}.
+
+\medskip
+\noindent\textit{Demostración.}
+Por no negatividad de la pérdida PINN empírica y por la
+$\delta_m$-suboptimalidad,
+\begin{align*}
+a_m\bigl(R_r(h_m)+R_b(h_m)\bigr)
+&\leq\operatorname{Loss}_m(h_m;\lambda,(a_m,a_m))\\
+&\leq\operatorname{Loss}_m(v_m;\lambda,(a_m,a_m))+\delta_m\\
+&=\operatorname{Loss}^{\mathrm{PINN}}_m(v_m;\lambda)
+   +a_m(R_r(v_m)+R_b(v_m))+\delta_m\\
+&\leq \varepsilon_m+a_mR^*+\delta_m.
+\end{align*}
+La división por $a_m>0$ demuestra
+\eqref{eq:aprox_regularidad_resultado}; la misma comparación demuestra
+\eqref{eq:aprox_loss_empirica}.
+
+El evento de cobertura es uniforme respecto de todas las funciones
+admisibles, incluidas las que dependen de los datos. Por el Teorema~1 y
+$\widehat\lambda_{r,m}^{\mathcal R},
+\widehat\lambda_{b,m}^{\mathcal R}\leq a_m$,
+\begin{align*}
+\operatorname{Loss}^{\mathrm{PINN}}(h_m;\lambda)
+&\leq C_m\operatorname{Loss}_m
+ (h_m;\lambda,\widehat\lambda_m^{\mathcal R})
+ +C'\bigl(m_r^{-\alpha/d}+m_b^{-\alpha/(d-1)}\bigr)\\
+&\leq C_m\bigl(\varepsilon_m+\delta_m+a_mR^*\bigr)
+ +C'\bigl(m_r^{-\alpha/d}+m_b^{-\alpha/(d-1)}\bigr),
+\end{align*}
+que equivale a \eqref{eq:aprox_loss_poblacional}.
+Si se satisface \eqref{eq:aprox_escala_suficiente}, las seminormas de
+$\mathcal L[h_m]$ y $\mathcal B[h_m]$ están acotadas uniformemente por
+$R^*+K$. Por \eqref{eq:shin_Cmam_rate},
+$C_ma_m=O(m_r^{-\alpha/d})$; la relación entre $m_r$ y $m_b$
+permite absorber el término de frontera. Así se obtiene
+\eqref{eq:aprox_tasa_poblacional}. Las probabilidades de fallo de
+cobertura son sumables, según el Paso~2 de la demostración del
+Teorema~2; Borel--Cantelli proporciona un único evento de probabilidad
+uno donde las cotas valen para todos los índices suficientemente grandes.
+Por último, las seminormas Hölder uniformes y el lema de interpolación
+\eqref{eq:holder_L2_interpolacion} permiten convertir la convergencia
+$L^2(\mu_r)$ y $L^2(\mu_b)$ en convergencia uniforme, con los mismos
+exponentes de \eqref{eq:shin_sup_rates}. \hfill$\square$
+
+\medskip
+\noindent\textbf{Corolario (criterio suficiente mediante aproximación fuerte).}
+Sea $u^*\in C^{2,\alpha}(\overline U)$ solución exacta de un problema
+elíptico lineal de segundo orden con contorno Dirichlet, y supóngase que
+$\mathcal L:C^{2,\alpha}(\overline U)\to C^{0,\alpha}(\overline U)$
+y $\mathcal B:C^{2,\alpha}(\overline U)\to C^{0,\alpha}(\partial U)$
+son aplicaciones lineales continuas, con normas de operador
+independientes de $m$ (por ejemplo, bajo regularidad global suficiente
+de sus coeficientes). Si para todo $m$ existe $v_m\in\mathcal H_m$
+con
+\begin{equation}\label{eq:aprox_criterio_fuerte}
+\|v_m-u^*\|_{C^{2,\alpha}(\overline U)}
+\leq A\sqrt{a_m},
+\end{equation}
+para una constante $A$ independiente de $m$, entonces los
+comparadores $v_m$ cumplen
+\eqref{eq:aprox_comparador_loss} y
+\eqref{eq:aprox_comparador_holder} con
+$\varepsilon_m=O(a_m)$ y $R^*<\infty$, de modo que la proposición
+precedente se aplica a cualquier sucesión de soluciones
+$\delta_m$-subóptimas con $\delta_m=O(a_m)$.
+
+\noindent\textit{Demostración.}
+Como $\mathcal L[u^*]=f$ y $\mathcal B[u^*]=g$,
+la continuidad de los operadores y
+\eqref{eq:aprox_criterio_fuerte} dan
+$\|\mathcal L[v_m]-f\|_\infty
++\|\mathcal B[v_m]-g\|_\infty=O(\sqrt{a_m})$.
+Al elevar al cuadrado y evaluar en las muestras, se obtiene
+$\operatorname{Loss}^{\mathrm{PINN}}_m(v_m;\lambda)=O(a_m)$,
+con constantes independientes de las muestras.
+Por otra parte, la desigualdad triangular y la continuidad de los
+operadores en norma Hölder implican
+$[\mathcal L[v_m]]_{\alpha;U}+[\mathcal B[v_m]]_{\alpha;\partial U}
+\leq [f]_{\alpha;U}+[g]_{\alpha;\partial U}+O(\sqrt{a_m})$.
+Dado que $a_m\to0$, estas seminormas están uniformemente acotadas.
+\hfill$\square$
+
+\medskip
+\noindent\textbf{Consecuencias para los Teoremas 3 y 4.}
+Si se suponen además el contorno Dirichlet completo y las condiciones
+elípticas de estabilidad del Teorema~3, los aproximantes de la
+proposición satisfacen su conclusión de convergencia en $C^0$ y la
+tasa allí indicada. Para Poisson, si $U$ es Lipschitz y
+$u^*,h_m\in H^1(U)$ tienen la misma traza en toda la frontera, la
+estimación energética del Teorema~4 proporciona convergencia en
+$H^1(U)$. Bajo la cota inferior de densidad interior incluida en la
+Hipótesis~1, se conserva la tasa condicional
+$O(m_r^{-\alpha/(2d)})$.
+Estas consecuencias requieren escoger las clases $\mathcal H_m$ de modo
+compatible con Dirichlet fuerte cuando este se impone: la aproximación
+\eqref{eq:aprox_criterio_fuerte}, por sí sola, no impone igualdad exacta
+de trazas.
+
+\medskip
+\noindent\textbf{Alcance y límites.}
+La condición $\varepsilon_m\to0$ por sí sola no permite cerrar la
+prueba: el cociente $(\varepsilon_m+\delta_m)/a_m$ podría divergir,
+y entonces \eqref{eq:aprox_regularidad_resultado} no ofrece una cota
+Hölder uniforme. La condición \eqref{eq:aprox_criterio_fuerte} es un
+\emph{criterio suficiente}, no un teorema que garantice la existencia
+de redes con dicha tasa de aproximación para todas las arquitecturas.
+Asimismo, una secuencia de pérdidas pequeñas obtenida con Adam o
+L-BFGS no demuestra que la brecha de suboptimalidad $\delta_m$ sea
+$O(a_m)$, pues no se dispone de una cota global de optimalidad para
+esos entrenamientos. Esta proposición no asigna tasas de convergencia a
+los optimizadores del Colab.
+
+\section{Existencia y regularidad para el problema de Dirichlet}
+\label{sec:existencia_dirichlet}
+
+(Teorema 6.13 en \cite{gilbarg2001elliptic}.)
+Sea $0<\alpha<1$ y sea $U$ un dominio acotado que satisfaga la condición de esfera exterior en cada punto de
+$\partial U$. Supóngase que el operador $\mathcal{L}$ (Capítulo~1) es uniformemente elíptico en $U$,
+que sus coeficientes satisfacen las hipótesis de regularidad y acotación de la Hipótesis~3 (abajo) y que
+\[
+\tilde c(x):=\sum_{i=1}^d D_i b^i(x)+d(x)\le 0 \quad \text{en } U.
+\]
+Entonces, para $f\in C^{0,\alpha}(U)$ acotada y $g\in C^0(\partial U)$, el problema de Dirichlet del Capítulo~1 admite una única solución clásica
+$u^*\in C^{2,\alpha}_{\mathrm{loc}}(U)\cap C^0(\overline U)$.
+La notación $C^{2,\alpha}_{\mathrm{loc}}(U)$ expresa regularidad de segundo orden en todo compacto contenido en $U$;
+la continuidad de $g$ no implica, por sí sola, una cota global de la norma $C^{2,\alpha}$ hasta la frontera.
+
+\medskip
+\noindent\textbf{Comentario técnico (estabilidad del operador).}
+Este resultado garantiza que el objeto límite $u^*$ existe y es regular, lo que permite cerrar el
+argumento de convergencia de PINNs. La condición $\tilde c\le 0$ (en combinación con elipticidad uniforme)
+es la que habilita un principio del máximo y, por tanto, estimaciones de estabilidad en norma suprema,
+ver estimación de estabilidad de la Sección~\ref{sec:estabilidad_dirichlet}.
+
+\section{Condiciones de elipticidad y regularidad (Hipótesis 3)}
+
+Consideremos $\lambda(x)$ el valor propio mínimo de $[a^{ij}(x)]$ y $\alpha\in(0,1)$.
+
+\begin{enumerate}
+\item (\textit{Elipticidad uniforme}) Existe $\lambda_0>0$ tal que $\lambda(x)\ge \lambda_0$ para todo $x\in U$
+y $a^{ij}=a^{ji}$.
+\item Los coeficientes $c^i$ y $d$ pertenecen a $C^{0,\alpha}(U)$ y tienen normas $L^\infty(U)$ finitas.
+\item Los coeficientes $a^{ij}$ y $b^i$ pertenecen a $C^{1,\alpha}(U)$, con coeficientes y derivadas de primer orden acotados en $U$. Además, $f\in C^{0,\alpha}(U)$ es acotada y $g\in C^{0,\alpha}(\partial U)$. Estas condiciones aseguran, en particular, que $\widetilde b$ y $\widetilde c$ están acotados, además de poseer la regularidad H\"older local que requiere el problema clásico de Dirichlet.
+\item $U$ satisface la condición de esfera exterior en cada punto de la frontera.
+\item Existen constantes $\Lambda,\nu\ge 0$ tales que, para todo $x\in U$,
+\[
+\sum_{i,j}|a^{ij}(x)|^2\le \Lambda,\qquad
+\lambda_0^{-2}\big(\|b(x)\|^2+\|c(x)\|^2\big)+\lambda_0^{-1}|d(x)|\le \nu^2,
+\]
+donde $b(x)=[b^1(x),\dots,b^d(x)]^T$ y $c(x)=[c^1(x),\dots,c^d(x)]^T$.
+\end{enumerate}
+
+\medskip
+\noindent
+La formulación precisa aquí las cotas globales de las derivadas de los
+coeficientes en divergencia, que se utilizan al pasar a la forma no
+divergente; no basta una cota puntual de $a^{ij}$, $b^i$, $c^i$ y $d$
+para controlar automáticamente $\widetilde b$. Bajo $\widetilde c\le0$,
+estas condiciones permiten aplicar el resultado clásico de existencia y
+el principio del máximo \cite{gilbarg2001elliptic}. La constante de
+estabilidad depende de $U$, $\lambda_0$ y una cota de $\widetilde b$;
+esta última puede involucrar derivadas de $a^{ij}$ que no aparecen en $\nu$.
+
+\section{Estabilidad uniforme para Dirichlet}
+\label{sec:estabilidad_dirichlet}
+
+\noindent\textbf{Procedencia y alcance.}
+La estimación siguiente corresponde al principio de estabilidad usado por
+\cite[Apéndice~D, Lema~D.1]{shin2020convergence}, donde se recurre al
+principio del máximo y a una cota clásica de Gilbarg--Trudinger.
+Aquí se reconstruye su demostración con una barrera explícita. Esta
+reconstrucción permite indicar exactamente qué condiciones intervienen y de
+qué cantidades depende la constante; no constituye un contraejemplo al
+resultado elíptico original.
+
+\medskip
+\noindent\textbf{Enunciado (estabilidad $C^0$ para Dirichlet).}
+Sea $U\subset\mathbb R^d$ un dominio acotado y supóngase que el operador
+\emph{en forma no divergente}, obtenido mediante la expansión del Capítulo~I,
+es
+\[
+\mathcal L[v]=\sum_{i,j=1}^d a^{ij}D_{ij}v+
+\sum_{j=1}^d\widetilde b^{\,j}D_jv+\widetilde c\,v,
+\qquad
+\widetilde b^{\,j}=\sum_{i=1}^dD_i a^{ij}+b^j+c^j,
+\quad
+\widetilde c=\sum_{i=1}^dD_i b^i+d.
+\]
+Supongamos que $A=(a^{ij})$ es uniformemente elíptica, con constante
+$\lambda_0>0$, que sus coeficientes y $\widetilde b$ son acotados y
+continuos en $U$, y que $\widetilde c\leq 0$ es acotada y continua.
+Las condiciones pertinentes se incluyen en la Hipótesis~3 precisada abajo.
+Entonces existe $C_0>0$, independiente de $v$, tal que para
+$v\in C^2(U)\cap C^0(\overline U)$ con $\mathcal L[v]$ acotada,
+\begin{equation}\label{eq:estabilidad_error_general}
+\|v\|_{C^0(\overline U)}
+\leq \|v\|_{C^0(\partial U)}+
+C_0\|\mathcal L[v]\|_{L^\infty(U)}.
+\end{equation}
+En particular, si $u^*$ es la solución clásica del problema de Dirichlet
+$\mathcal L[u^*]=f$, $u^*|_{\partial U}=g$, y
+$h\in C^2(U)\cap C^0(\overline U)$, entonces
+\begin{equation}\label{eq:stability_C0}
+\|u^*-h\|_{C^0(\overline U)}
+\leq
+\|g-h\|_{C^0(\partial U)}+
+C_0\|f-\mathcal L[h]\|_{L^\infty(U)}.
+\end{equation}
+La constante puede elegirse en términos de $\lambda_0$, de la extensión
+del dominio en una dirección y de una cota de $\widetilde b$, sin depender
+del número de muestras ni de los parámetros neuronales.
+
+\medskip
+\noindent\textbf{Demostración mediante una barrera explícita.}
+Sean $\ell=\inf_{x\in U}x_1$ y $R=1+\sup_{x\in U}x_1$.
+Definamos
+\[
+B:=\sup_{x\in U}|\widetilde b^{\,1}(x)|<\infty,
+\qquad
+\gamma>\max\{1,2B/\lambda_0\},
+\qquad
+q(x):=1-\exp\bigl(\gamma(x_1-R)\bigr).
+\]
+Como $x_1\le R-1$ en $U$, se tiene $q\ge0$. Además,
+$D_1q=-\gamma e^{\gamma(x_1-R)}$,
+$D_{11}q=-\gamma^2 e^{\gamma(x_1-R)}$, y las demás derivadas
+primeras y segundas se anulan. La elipticidad $a^{11}\ge\lambda_0$
+y la condición $\widetilde c\le0$ proporcionan
+\[
+\begin{aligned}
+\mathcal L[q]
+&=-\gamma^2a^{11}e^{\gamma(x_1-R)}
+-\gamma\widetilde b^{\,1}e^{\gamma(x_1-R)}
++\widetilde c\,q\\
+&\le-e^{\gamma(x_1-R)}(\lambda_0\gamma^2-B\gamma)
+\le-\delta,
+\end{aligned}
+\]
+donde
+\[
+\delta:=e^{\gamma(\ell-R)}(\lambda_0\gamma^2-B\gamma)>0.
+\]
+Por lo tanto, $\psi=q/\delta$ cumple $\psi\ge0$,
+$\mathcal L[\psi]\le-1$ y $\|\psi\|_\infty\le\delta^{-1}$.
+
+Para $v$ como en el enunciado pongamos
+$M:=\|v\|_{C^0(\partial U)}$ y
+$F:=\|\mathcal L[v]\|_{L^\infty(U)}$.
+Las funciones $w_\pm:=\pm v-M-F\psi$ son no positivas en
+$\partial U$ y verifican
+\[
+\mathcal L[w_\pm]
+=\pm\mathcal L[v]-M\widetilde c-F\mathcal L[\psi]
+\ge -F+F=0
+\quad\text{en }U.
+\]
+El principio del máximo débil para operadores uniformemente elípticos
+con $\widetilde c\le0$ da $w_\pm\le0$ en $\overline U$.
+Por consiguiente,
+\[
+|v(x)|\le M+F\psi(x),\qquad
+\|v\|_{C^0(\overline U)}\le M+\delta^{-1}F.
+\]
+Esto prueba \eqref{eq:estabilidad_error_general} con
+$C_0=\delta^{-1}$. Sustituyendo $v=u^*-h$ y utilizando
+$\mathcal L[u^*]=f$ se obtiene \eqref{eq:stability_C0}.
+\hfill$\square$
+
+\medskip
+\noindent\textbf{Observación (separación entre existencia y estabilidad).}
+La condición de esfera exterior se emplea para obtener existencia y
+continuidad hasta la frontera de una solución clásica con dato continuo,
+según el Teorema~6.13 de Gilbarg--Trudinger. En cambio, una vez dadas
+$u^*$ y $h$ con la regularidad indicada, la desigualdad de estabilidad
+anterior solo utiliza que $U$ es acotado, la elipticidad uniforme,
+$\widetilde b\in L^\infty(U)$ y $\widetilde c\le0$; no se necesitan
+hipótesis de frontera $C^{2,\alpha}$. Esto permite aplicar la estimación
+también en el cuadrado de los experimentos.
+
+\section{Convergencia uniforme de los aproximantes (Teorema 3)}
+
+\noindent\textbf{Enunciado (convergencia $C^0$ de la solución aproximada).}
+Bajo las Hipótesis~1,~2 y~3, tomando explícitamente el operador
+de frontera de Dirichlet $\mathcal B[h]=h|_{\partial U}$, con
+$\Gamma=\partial U$ y $\widetilde c\le0$ en $U$, sea $h_m$ una sucesión de minimizadores
+globales de las pérdidas regularizadas del Teorema~2, con los pesos allí
+fijados y a lo largo de su sucesión de tamaños muestrales. Entonces,
+con probabilidad uno respecto del muestreo i.i.d.,
+\begin{equation}\label{eq:teorema3_convergencia_C0}
+\|h_m-u^*\|_{C^0(\overline U)}\longrightarrow0.
+\end{equation}
+Para $d\ge2$ y $0<\alpha<1$, en el mismo evento de probabilidad uno,
+la demostración proporciona además la cota conservadora
+\begin{equation}\label{eq:teorema3_tasa_C0}
+\|h_m-u^*\|_{C^0(\overline U)}
+=O\!\left(m_r^{-\alpha^2/[d(2\alpha+d)]}\right).
+\end{equation}
+Esta tasa describe el límite idealizado de minimizadores globales bajo
+las hipótesis de interpolación exacta y regularización del Teorema~2,
+no la convergencia del algoritmo de entrenamiento.
+
+\medskip
+\noindent\textbf{Demostración.}
+Sea $e_m=u^*-h_m$. La desigualdad \eqref{eq:stability_C0}, cuyo
+factor $C_0$ depende solo del operador y del dominio, da
+\[
+\|e_m\|_{C^0(\overline U)}
+\le
+\|g-h_m\|_{C^0(\partial U)}+
+C_0\|f-\mathcal L[h_m]\|_{C^0(\overline U)}.
+\]
+Por el Teorema~2 ambos sumandos convergen a cero en un único evento
+de probabilidad uno, lo que prueba \eqref{eq:teorema3_convergencia_C0}.
+Para $d\ge2$, sustituimos las estimaciones cuantitativas
+\eqref{eq:shin_sup_rates}. Como
+\[
+\frac{\alpha^2}{d(2\alpha+d-1)}>
+\frac{\alpha^2}{d(2\alpha+d)},
+\]
+la cota correspondiente a la frontera decae al menos tan rápidamente
+como la del residuo interior. Obtenemos así
+\eqref{eq:teorema3_tasa_C0}.
+\hfill$\square$
+
+\medskip
+\noindent\textbf{Observación (procedencia de la demostración).}
+La implicación ``convergencia uniforme de residuos y de frontera $\Rightarrow$
+convergencia uniforme de aproximantes'' es la del Teorema~3.3 de
+\cite{shin2020convergence}. La prueba precedente reconstruye de manera
+autónoma el paso elíptico y explicita una cota de error. La reparación
+referida a la comparabilidad de los pesos pertenece al Teorema~2 y se
+transmite aquí a través de sus hipótesis; no es necesario atribuir un
+error distinto al argumento de estabilidad de Shin.
+
+\section{Convergencia en norma de energía con Dirichlet fuerte (Teorema 4)}
+\label{sec:teorema4_dirichlet_fuerte}
+
+El Teorema~3 relaciona el residuo y el error en norma uniforme mediante el
+principio del máximo. Para el problema de Poisson con condiciones de Dirichlet
+impuestas exactamente se dispone, además, de una estimación energética en
+$H^1(U)$. Formulamos primero la parte determinista, que no requiere ni
+muestreo aleatorio ni minimización de una pérdida neuronal.
+
+\medskip
+\noindent\textbf{Lema (estabilidad $H^1$ para Poisson con traza nula).}
+Sea $U\subset\mathbb R^d$ un dominio acotado Lipschitz y sea $C_P>0$ una
+constante de Poincaré para $H_0^1(U)$, de modo que
+$\|v\|_{L^2(U)}\le C_P\|\nabla v\|_{L^2(U)}$ para todo
+$v\in H_0^1(U)$. Si $e\in H_0^1(U)$ y su laplaciano distribucional
+$\Delta e\in L^2(U)$, entonces
+\begin{equation}\label{eq:teorema4_estabilidad_energia}
+\boxed{\quad
+\|e\|_{H^1(U)}\le C_P\sqrt{1+C_P^2}\,
+\|\Delta e\|_{L^2(U)}.\quad}
+\end{equation}
+\noindent\emph{Demostración del lema.}
+La identidad distribucional y la densidad de $C_c^\infty(U)$ en
+$H_0^1(U)$ implican que, para toda $\varphi\in H_0^1(U)$,
+\[
+\int_U\nabla e\cdot\nabla\varphi\,dx
+=-\int_U(\Delta e)\,\varphi\,dx.
+\]
+Tomando $\varphi=e$ y aplicando Cauchy--Schwarz y Poincaré,
+\[
+\|\nabla e\|_{L^2(U)}^2
+\le\|\Delta e\|_{L^2(U)}\|e\|_{L^2(U)}
+\le C_P\|\Delta e\|_{L^2(U)}\|\nabla e\|_{L^2(U)}.
+\]
+Si $\|\nabla e\|_2=0$, entonces $e=0$ por Poincaré. En otro caso
+podemos dividir, obteniendo
+$\|\nabla e\|_2\le C_P\|\Delta e\|_2$ y
+$\|e\|_2\le C_P^2\|\Delta e\|_2$. La combinación cuadrática de
+estas dos desigualdades proporciona
+\eqref{eq:teorema4_estabilidad_energia}.\hfill$\square$
+
+\medskip
+\noindent\textbf{Enunciado (Teorema 4: convergencia $H^1$ con Dirichlet fuerte).}
+Considérese $\mathcal L=\Delta$ en un dominio acotado Lipschitz
+$U\subset\mathbb R^d$, con $\Gamma=\partial U$. Supóngase que
+$u^*\in H^1(U)\cap C^0(\overline U)$ resuelve
+$\Delta u^*=f$ en el sentido distribucional, con
+$f\in L^2(U)$, y satisface $u^*|_{\partial U}=g$.
+Se escogen las clases $\mathcal H_m$ del Teorema~2 dentro del espacio
+afín de funciones con traza $g$ en toda $\partial U$; se exige que
+dichas clases sigan satisfaciendo la Hipótesis~2, incluidos los
+comparadores de pérdida empírica nula con regularidad uniforme.
+Sea $h_m$ una elección mensurable de minimizadores globales de la
+pérdida del Teorema~2 \emph{sobre esas clases con Dirichlet fuerte}.
+Supóngase además que
+$h_m\in H^1(U)\cap C^0(\overline U)$,
+$\Delta h_m\in L^2(U)$; por construcción, cada aproximante satisface
+\emph{exactamente} $h_m=g$ sobre $\partial U$.
+Entonces, con probabilidad uno respecto del muestreo i.i.d. del
+Teorema~2,
+\begin{equation}\label{eq:teorema4_convergencia_h1}
+\|h_m-u^*\|_{H^1(U)}\longrightarrow0.
+\end{equation}
+En particular, para $d\ge2$ y $0<\alpha<1$, a lo largo de la
+sucesión de tamaños muestrales especificada en el Teorema~2, se obtiene
+la tasa condicional
+\begin{equation}\label{eq:teorema4_tasa_h1_general}
+\|h_m-u^*\|_{H^1(U)}
+=O\!\left(m_r^{-\alpha^2/[d(2\alpha+d)]}\right).
+\end{equation}
+De hecho, la Hipótesis~1 ya impone una cota inferior positiva
+$\rho_r(x)\ge\rho_0>0$ casi en todas partes de $U$; por tanto,
+en el marco de este teorema se dispone directamente de la tasa más favorable:
+\begin{equation}\label{eq:teorema4_tasa_h1_densidad}
+\|h_m-u^*\|_{H^1(U)}=O\!\left(m_r^{-\alpha/(2d)}\right).
+\end{equation}
+La cota de densidad se cumple, por ejemplo, para la medida
+uniforme de probabilidad en $U$, con $\rho_0=|U|^{-1}$.
+La tasa anterior es condicional al conjunto de hipótesis del
+Teorema~2 y a la elección de clases con Dirichlet fuerte; no se
+sigue de la mera parametrización de frontera.
+
+\medskip
+\noindent\textbf{Demostración.}
+En un dominio Lipschitz existe un operador de traza continuo
+$\operatorname{Tr}:H^1(U)\to H^{1/2}(\partial U)$ y se tiene
+$H_0^1(U)=\ker(\operatorname{Tr})$. Puesto que $u^*$ y $h_m$
+son continuas hasta la frontera y sus valores de contorno coinciden
+con $g$, sus trazas también coinciden. Por tanto,
+\[
+e_m:=u^*-h_m\in H_0^1(U),\qquad
+\Delta e_m=f-\Delta h_m=:r_m\in L^2(U).
+\]
+El lema anterior proporciona, para todo $m$,
+\begin{equation}\label{eq:teorema4_residuo_h1}
+\|h_m-u^*\|_{H^1(U)}
+\le C_P\sqrt{1+C_P^2}\,\|f-\Delta h_m\|_{L^2(U)}.
+\end{equation}
+Por el Teorema~2, en un evento de probabilidad uno,
+$\|r_m\|_{C^0(\overline U)}\to0$. Puesto que $U$ es acotado,
+\[
+\|r_m\|_{L^2(U)}\le |U|^{1/2}\|r_m\|_{C^0(\overline U)}\to0.
+\]
+Aplicando \eqref{eq:teorema4_residuo_h1} se deduce
+\eqref{eq:teorema4_convergencia_h1}; la primera tasa se obtiene
+sustituyendo la cota interior de \eqref{eq:shin_sup_rates}.
+
+Para la tasa bajo la cota de densidad ya exigida por la Hipótesis~1, usamos la
+convergencia de la \emph{pérdida poblacional}, sin pasar por la norma
+uniforme. Por la condición $\rho_r\ge\rho_0$ y la positividad del
+peso residual fijo $\lambda_r$,
+\[
+\begin{aligned}
+\|r_m\|_{L^2(U)}^2
+&=\int_U|r_m|^2\,dx
+\le\rho_0^{-1}\int_U|r_m|^2\,d\mu_r\\
+&\le(\rho_0\lambda_r)^{-1}
+\operatorname{Loss}^{\mathrm{PINN}}(h_m;\lambda)
+=O\!\left(m_r^{-\alpha/d}\right),
+\end{aligned}
+\]
+donde la última igualdad procede de
+\eqref{eq:shin_expected_rate}. Tomando raíces cuadradas y
+sustituyendo en \eqref{eq:teorema4_residuo_h1} se demuestra
+\eqref{eq:teorema4_tasa_h1_densidad}.
+Las dos tasas son afirmaciones sobre minimizadores globales bajo las
+hipótesis del Teorema~2, no sobre el número de iteraciones de Adam o
+L-BFGS.\hfill$\square$
+
+\medskip
+\noindent\textbf{Observación (alcance de la regularidad y de Dirichlet fuerte).}
+La regularidad $u^*\in C^2(U)\cap C^0(\overline U)$, por sí sola,
+no implica $u^*\in H^1(U)$. Por ello se incluye explícitamente
+esta última condición. Asimismo, la igualdad de Dirichlet debe ser
+exacta en el sentido de trazas; una penalización de frontera con peso
+finito no basta para deducir que $e_m\in H_0^1(U)$.
+La arquitectura $h_\theta(x,y)=(1-x^2)(1-y^2)N_\theta(x,y)$,
+utilizada en el Capítulo~IV para $g=0$ en $(-1,1)^2$, sí
+impone Dirichlet fuerte. Sin embargo, esto no verifica por sí solo
+la Hipótesis~2 de interpolación exacta ni demuestra que Adam o
+L-BFGS produzcan minimizadores globales.
+
+\medskip
+\noindent\textbf{Observación (procedencia y comparación con Shin).}
+El Teorema~3.4 y el Apéndice~E de \cite{shin2020convergence}
+consideran un operador elíptico más general. En la prueba publicada
+se utiliza una desigualdad energética tras integrar por partes.
+Para justificar ese paso hay que disponer de regularidad $H^1$
+de las funciones involucradas, hipótesis que aquí se hace expresa.
+Nuestra proposición se restringe al caso Poisson y demuestra
+la desigualdad de estabilidad \eqref{eq:teorema4_residuo_h1}
+directamente para el error con traza nula. Las tasas
+\eqref{eq:teorema4_tasa_h1_general} y
+\eqref{eq:teorema4_tasa_h1_densidad} son consecuencias
+cuantitativas de los resultados previamente establecidos en esta
+tesis; no afirman falsedad del teorema general de Shin.
+La segunda tasa utiliza específicamente la cota inferior de la
+densidad de la medida poblacional, que ya se incluye en nuestra
+Hipótesis~1; no se deduciría de una hipótesis de cobertura puramente
+geométrica que omitiera esa cota.
+
+\medskip
+\noindent\textbf{Observación (convención de signo).}
+El capítulo teórico utiliza $\mathcal L=\Delta$.
+La versión equivalente $-\Delta u=f_{\mathrm{num}}$ se obtiene
+poniendo $f=-f_{\mathrm{num}}$; ambas conducen a la misma
+estimación \eqref{eq:teorema4_residuo_h1}, porque el signo no
+modifica la norma del residuo.

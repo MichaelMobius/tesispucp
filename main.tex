@@ -1,0 +1,198 @@
+\documentclass[12pt,a4paper,oneside]{report}
+\usepackage[spanish]{babel}
+\selectlanguage{spanish}
+\usepackage{times}
+\usepackage{graphicx,color}
+\usepackage{xcolor}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{verbatim}
+\usepackage{longtable}
+\usepackage{tabularx} % Para tablas de mas de una página
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage[refpages]{gloss}
+\usepackage{float}
+\usepackage{anysize}
+\usepackage{appendix}
+%\usepackage{listings}
+\usepackage{latexsym}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+
+% Terminología española para los algoritmos (algorithm / algpseudocode).
+\floatname{algorithm}{Algoritmo}
+\algrenewcommand\algorithmicrequire{\textbf{Datos:}}
+\algrenewcommand\algorithmicensure{\textbf{Resultado:}}
+\algrenewcommand\algorithmicend{\textbf{fin}}
+\algrenewcommand\algorithmicdo{\textbf{hacer}}
+\algrenewcommand\algorithmicfor{\textbf{para}}
+\algrenewcommand\algorithmicforall{\textbf{para todo}}
+\algrenewcommand\algorithmicwhile{\textbf{mientras}}
+\algrenewcommand\algorithmicloop{\textbf{bucle}}
+\algrenewcommand\algorithmicif{\textbf{si}}
+\algrenewcommand\algorithmicthen{\textbf{entonces}}
+\algrenewcommand\algorithmicelse{\textbf{si no}}
+\algrenewcommand\algorithmicfunction{\textbf{función}}
+\algrenewcommand\algorithmicprocedure{\textbf{procedimiento}}
+\algrenewcommand\algorithmicreturn{\textbf{devolver}}
+
+\usepackage{hyperref}
+
+\usepackage{listings}
+\usepackage{listingsutf8} % habilita inputencoding en listings
+\lstset{
+  inputencoding=utf8,
+  basicstyle=\ttfamily\small,
+  columns=fullflexible,
+  keepspaces=true,
+  upquote=true,
+  % Mapeo de acentos para listings:
+  literate=
+   {á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'\i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1
+   {Á}{{\'A}}1 {É}{{\'E}}1 {Í}{{\'I}}1 {Ó}{{\'O}}1 {Ú}{{\'U}}1
+   {ñ}{{\~n}}1 {Ñ}{{\~N}}1 {ü}{{\"u}}1 {Ü}{{\"U}}1
+}
+\usepackage{setspace}
+\usepackage{ragged2e}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{shapes, positioning, arrows.meta, calc, shapes.geometric, arrows, decorations.pathreplacing}
+
+%New colors defined below
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+%Code listing style named "mystyle"
+\lstdefinestyle{mystyle}{
+  backgroundcolor=\color{backcolour}, 
+  commentstyle=\color{codegreen},
+  keywordstyle=\color{magenta},
+  numberstyle=\tiny\color{codegray},
+  stringstyle=\color{codepurple},
+  basicstyle=\ttfamily\footnotesize,
+  breakatwhitespace=false,         
+  breaklines=true,                 
+  captionpos=b,                    
+  keepspaces=true,                 
+  numbers=left,                    
+  numbersep=5pt,                  
+  showspaces=false,                
+  showstringspaces=false,
+  showtabs=false,                  
+  tabsize=2
+}
+
+%"mystyle" code listing set
+\lstset{style=mystyle}
+
+
+% -------- Entornos de teoremas y macros de normas --------
+\usepackage{amsthm}
+\newtheorem{teorema}{Teorema}[chapter]
+\newtheorem{lema}[teorema]{Lema}
+\newtheorem{proposicion}[teorema]{Proposición}
+\newtheorem{corolario}[teorema]{Corolario}
+\newtheorem{definicion}[teorema]{Definición}
+\newtheorem{suposicion}[teorema]{Hipótesis}
+\newtheorem{observacion}[teorema]{Observación}
+\newtheorem{remark}[teorema]{Remark}
+
+% Macros útiles
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Emp}{\widehat{\mathbb{E}}}
+\newcommand{\Prob}{\mathbb{P}}
+\newcommand{\norm}[1]{\left\lVert #1 \right\rVert}
+\newcommand{\abs}[1]{\left\lvert #1 \right\rvert}
+\newcommand{\Holder}[3]{\left[ #1 \right]_{#2; #3}}
+\newcommand{\Loss}{\mathcal{J}} % para la función de pérdida
+
+
+\input{config/datos}
+
+\begin{document}
+%----------------------------------------------------------------------------------------
+%	CONFIGURACION
+%----------------------------------------------------------------------------------------
+\marginsize{3.0cm}{3.0cm}{3.0cm}{3.0cm}
+
+\input{config/caratula}
+\pagenumbering{roman}
+%-----------------
+%	Resumen
+%-----------------
+
+\input{resumen}
+
+
+%-------------------------
+%	Agradecimientos
+%-----------------------
+
+\input{agradecimientos}
+
+
+%--------------------------
+%	TABLA DE CONTENIDOS
+%--------------------------
+\cleardoublepage
+\addcontentsline{toc}{chapter}{\contentsname}
+\tableofcontents \newpage
+
+\addcontentsline{toc}{chapter}{\listfigurename}
+\listoffigures \newpage
+
+%\addcontentsline{toc}{chapter}{\listtablename}
+%\listoftables \newpage
+\makegloss
+\newpage
+\pagenumbering{arabic}
+
+%-----------------
+%	Capítulo 1
+%-----------------
+\doublespacing
+
+\input{introduccion}
+
+\input{capitulo1_13_07_26_shin}
+
+\input{capitulo2_13_07_26_shin}
+
+%\input{capitulo3}
+
+\input{capitulo3_13_07_26_shin}
+
+\input{Capitulo_IV_Resultados_2026}
+
+\input{capitulo_conclusiones}
+
+
+%-----------------
+%	BIBLIOGRAFIA
+%-----------------
+\bibliographystyle{ieeetr}
+\bibliography{bib/biblio}
+
+
+%------------
+%	Anexos
+%------------
+\appendix
+% El comando \appendix cambia la numeración a letras y el nombre a "Apéndice"
+
+\input{apendice} 
+
+
+%\renewcommand{\appendixname}{Anexo}% Descomenta si prefieres que diga "Anexo" en vez de "Apéndice"
+%\chapter*{\appendixname}
+\phantomsection
+\end{document}
+

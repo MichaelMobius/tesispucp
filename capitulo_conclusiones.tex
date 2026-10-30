@@ -1,0 +1,87 @@
+\chapter{Conclusiones y trabajo futuro}
+\label{chap:conclusiones}
+
+\section{Conclusiones principales}
+
+\subsection{Conclusiones teóricas}
+
+\begin{enumerate}
+\item \textbf{Regularidad de las aproximaciones neuronales.} Bajo las condiciones de suavidad de la activación y control de parámetros empleadas en el Capítulo~\ref{chap:convergencia}, las redes permiten definir clásicamente los residuos de operadores elípticos de segundo orden. El control de sus seminormas no es automático: forma parte de las hipótesis de los resultados de convergencia.
+
+\item \textbf{De la pérdida empírica a la continua.} El argumento de cobertura asociado al trabajo de Shin, Darbon y Karniadakis~\cite{shin2020convergence} explica por qué minimizar un residuo sobre muestras finitas no basta sin condiciones adicionales de muestreo y regularidad H\"older. La reconstrucción de las estimaciones muestra dónde intervienen las probabilidades de cobertura, los pesos de regularización y las constantes del dominio.
+
+\item \textbf{Del residuo integral al uniforme.} El control H\"older limita la posibilidad de que los residuos se concentren en regiones no detectadas por las muestras. El paso de pérdidas integrales a normas uniformes se obtiene bajo las cotas de regularidad establecidas, no como consecuencia directa del comportamiento del optimizador.
+
+\item \textbf{Comparadores y minimizadores aproximados.} Como extensión cuantitativa de la reconstrucción de Shin, la Sección~\ref{sec:comparadores_aproximados} reemplaza la interpolación empírica exactamente nula por comparadores con pérdida $\varepsilon_m$ y minimizadores con brecha de suboptimalidad $\delta_m$. La condición suficiente $\varepsilon_m+\delta_m=O(a_m)$, donde $a_m$ es el peso regularizador, preserva el control uniforme de las seminormas y las tasas condicionales. No se demuestra que las redes concretas ni los entrenamientos numéricos satisfagan esa condición.
+
+\item \textbf{Estabilidad elíptica y error de aproximación.} Una vez controlados el residuo y el defecto de frontera, las estimaciones elípticas permiten acotar el error de la solución. En Poisson con Dirichlet fuerte resulta natural la estimación energética en $H^1$. Estas conclusiones son condicionales y se apoyan en el marco de Shin y la teoría elíptica clásica~\cite{gilbarg2001elliptic}. No se demuestra que un entrenamiento finito alcance necesariamente los minimizadores globales ni que las arquitecturas fijas utilizadas satisfagan las hipótesis de aproximación exacta.
+\end{enumerate}
+
+\subsection{Conclusiones computacionales}
+
+Los ejemplos introductorios muestran la diferencia entre optimizar componentes de la función de pérdida y medir el error de la solución respecto de una referencia. En Poisson 1D, la comparación de la PINN estándar, la penalización cuadrática media y la regularización LIPR presenta descensos de error que dependen tanto del tamaño de muestra como de la escala de los términos de regularización; esos descensos no deben interpretarse por sí solos como tasas teóricas.
+
+La reproducción del primer experimento elíptico de Shin presenta una tendencia cualitativa de reducción del error con Dirichlet penalizado. En el experimento oscilatorio, con Dirichlet impuesto exactamente, permanecen errores altos y no monótonos. La corrección posterior del peso LIPR y un ensayo controlado con y sin minilotes no explican por completo la discrepancia. El problema sigue siendo una limitación de reproducibilidad y optimización, no un contraejemplo a resultados asintóticos formulados bajo supuestos más fuertes. Las dificultades conocidas de dinámica de gradientes y condicionamiento~\cite{wang2021gradient,krishnapriyan2021failure} proporcionan contexto, pero no permiten atribuir una causa única a estas ejecuciones.
+
+El diagnóstico de la regularidad H\"older permite inspeccionar diferencias entre residuos en puntos de colocación y valores calculados sobre mallas auxiliares. Sus seminormas y máximos son evaluaciones finitas y no cotas certificadas de los supremos continuos. La distinción reaparece en Poisson 2D: al evaluar los modelos sobre una malla de $201\times201$ puntos, es posible registrar conjuntamente pérdida residual de prueba, residuo máximo evaluado, error máximo y defecto de Dirichlet. La desigualdad del principio del máximo ofrece el marco interpretativo, sin convertir los máximos discretos en una comprobación rigurosa de dicha desigualdad para todo el dominio.
+
+El nuevo barrido de Poisson 2D comprende $24$ ejecuciones: cuatro resoluciones, tres semillas y dos tratamientos de frontera. La imposición fuerte
+\[
+  h_\theta(x,y)=(1-x^2)(1-y^2)N_\theta(x,y)
+\]
+produce errores relativos $L^2$ y $H^1$ sustancialmente menores que la penalización de frontera en las configuraciones estudiadas. Para $N=75$, las medianas $L^2$ son $1.737\times10^{-4}$ con Dirichlet fuerte y $6.187\times10^{-3}$ con Dirichlet penalizado; las medianas $H^1$ son $5.483\times10^{-4}$ y $1.408\times10^{-2}$, respectivamente. Esta diferencia se obtiene con mayor tiempo computacional en el caso fuerte. La estabilización de errores en las mayores resoluciones impide hablar de una tasa asintótica observada para toda la familia.
+
+Los resultados revelan asimismo una separación significativa entre pérdidas residuales evaluadas sobre los puntos de colocación y sobre la malla independiente: para $N=12$ y Dirichlet fuerte, las medianas respectivas son $1.816\times10^{-4}$ y $1.045\times10^{-1}$. Este hallazgo es coherente con la función de las hipótesis de cobertura y regularidad de la teoría, sin representar su verificación experimental completa.
+
+El estudio complementario de redes $\tanh$ con Dirichlet fuerte
+(Sección~\ref{sec:experimentos_tanh_abc}) distinguió continuación de
+L--BFGS (A), comparación de anchuras a muestreo fijo (B) y escalamiento
+conjunto (C). En B, la mediana del error residual de prueba pasó de
+$0.02440$ a $0.01059$ al aumentar $W$ de $32$ a $128$. En C, con
+$m_r=1521,5476,11881$, la pérdida empírica disminuyó, pero la razón
+$\varepsilon_m/a_m^{\mathrm{int}}$ creció aproximadamente de $13.35$ a
+$33.76$. La pendiente descriptiva $-0.284$ de las tres medianas, obtenida con
+un presupuesto fijo de 900 pasos Adam y etapas L--BFGS sobre 512
+puntos, es menos pronunciada que el exponente $-0.750$ del criterio
+suficiente. No constituye una estimación de la tasa asintótica de
+aproximación de las clases neuronales.
+Por tanto, el protocolo aporta evidencia de mejor aproximación y de
+regularidad residual moderada en evaluaciones discretas, pero no
+verifica la condición asintótica de comparadores aproximados.
+
+La comparación FEM/FVM/PINN muestra que, dentro de los regímenes computados, FEM y FVM reducen sus errores de forma regular al refinar la discretización, mientras que la PINN del benchmark presenta variaciones por resolución e inicialización. Los costos registrados en CPU y GPU describen esas implementaciones concretas; no representan igualdad de recursos ni una comparación general de eficiencia. El experimento adicional de Dirichlet fuerte muestra, por otra parte, que el comportamiento de una PINN depende de manera importante de su parametrización de frontera y del protocolo de optimización.
+
+\section{Limitaciones del estudio}
+
+\begin{itemize}
+\item Las hipótesis teóricas sobre minimizadores globales, regularidad H\"older y existencia de aproximaciones exactas o suficientemente controladas no quedan garantizadas por Adam y L--BFGS. La Hipótesis 2 del marco de Shin exige condiciones restrictivas sobre las clases neuronales; la extensión con comparadores aproximados reduce la exigencia de interpolación exacta, pero requiere una tasa cuantitativa de aproximación y suboptimalidad que los experimentos no certifican.
+\item Parte de las reproducciones emplea puntos equiespaciados, mientras que los resultados probabilísticos se apoyan en hipótesis de muestreo que no son equivalentes. Una malla de evaluación densa tampoco certifica normas uniformes continuas.
+\item La revisión de la función objetivo LIPR corrigió el peso de regularización para que dependa de $N_f$ total. Cuando se usan minilotes, la estimación del máximo de derivadas sigue siendo un sustituto del funcional sobre toda la muestra.
+\item El problema oscilatorio de Shin no reprodujo su tendencia de error. El diagnóstico controlado tiene una semilla y un presupuesto limitado; se desconocen las contribuciones relativas de inicialización, frecuencia, cobertura y optimización.
+\item En A--C se minimizó el residuo cuadrático, pero no la pérdida
+regularizada con seminorma H\"older del Teorema~2. Por tanto, se
+estudiaron posibles comparadores empíricos y no minimizadores
+comprobados de aquella función objetivo; ni la suboptimalidad global
+$\delta_m$ ni la tasa de aproximación para todas las muestras quedan
+verificadas.
+\item El estudio A--C de redes $\tanh$ tiene solo dos semillas por
+configuración y tres escalas en el protocolo C; el primer punto C
+reutiliza B y no es una repetición independiente. Las seminormas
+residuales provienen de pares finitos. Los checkpoints históricos son
+necesarios para reproducir A; las tablas agregadas no reemplazan los
+archivos por semilla, el historial o una cota de suboptimalidad global.
+\item El barrido 2D utiliza tres semillas y una arquitectura base fija. Es útil para examinar el efecto del refinamiento y las condiciones de frontera, pero no separa por completo errores de aproximación y optimización ni verifica resultados asintóticos para familias crecientes de espacios neuronales.
+\item La comparación FEM/FVM/PINN de referencia utiliza una única realización de PINN por resolución, diferentes algoritmos y rutas de cómputo. Sus tiempos y errores son propios del entorno utilizado y no admiten extrapolaciones generales de eficiencia.
+\item La geometría cuadrada no tiene frontera global $C^{2,\alpha}$. Las estimaciones utilizadas deben justificarse mediante hipótesis adecuadas a ese dominio; no se generalizan sin análisis adicional a todas las geometrías con esquinas o interfaces.
+\end{itemize}
+
+\section{Líneas de trabajo futuro}
+
+\begin{enumerate}
+\item \textbf{Diagnóstico del caso oscilatorio.} Comparar varias semillas y presupuestos mayores, registrar el residuo fuera de muestra y controlar las diferencias entre una época, un paso de Adam y una iteración de L--BFGS, antes de formular conclusiones sobre reproducibilidad frente a Shin.
+\item \textbf{Verificación de tolerancias teóricas.} Investigar condiciones de arquitectura y complejidad que garanticen comparadores con $\varepsilon_m=O(a_m)$, así como métodos para acotar la suboptimalidad $\delta_m$ de los optimizadores. Una pérdida final pequeña no constituye por sí sola una cota de suboptimalidad global.
+\item \textbf{Control verificable de regularidad.} Diseñar procedimientos para obtener cotas superiores de seminormas H\"older y residuos uniformes, distinguiéndolos de evaluaciones discretas o estimadores empíricos.
+\item \textbf{Muestreo y error fuera de muestra.} Explorar puntos adaptativos o aleatorios, y estudiar cómo cambian las diferencias entre pérdida empírica y pérdida residual de prueba conforme varían resolución, arquitectura y presupuesto.
+\item \textbf{Contornos y geometrías.} Extender la comparación entre imposición exacta y penalizada de Dirichlet a datos de frontera no homogéneos, otros dominios y formulaciones variacionales.
+\item \textbf{Comparación de costo y precisión.} Diseñar benchmarks que controlen hardware, múltiples inicializaciones, criterios de parada y tolerancias de error entre FEM, FVM y PINN, incluyendo problemas inversos y con observaciones parciales.
+\end{enumerate}

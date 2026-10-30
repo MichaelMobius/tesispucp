@@ -1,0 +1,141 @@
+\chapter{Implementación computacional}
+\label{app:codigo}
+\singlespacing
+\lstset{basicstyle=\ttfamily\scriptsize,breaklines=true,numbersep=4pt,frame=none}
+
+Se presentan los programas empleados en el Capítulo~\ref{chap:resultados}. Los listados A.1--A.12 documentan los experimentos iniciales del proyecto; el A.8 presenta ahora el código corregido para nuevas ejecuciones, mientras que el archivo histórico original se conserva aparte para la trazabilidad de los CSV publicados. Los experimentos adicionales y las correcciones del protocolo se reproducen en el cuaderno incluido en \texttt{cuadernos/}; las secciones añadidas al final de este apéndice detallan su procedencia y los archivos necesarios. Los métodos comparten la ecuación de Poisson cuando corresponde, pero las nuevas celdas deben ejecutarse después de las definiciones indicadas en el cuaderno.
+
+El cuaderno computacional se encuentra en el
+\href{https://github.com/MichaelMobius/tesispucp}{repositorio público \texttt{tesispucp} de GitHub}.
+Los resultados originales y los nuevos registros de ejecución se conservan por separado. El barrido 2D adicional utilizó el perfil \texttt{experimento}, mientras que la reproducción principal de Shin empleó el perfil \texttt{articulo}. El código diferencia los errores relativos
+computados en los ejemplos propios de los errores RMS discretos no relativos
+utilizados para contrastar las figuras del artículo de
+Shin et al.~\cite{shin2020convergence}.
+
+\noindent\textbf{Dependencias.} Python 3, PyTorch~\cite{paszke2019pytorch}, NumPy, SciPy, Matplotlib y pandas;
+para la comparación con métodos clásicos, también \texttt{scikit-fem}~\cite{gustafsson2020scikitfem} y
+\texttt{FiPy}~\cite{guyer2009fipy}. La precisión doble se usa en las reproducciones de Shin y
+en la comparación de regularizaciones; los ejemplos iniciales emplean,
+según su configuración, precisión simple.
+
+\section{Regresión simple}
+\label{app:experimento1}
+\lstinputlisting[language=Python,caption={Regresión con red neuronal simple},label={lst:anexo1}]{codigos/A01_regresion.py}
+
+\section{Ecuación logística}
+\label{app:experimento2}
+\lstinputlisting[language=Python,caption={PINN para la ecuación logística},label={lst:anexo2}]{codigos/A02_logistica.py}
+
+\section{Poisson 1D con observaciones: solución seno}
+\label{app:experimento3}
+\lstinputlisting[language=Python,caption={Poisson 1D con datos: solución seno},label={lst:anexo3}]{codigos/A03_poisson1d_seno_datos.py}
+
+\section{Poisson 1D con observaciones: tangente hiperbólica}
+\label{app:experimento4}
+\lstinputlisting[language=Python,caption={Poisson 1D con datos: tangente hiperbólica},label={lst:anexo4}]{codigos/A04_poisson1d_tanh_datos.py}
+
+\section{Poisson 1D sin observaciones interiores}
+\label{app:experimento5}
+\lstinputlisting[language=Python,caption={Poisson 1D sin observaciones},label={lst:anexo5}]{codigos/A05_poisson1d_tanh_sin_datos.py}
+
+\section{Comparación de regularizadores}
+\label{app:experimento6}
+\lstinputlisting[language=Python,caption={PINN estándar, penalización media y LIPR},label={lst:anexo6}]{codigos/A06_regularizaciones.py}
+
+\section{Reproducción de Shin: Dirichlet débil}
+\label{app:experimento7}
+\lstinputlisting[language=Python,caption={Poisson 1D: reproducción de la Figura 3 de Shin},label={lst:anexo7}]{codigos/A07_shin_tanh.py}
+
+\section{Reproducción de Shin: Dirichlet fuerte}
+\label{app:experimento8}
+\noindent El Listado~\ref{lst:anexo8} es una implementación corregida, destinada a \emph{ejecuciones futuras}: fija el peso LIPR mediante el total $N_f$ y escribe en un directorio separado. Los CSV históricos de la Tabla~\ref{tab:shin_diagnostico_nuevo} y de la reproducción principal \emph{no} se recalcularon con este archivo. La versión original permanece como \texttt{codigos/A08\_shin\_oscilatorio\_historico.py}, pero no se repite integralmente para evitar duplicación.
+\lstinputlisting[language=Python,caption={Protocolo oscilatorio corregido para nuevas ejecuciones},label={lst:anexo8}]{codigos/A08_shin_oscilatorio.py}
+
+\section{Regularidad Hölder y cobertura}
+\label{app:experimento9}
+Se estima la seminorma de H\"older a partir de una malla auxiliar finita. El máximo discreto no certifica el supremo continuo de los teoremas.
+
+\lstinputlisting[language=Python,caption={Aproximación discreta de seminormas Hölder},label={lst:anexo9}]{codigos/A09_holder.py}
+
+\section{Poisson 2D con observaciones}
+\label{app:experimento10}
+\lstinputlisting[language=Python,caption={PINN Poisson 2D con observaciones},label={lst:anexo10}]{codigos/A10_poisson2d_datos.py}
+
+\section{Poisson 2D sin observaciones}
+\label{app:experimento11}
+\lstinputlisting[language=Python,caption={PINN Poisson 2D sin observaciones},label={lst:anexo11}]{codigos/A11_poisson2d_sin_datos.py}
+
+\section{Comparación FEM, FVM y PINN}
+\label{app:experimento12}
+Los errores se evalúan sobre una cuadrícula común.
+
+\lstinputlisting[language=Python,caption={Comparación numérica FEM, FVM y PINN},label={lst:anexo12}]{codigos/A12_fem_fvm_pinn.py}
+
+
+
+\section{Datos, entorno y trazabilidad del protocolo revisado}
+\label{app:protocolo_revisado}
+
+\paragraph{Cuaderno y fuentes de datos.}
+El cuaderno de Colab se adjunta al proyecto como archivo ejecutable.
+Los datos numéricos utilizados para actualizar los Capítulos IV y V se adjuntan en la carpeta \texttt{resultados/}, sin sustituir los CSV históricos. Los archivos clave son:
+\begin{itemize}
+\item \texttt{convergencia\_poisson2d\_revisada.csv}: una fila por cada una de las $24$ ejecuciones, con número de puntos, semilla, tipo de contorno, errores, residuos, defectos de frontera, tiempos y firma de configuración;
+\item \texttt{resumen\_convergencia\_poisson2d.csv}: medianas y desviaciones estándar de las tres semillas;
+\item \texttt{estabilidad\_modelos\_originales\_2d.csv}: reevaluación, en una malla distinta, de los dos experimentos 2D originales;
+\item \texttt{diagnostico\_oscilatorio\_controlado.csv}: comparación controlada de lote completo y minilote en el problema 1D de alta frecuencia;
+\item \texttt{resultados\_shin\_oscilatorio.csv}: tabla principal de la reproducción oscilatoria con la versión de función objetivo registrada;
+\item \texttt{comparacion\_fem\_fvm\_pinn.csv}: resultados del benchmark con $N=30$ y tiempos de ejecución;
+\item \texttt{entorno\_revision.json}: versiones del entorno histórico; el archivo \texttt{HISTORICO\_manifiesto\_sha256.csv} es propio de otra ejecución y no certifica este depósito; \texttt{MANIFIESTO\_DEPOSITO\_SHA256.csv} es el inventario generado para los archivos que se entregan ahora.
+\end{itemize}
+
+El entorno registrado fue Python 3.13.16, PyTorch 2.11.0 con CUDA 13.0, NumPy 2.1.3, SciPy 1.16.3, FiPy 4.0.3 y scikit-fem 12.0.2, sobre una GPU NVIDIA A100-SXM4-40GB. En el barrido 2D se empleó \texttt{torch.float32} y en Shin \texttt{torch.float64}. Se adjuntan los $24$ modelos de barrido 2D en \texttt{modelos\_2d\_barrido/}, los ocho modelos de diagnóstico oscilatorio en \texttt{diagnostico\_shin\_modelos/} y los checkpoints disponibles en \texttt{checkpoints\_shin/}. No debe asumirse que un archivo de pesos histórico es intercambiable entre versiones de código con distinta función objetivo.
+
+\paragraph{Discretización y precisión numérica.}
+En las reproducciones unidimensionales de Shin, la función \texttt{linspace} genera $N_f$ nodos desde $-1$ hasta $1$ e incluye los extremos para $N_f\geq2$, y el caso $N_f=1$ utiliza el origen; por ello no todos esos puntos pertenecen al dominio abierto. En Poisson 2D, $N=75$ representa subdivisiones por eje: $(N-1)^2=5\,476$ puntos interiores y $4(N+1)=304$ entradas de frontera, con cuatro esquinas duplicadas. El peso de penalización de frontera de los experimentos 2D originales es $10$. La ejecución 2D usa derivadas automáticas segundas en precisión simple (\texttt{float32}); el protocolo unidimensional de Shin usa \texttt{float64}. Los efectos de redondeo en segunda derivada no se cuantificaron mediante un experimento de sensibilidad de precisión.
+
+\paragraph{Definición de época y objetivo LIPR.}
+En la revisión se fijó el peso $\lambda_R=N_f^{-3/2}$ a partir del tamaño total de los puntos de colocación, incluso cuando se entrena con un lote más pequeño. Cuando se utilizan minilotes, la cantidad \texttt{max} del regularizador se evalúa en el lote y no es idéntica al máximo en todo el conjunto. En este documento, \emph{actualización Adam} designa una aplicación del optimizador a un lote; no debe confundirse con una pasada completa por los $N_f$ ejemplos. El protocolo específico y sus firmas se encuentran en las celdas que generan los CSV y los checkpoints.
+
+\paragraph{Rectas auxiliares y regularizadores discretos.}
+En las figuras de Shin, la recta de pendiente $-1$ se coloca verticalmente con la mediana de los errores positivos del barrido; es una guía visual dependiente de los datos, no un ajuste estadístico de pendiente ni una tasa demostrada. Para $\alpha=1$, el máximo de la derivada del operador y la seminorma Lipschitz son equivalentes como magnitudes continuas bajo regularidad suficiente, pero los máximos discretos LIPR y H\"older se calculan en muestras diferentes. El caso $\alpha=1/2$ se evaluó, sin un entrenamiento separado.
+
+\paragraph{Métricas en Poisson 2D.}
+Para $Q$ malla de prueba y $Q_\partial$ puntos de su frontera, los valores reportados son
+\begin{align*}
+ J_{\mathrm{PDE,test}}&=\frac{1}{|Q|}\sum_{z\in Q}|\Delta h_\theta(z)-f(z)|^2,\\
+ R_{\infty,Q}&=\max_{z\in Q}|\Delta h_\theta(z)-f(z)|,\\
+ E_{\infty,Q}&=\max_{z\in Q}|h_\theta(z)-u^*(z)|,\\
+ D_{\partial,Q}&=\max_{z\in Q_\partial}|h_\theta(z)-g(z)|.
+\end{align*}
+La columna \texttt{cota\_estabilidad\_evaluada} almacena $B_Q=R_{\infty,Q}/2+D_{\partial,Q}$. No es una cota certificada: el máximo de un residuo sobre una malla es, en general, \emph{menor o igual} que su supremo continuo, y tampoco certifica el supremo del error. Los errores $L^2$ y $H^1$ informados se estiman discretamente y se normalizan respecto de la solución analítica.
+
+\paragraph{Extracción de implementaciones.}
+Para facilitar la auditoría sin duplicar todo el cuaderno, los siguientes listados corresponden a sus celdas de revisión. Se ejecutan dentro del cuaderno después de sus definiciones anteriores, y no constituyen programas independientes.
+\lstinputlisting[language=Python,caption={Dirichlet fuerte y métricas discretas de estabilidad: extracto del cuaderno},label={lst:anexo13}]{codigos/A13_metricas_estabilidad_2d.py}
+\lstinputlisting[language=Python,caption={Entrenamiento revisado y registro reproducible del barrido 2D: extracto del cuaderno},label={lst:anexo14}]{codigos/A14_barrido_dirichlet_2d.py}
+\lstinputlisting[language=Python,caption={Diagnóstico controlado del caso oscilatorio: extracto del cuaderno},label={lst:anexo15}]{codigos/A15_diagnostico_oscilatorio.py}
+
+\paragraph{Reproducibilidad y limitaciones.}
+Los valores presentados se refieren a la ejecución registrada, no a una certificación matemática. Los cambios de precisión numérica, biblioteca, plataforma, semilla o función objetivo pueden modificar los resultados. La combinación de CSV, gráficos, parámetros, checkpoints y cuaderno permite inspeccionar las correspondencias entre datos y figuras; para verificar un número específico se debe ejecutar la celda correspondiente con su configuración completa y comparar la huella del archivo exportado.
+
+
+\section{Protocolo de comprobaci\'on de los comparadores aproximados (A--C)}
+\label{app:tanh_abc}
+
+El cuaderno ejecutable y la nota de procedencia se adjuntan al
+directorio de reproducibilidad. Las medianas reportadas est\'an
+en un CSV de la carpeta de resultados; su nombre y las reglas
+de interpretaci\'on, figura en la nota de procedencia. Las figuras
+del estudio se reconstruyeron a partir de las medianas reportadas,
+no de registros individuales inventados.
+
+El depósito incluye el CSV individual recuperado del Colab (16 filas),
+el resumen original, el entorno y las cuatro fuentes de checkpoints del
+protocolo A. Los archivos originales de Drive permiten contrastar los
+resultados por semilla; los modelos finales y los historiales por etapa
+no se han incorporado íntegramente a esta copia. Para una auditoría de
+los entrenamientos finales debe consultarse el archivo original en
+Google Drive, identificado en la nota de procedencia. El manifiesto
+SHA-256 del depósito se genera sobre los archivos efectivamente
+entregados, y el manifiesto antiguo se conserva como histórico.
