@@ -35,6 +35,18 @@ ax.plot(b.ancho,b.mediana_H1_integral,'s-',label=r'Error $H^1$ integral estimado
 ax.set(xlabel='Anchura W (N=40 fijo)',ylabel='Magnitud estimada (escalas distintas)',title='Protocolo B: muestreo fijo')
 ax.legend(fontsize=9);save(fig,'abc_B_anchuras.png')
 
+# Graficas independientes: MSE (cuadratica) y H1 (norma integral estimada)
+# No compartir eje para magnitudes heterogeneas.
+fig,ax=plt.subplots(figsize=(6.6,3.6))
+ax.plot(b.ancho,b.mediana_eps_test,'o-')
+ax.set(xlabel='Anchura W (N=40 fijo)',ylabel='MSE residual de prueba',title='Protocolo B: residuo de prueba')
+save(fig,'abc_B_mse_test.png')
+
+fig,ax=plt.subplots(figsize=(6.6,3.6))
+ax.plot(b.ancho,b.mediana_H1_integral,'s-')
+ax.set(xlabel='Anchura W (N=40 fijo)',ylabel=r'Error H$^1$ integral estimado',title='Protocolo B: error de solucion')
+save(fig,'abc_B_H1_integral.png')
+
 fig,ax=plt.subplots(figsize=(6.6,3.6))
 ax.loglog(c.m_r,c.mediana_eps,'o-',label='MSE residual empírico')
 ax.loglog(c.m_r,c.mediana_eps_test,'s--',label='MSE residual de prueba')
