@@ -16,7 +16,7 @@ La convención de la tesis es `L=Δ`, `Δu*=f` y `r_h=Δh-f` (páginas PDF 113�
 
 La hipótesis `u*∈H01` de la última fila es más fuerte que su pertenencia a `H¹` y su coincidencia de frontera con `h` en el Teorema 3.20. El puente `ker(trace)=H01` no está formalizado. La sexta etapa tampoco formaliza comparadores, minimizadores, muestreo ni tasa probabilística; por tanto **no completa el Teorema 3.20**. Para datos de frontera no homogéneos se necesita además representar una extensión de `g` y probar que el error tiene traza cero. Una penalización finita de frontera no da esta conclusión.
 
-Verificación local: `lake build` (3189 trabajos), `#print axioms` solo `propext`, `Classical.choice`, `Quot.sound`; Lean 4.35.0, Mathlib v4.35.0 y EllipticPDE `c47acceaf985f59e1cf3257ffea077a73ea99dae`. CI de la PR apilada: se registrará al concluir.
+Verificación local: `lake build` (3189 trabajos), `#print axioms` solo `propext`, `Classical.choice`, `Quot.sound`; Lean 4.35.0, Mathlib v4.35.0 y EllipticPDE `c47acceaf985f59e1cf3257ffea077a73ea99dae`. El CI Lean 4 / Mathlib de la PR #8 pasó en la ejecución [42557228273](https://github.com/MichaelMobius/tesispucp/actions/runs/42557228273).
 
 ## Registro de la quinta etapa
 
