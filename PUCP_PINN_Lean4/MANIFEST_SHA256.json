@@ -1,0 +1,12 @@
+{
+  "README.md": "a57a1e5afd0d737857381d5f7af7ed30eeed8d8b66b9c177155118e1f9433ed1",
+  "lean-toolchain": "ca5f1f601d34c49079e38d7e7041eb0f2a9c227fbc1df0f404820069a052330c",
+  "lakefile.toml": "d450e1e2b1419e1c09138c14414abf97c5965432ee5042048cd0e39eeb04f38e",
+  "ESTADO.json": "cbcadbced8fac9c7bc48c26315c5e0a5dd46f682bf94bb99018525f4b37dda71",
+  "MAPA_VERIFICACION.md": "9aa7f9f9e818a1b9427d4b85f52c8f1f4734d88d756687ba31204bc494203428",
+  "TesisPINN.lean": "3392f44c479d50b33d1d5ebef07021d573f4286ce8614cdda82bfd4d8e444d7b",
+  "TesisPINN/Minimalidad.lean": "6126b32640f6462cd4e9ada19566084bbeed05afc61a55c74d34e948c17a434c",
+  "TesisPINN/RedCuadratica.lean": "13bd7329bb3b7a2fb7c332ede8c16d310fa17e67d1a94e5faff6385911348698",
+  "TesisPINN/Energia.lean": "33ca77fbc9aaa761c092f9d5d4ec298c6c12906408747c80d2ee737bc4e02a22",
+  ".github/workflows/lean.yml": "489c27f0bfe99d63d8742c25c16274b8b4a2905246843a110fc83f3fec987804"
+}
