@@ -17,4 +17,5 @@ import TesisPINN.CoberturaPINN
 import TesisPINN.VoronoiMedible
 import TesisPINN.CoberturaIntegral
 import TesisPINN.OcupacionAleatoria
+import TesisPINN.TasaPoblacional
 import TesisPINN.RedCuadratica
