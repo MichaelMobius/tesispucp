@@ -1,4 +1,23 @@
-# Mapa de dependencias matemáticas — séptima etapa
+# Mapa de dependencias matemáticas — octava etapa
+
+## Pérdida poblacional y transferencia probabilística condicional
+
+`PerdidaPoblacional.lean` trabaja en `U=(-1,1)²`, con `r=Δ(ψq)-f∈L²(U)` y `h=ψq` globalmente suave. La tesis fija `L=Δ`, y sus ecuaciones (3.72)–(3.74) usan el residuo opuesto `f−Δh`, con la misma norma. La constante `K=constanteEnergiaCuadrado>0` es la misma para todos los candidatos y tamaños de muestra.
+
+| Dependencia | Declaración Lean | Resultado y límite |
+|---|---|---|
+| `r∈L²`, `ρ₀≤ρ≤ρMax` c.t.p., `ρ` medible | `DensidadResidual`, `integrable_residuo_ponderado` | `ρr²∈L¹(U)`; **la cota superior esencial es una premisa adicional explícita**, suficiente para finitud. La Hipótesis 3.2 enuncia la cota inferior y cotas de masa de bolas, no una cota superior directa de `ρ`. |
+| Identidad `‖r‖²₂=∫r²` y cota inferior de la densidad | `cota_residuo_por_densidad` | `ρ₀‖r‖²₂≤∫ρr²`, con representantes `Lp` y casi en todas partes |
+| `λr>0`, pérdida total que domina `λr∫ρr²` | `perdidaResidualPoblacional_nonneg`, `cota_residuo_por_perdida`, `cota_norma_residuo_por_perdida` | `‖r‖²₂≤Loss/(ρ₀λr)` y su versión con raíz; la dominación es una hipótesis visible que corresponde a los términos no negativos de la pérdida PINN |
+| `u*∈H01`, `Δu*=f` distribucional, `h=ψq` suave | `estimacion_error_por_perdida` | `‖h−u*‖H¹≤K(ρ₀λr)^(-1/2)√Loss`, paso ponderado de (3.74) |
+| Dominación para cada índice y `Loss_n→0` | `tendsto_psiGraph_de_perdida` | Convergencia `H¹` determinista; el antecedente de pérdida no se deduce de (3.26) aquí |
+| `Loss_n≤A·mr(n)^(-α/2)` en dimensión `d=2` | `tasa_error_de_perdida_mr` | Cota `K√A/√(ρ₀λr)·mr(n)^(-α/4)`, exponente de (3.73); `n` y `mr(n)` son distintos y la cota de pérdida es premisa |
+| Espacio de probabilidad, dominación y convergencia de pérdida c.t.p. | `tendsto_psiGraph_de_perdida_ae` | Transferencia casi segura trayectoria por trayectoria; no se construye la pérdida aleatoria |
+| Pérdida y aproximantes mensurables; evento de pérdida de probabilidad uno | `prob_uno_tendsto_psiGraph_de_perdida` | El evento de convergencia `H¹` es mensurable y tiene probabilidad uno. Las mensurabilidades son hipótesis visibles, no consecuencias de un minimizador aún no construido. |
+
+**Pendiente para los Teoremas 3.8 y 3.20 completos:** formalizar la Hipótesis 3.2 (distribuciones i.i.d., independencia, particiones y cobertura), la Hipótesis 3.7 (comparadores y regularidad uniforme), pesos (3.23), minimizadores globales mensurables y la cota de pérdida (3.26). Los límites `C⁰` (3.27) y tasas (3.28) tampoco se han demostrado. La tasa (3.73) y la convergencia (3.72) son **implicaciones condicionales** en la clase homogénea `ψq`; faltan la construcción aleatoria y el puente de trazas para candidatos generales. La normalización `∫ρ=1` de una densidad probabilística no interviene en la comparación y no se codifica todavía. La cota superior esencial y la mensurabilidad de los aproximantes son obligaciones adicionales explícitas de esta formalización.
+
+Véase `INFORME_OCTAVA_ETAPA.md` para la correspondencia literal con la tesis y la verificación. Las secciones siguientes registran el estado histórico de etapas previas; sus listas de pendientes deben leerse en la fecha de cada etapa.
 
 ## Constante uniforme y transferencia determinista
 
@@ -119,3 +138,4 @@ El enunciado final usa `Ω : Opens Plano` acotado, `U : H1Graph.H01 volume Ω`, 
 - Extender el nuevo puente a dimensión finita general si se desea fuera de `ℝ²`; la prueba actual usa la base ortonormal de dos elementos.
 
 Otros resultados: Teorema 3.8, Lema 3.24, Teoremas 3.4 y 3.18, Proposiciones 3.15 y 3.25 y Corolario 3.26 siguen pendientes como resultados completos. Sus pasos parciales de `Minimalidad.lean` y `RedCuadratica.lean` permanecen compilados.
+
