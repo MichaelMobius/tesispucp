@@ -5,4 +5,5 @@ import TesisPINN.LaplacianoDistribucional
 import TesisPINN.DirichletCuadrado
 import TesisPINN.RecorteCuadradoH01
 import TesisPINN.ResiduoCuadrado
+import TesisPINN.TransferenciaEnergetica
 import TesisPINN.RedCuadratica
