@@ -17,7 +17,7 @@ Para `U=(-1,1)²` y la medida de Lebesgue, `constanteEnergiaCuadrado` se elige *
 
 **Correspondencia con el Teorema 3.8:** sus hipótesis 3.2 y 3.7, los comparadores exactos, la selección mensurable de minimizadores globales, los pesos de regularización (3.23), la cobertura y la convergencia/tasa de la pérdida poblacional (3.26) no se han formalizado. El enunciado (3.27) proporciona convergencia `C⁰` de `Δh_m−f` casi segura; falta formalizar la transferencia `C⁰→L²` en el evento de probabilidad uno. Para la tasa (3.73) falta además la comparación de la pérdida ponderada con `‖r_m‖²_{L²}` usando `ρ_r≥ρ₀>0` y `λ_r>0`. Por ello (3.72) y (3.73) **no** están demostradas como afirmaciones probabilísticas.
 
-La auditoría de coherencia de las PR #3–#8 se registra en `INFORME_SEPTIMA_ETAPA.md`. Verificación local: `lake build` pasó (3190 trabajos) y `#print axioms` de los teoremas nuevos mostró solo `propext`, `Classical.choice`, `Quot.sound`; el estado del CI de la PR apilada se registrará cuando concluya.
+La auditoría de coherencia de las PR #3–#8 se registra en `INFORME_SEPTIMA_ETAPA.md`. Verificación local: `lake build` pasó (3190 trabajos) y `#print axioms` de los teoremas nuevos mostró solo `propext`, `Classical.choice`, `Quot.sound`. El CI Lean 4 / Mathlib de la PR #9 pasó en la ejecución [42561147867](https://github.com/MichaelMobius/tesispucp/actions/runs/42561147867).
 
 ## Registro de la sexta etapa
 
