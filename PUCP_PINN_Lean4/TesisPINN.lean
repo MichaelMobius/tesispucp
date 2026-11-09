@@ -16,4 +16,5 @@ import TesisPINN.VariacionalPINN
 import TesisPINN.CoberturaPINN
 import TesisPINN.VoronoiMedible
 import TesisPINN.CoberturaIntegral
+import TesisPINN.OcupacionAleatoria
 import TesisPINN.RedCuadratica
