@@ -50,4 +50,4 @@ Las ramas #3–#8 forman la cadena apilada `main → #3 → #4 → #5 → #6 →
 - `#print axioms`: solo `propext`, `Classical.choice`, `Quot.sound` en los teoremas nuevos.
 - No hay `sorry`, `admit` ni axiomas nuevos en el módulo nuevo.
 - Lean 4.35.0, Mathlib v4.35.0, EllipticPDE `c47acceaf985f59e1cf3257ffea077a73ea99dae`; pruebas anteriores y PDF intactos.
-- CI de la PR borrador apilada: pendiente de ejecución remota.
+- CI Lean 4 / Mathlib de la PR borrador #9: éxito, ejecución [42561147867](https://github.com/MichaelMobius/tesispucp/actions/runs/42561147867).
