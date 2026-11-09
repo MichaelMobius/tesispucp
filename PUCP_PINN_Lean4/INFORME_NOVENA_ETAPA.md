@@ -42,5 +42,6 @@ Para obtener (3.26) faltan la prueba de (3.13), la cobertura probabilística por
 
 - Versiones fijadas: Lean 4.35.0, Mathlib v4.35.0, EllipticPDE `c47acceaf985f59e1cf3257ffea077a73ea99dae`.
 - `lake build` local: éxito, 3200 trabajos. `#print axioms` en los teoremas nuevos: únicamente `propext`, `Classical.choice`, `Quot.sound`.
+- CI Lean 4 / Mathlib de la PR borrador #11: éxito, ejecución [42634872004](https://github.com/MichaelMobius/tesispucp/actions/runs/42634872004).
 - Los módulos anteriores y el PDF no se modificaron. No se introdujeron `sorry`, `admit` ni axiomas nuevos.
 
