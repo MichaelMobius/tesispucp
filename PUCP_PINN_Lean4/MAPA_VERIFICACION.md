@@ -1,4 +1,25 @@
-# Mapa de dependencias matemáticas — sexta etapa
+# Mapa de dependencias matemáticas — séptima etapa
+
+## Constante uniforme y transferencia determinista
+
+Para `U=(-1,1)²` y la medida de Lebesgue, `constanteEnergiaCuadrado` se elige **una sola vez** a partir de `exists_poincare_constant` y vale `Cₚ√(1+Cₚ²)` para algún `Cₚ>0` dependiente solo del dominio. No se afirma la constante óptima `√2/π` del Corolario 3.23. La prueba de `energia_cuadrado_uniforme` cuantifica primero sobre todos los errores `e∈H01` y todos los residuos `r∈L²(U)` con `Δe=r`; por tanto la elección no depende de `m`, `e` ni `r`.
+
+| Paso | Declaración Lean | Alcance |
+|---|---|---|
+| `K>0` fija para todo error admisible | `constanteEnergiaCuadrado_pos`, `energia_cuadrado_uniforme` | Forma uniforme del Lema 3.19, ecuación (3.71), en el cuadrado; premisas analíticas `e∈H01`, `Δe=r∈L²` explícitas |
+| Residuo de un candidato `h=ψq` ante `u*` fija | `residuoAproximacion`, `laplaciano_error_psi_solucion_exacta` | `r=Δh−f`; requiere `Δu*=f` como ecuación distribucional |
+| Cota uniforme para todos los `q` globalmente `C∞` | `estimacion_uniforme_psi_solucion_exacta` | Paso determinista (3.74) en el caso homogéneo, condicionado a `u*∈H01`, `Δu*=f` |
+| Cota `‖r_m‖≤ε_m ⇒ ‖h_m−u*‖≤Kε_m` | `cota_error_de_cota_residuo` | Completamente probado bajo esas premisas, con el mismo `K` para todo `m` |
+| `r_m→0` en `L²` implica `h_m→u*` en `H¹` | `tendsto_psiGraph_de_residuo_l2` | Implicación determinista previa a (3.72); no demuestra convergencia casi segura del residuo |
+| `ε_m→0` y `‖r_m‖≤ε_m` implican convergencia `H¹` | `tendsto_psiGraph_de_cota_residuo` | Probado; la convergencia de `ε_m` es premisa |
+| Una tasa residual `A(m+1)^(-β)` se transfiere con coeficiente `KA` | `tasa_potencia_psi` | Transferencia de exponente; no prueba la tasa residual de (3.73) |
+| Cota válida en cada realización de un evento arbitrario `A` | `cota_error_en_evento` | Preparación trayectoria por trayectoria; ninguna afirmación sobre la medida de `A` |
+
+**Correspondencia con el Teorema 3.8:** sus hipótesis 3.2 y 3.7, los comparadores exactos, la selección mensurable de minimizadores globales, los pesos de regularización (3.23), la cobertura y la convergencia/tasa de la pérdida poblacional (3.26) no se han formalizado. El enunciado (3.27) proporciona convergencia `C⁰` de `Δh_m−f` casi segura; falta formalizar la transferencia `C⁰→L²` en el evento de probabilidad uno. Para la tasa (3.73) falta además la comparación de la pérdida ponderada con `‖r_m‖²_{L²}` usando `ρ_r≥ρ₀>0` y `λ_r>0`. Por ello (3.72) y (3.73) **no** están demostradas como afirmaciones probabilísticas.
+
+La auditoría de coherencia de las PR #3–#8 se registra en `INFORME_SEPTIMA_ETAPA.md`. Verificación local: `lake build` pasó (3190 trabajos) y `#print axioms` de los teoremas nuevos mostró solo `propext`, `Classical.choice`, `Quot.sound`. El CI Lean 4 / Mathlib de la PR #9 pasó en la ejecución [42561147867](https://github.com/MichaelMobius/tesispucp/actions/runs/42561147867).
+
+## Registro de la sexta etapa
 
 ## Residuo laplaciano concreto en `U=(-1,1)²`
 
