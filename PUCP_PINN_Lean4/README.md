@@ -1,10 +1,10 @@
 # PUCP PINN Lean 4 — Capítulo III
 
-Proyecto de formalización progresiva de la tesis de Maestría en Matemáticas Aplicadas de la PUCP. **Estado al 8 de noviembre de 2026:** `lake build` exitoso con Lean 4.35.0 y Mathlib v4.35.0; once declaraciones compiladas y auditadas con `#print axioms`. Ningún teorema completo del Capítulo III ha sido certificado todavía.
+Formalización progresiva de la tesis de Maestría en Matemáticas Aplicadas de la PUCP. La segunda etapa se concentra en el Lema 3.19; el Teorema 3.20 sigue pendiente.
 
 ## Reproducir
 
-Desde este directorio, con elan y Git disponibles:
+Con elan y Git disponibles, desde este directorio:
 
 ```text
 lake update
@@ -12,14 +12,14 @@ lake exe cache get
 lake build
 ```
 
-En esta ejecución de Windows se ubicó temporalmente `ELAN_HOME` en `D:\PUCP_PINN_Lean4\.tooling\elan` por falta de espacio en C:. La carpeta `.tooling` y `.lake` no se versionan. El archivo `lake-manifest.json` fija la revisión exacta de Mathlib.
+`lean-toolchain` fija Lean 4.35.0; `lakefile.toml` fija Mathlib v4.35.0 y el commit `c47acceaf985f59e1cf3257ffea077a73ea99dae` de [EllipticPDE](https://github.com/alejandro-soto-franco/EllipticPDE). `lake-manifest.json` registra las revisiones resueltas. Los artefactos `.lake` y `.tooling` no se versionan.
 
-## Código
+## Módulos
 
-- `TesisPINN/Minimalidad.lean`: dos consecuencias algebraicas condicionales de la minimalidad usada en el Teorema 3.8.
-- `TesisPINN/Energia.lean`: seis resultados del núcleo de la estimación energética, incluida la deducción de la cota de Green por Cauchy–Schwarz desde una identidad débil entre espacios con producto interno y la cota de la norma del par `(error, gradiente)` con coeficiente `Cₚ√(1+Cₚ²)`.
-- `TesisPINN/RedCuadratica.lean`: tres identidades de activación cuadrática y factor de frontera utilizadas en el Lema 3.24.
+- `TesisPINN/Minimalidad.lean`: dos pasos algebraicos condicionales del Teorema 3.8.
+- `TesisPINN/Energia.lean`: núcleo hilbertiano previo de la estimación energética; no se cambió en esta etapa.
+- `TesisPINN/EnergiaSobolev.lean`: error en `H1Graph.H01`; Poincaré con constante positiva; norma H¹; gradiente distribucional; Green por densidad de funciones de prueba; estimación energética bajo la identidad laplaciana en pruebas.
+- `TesisPINN/RedCuadratica.lean`: tres identidades algebraicas del Lema 3.24.
 
-Las hipótesis `hWeak` y `hPoincare` en `Energia.lean` no son axiomas nuevos: son premisas explícitas de los teoremas condicionales. Aún hay que obtenerlas para el error de Poisson como función de `H₀¹`, y vincular la norma del par con la norma Sobolev `H¹`. La convergencia y la tasa del Teorema 3.20 requieren además formalizar sus hipótesis de muestreo, comparadores, minimizadores y densidad.
+La identificación de la premisa literal `Δe ∈ L²` con la condición `HasTestLaplacian` aún requiere el puente de segundas derivadas distribucionales. Por tanto, la versión literal del Lema 3.19 no se declara completa. Véanse `INFORME_COMPILACION.md` y `MAPA_VERIFICACION.md`. `MANIFEST_SHA256.json` corresponde al ZIP de entrada, no a esta revisión.
 
-Véanse [el informe de compilación](INFORME_COMPILACION.md) y [el mapa tesis–Lean](MAPA_VERIFICACION.md) para la clasificación exacta. `MANIFEST_SHA256.json` documenta la integridad del ZIP original, antes de estas modificaciones.
