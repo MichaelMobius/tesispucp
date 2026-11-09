@@ -1,7 +1,17 @@
 {"version": "1.3.0",
  "packagesDir": ".lake/packages",
  "packages":
- [{"url": "https://github.com/leanprover-community/mathlib4",
+ [{"url": "https://github.com/alejandro-soto-franco/EllipticPDE.git",
+   "type": "git",
+   "subDir": "lean",
+   "scope": "",
+   "rev": "c47acceaf985f59e1cf3257ffea077a73ea99dae",
+   "name": "EllipticPdes",
+   "manifestFile": "lake-manifest.json",
+   "inputRev": "c47acceaf985f59e1cf3257ffea077a73ea99dae",
+   "inherited": false,
+   "configFile": "lakefile.toml"},
+  {"url": "https://github.com/leanprover-community/mathlib4",
    "type": "git",
    "subDir": null,
    "scope": "leanprover-community",
@@ -94,3 +104,4 @@
  "name": "tesis_pinn",
  "lakeDir": ".lake",
  "fixedToolchain": false}
+
