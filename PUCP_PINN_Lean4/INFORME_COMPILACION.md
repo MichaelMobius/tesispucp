@@ -1,28 +1,39 @@
-# Informe de compilación — segunda etapa (8 de noviembre de 2026)
+# Informe de compilación y alcance — tercera etapa (8 de noviembre de 2026)
 
-## Configuración fijada
+## Entorno
 
-- Lean: `leanprover/lean4:v4.35.0` (`lean-toolchain`).
-- Mathlib: etiqueta `v4.35.0`, commit del manifiesto `56a005855ea17e0b0958f73ec801ae140b0a1679`.
-- EllipticPDE de Soto Franco y Marshall-Stevens: commit exacto `c47acceaf985f59e1cf3257ffea077a73ea99dae`, subdirectorio `lean`, paquete Lake `EllipticPdes`. El commit se registró tanto en `lakefile.toml` como en `lake-manifest.json`.
-- Se inspeccionaron `EllipticPdes/Sobolev/Graph.lean` y `EllipticPdes/Poincare/GraphBounded.lean`, además de `Sobolev/WeakDeriv.lean` para la semántica distribucional.
+- `lean-toolchain`: Lean 4.35.0.
+- `lakefile.toml`: Mathlib v4.35.0 y EllipticPDE en el commit exacto `c47acceaf985f59e1cf3257ffea077a73ea99dae`.
+- `lake-manifest.json`: Mathlib `56a005855ea17e0b0958f73ec801ae140b0a1679`; EllipticPDE en el commit anterior.
+- `lake build TesisPINN.LaplacianoDistribucional`: éxito, código 0.
+- `lake build` del objetivo raíz: éxito, código 0, **3166 trabajos**.
+- Los `#print axioms` de los once teoremas nuevos enumeran únicamente `[propext, Classical.choice, Quot.sound]`. No aparece `sorryAx`; el módulo nuevo no contiene `sorry`, `admit` ni declaraciones `axiom`.
+- `TesisPINN/Energia.lean` conserva SHA256 `DDC5D2DD1A4F3F7E263B4F1CF3E847DFBE039DDAA0AD80A34C06350E6D3CA987`; `EnergiaSobolev.lean` también se conservó sin cambios.
 
-## Comandos y resultado
+Las advertencias de imports del sistema de módulos y la variable `he` no usada en `Energia.lean` no son errores de compilación.
 
-- `lake update`: éxito, código 0; fijó el commit de EllipticPDE sin cambiar el commit de Mathlib.
-- `lake build`: éxito, código 0, **3165 trabajos** en la primera compilación conjunta, incluidas `EllipticPdes.Sobolev.Graph`, `EllipticPdes.Poincare.GraphBounded` y `TesisPINN.EnergiaSobolev`.
-- Tras ampliar el módulo con Green por densidad y la identificación del gradiente distribucional, `lake build TesisPINN.EnergiaSobolev`: éxito, código 0, 3161 trabajos. La compilación final del objetivo raíz con `lake build` también tuvo éxito, código 0, **3165 trabajos**.
-- `#print axioms` para los cinco teoremas nuevos: solo `[propext, Classical.choice, Quot.sound]`; ninguno contiene `sorryAx`.
-- No se modificó `TesisPINN/Energia.lean`; SHA256: `DDC5D2DD1A4F3F7E263B4F1CF3E847DFBE039DDAA0AD80A34C06350E6D3CA987`.
+## Enunciado final comprobado
 
-Las advertencias de compilación son del sistema de módulos de Mathlib, variables de sección no usadas en tres teoremas nuevos y la variable `he` heredada de `Energia.lean`. No hay errores de compilación en los objetivos indicados.
+En el plano `EuclideanSpace ℝ (Fin 2)` y con medida de Lebesgue, para un abierto acotado `Ω`, un error `U : H1Graph.H01 volume Ω` y `r : Lp ℝ 2 (volume.restrict Ω)`, si `ΔU = r` como igualdad de distribuciones abiertas `𝓓′(Ω)`, entonces existe `Cₚ > 0` tal que
 
-## Alcance matemático
+`‖U‖_{H¹} ≤ Cₚ √(1 + Cₚ²) ‖r‖_{L²}`.
 
-`EnergiaSobolev.lean` demuestra Poincaré con constante positiva, la identidad cuadrática de la norma H¹ del grafo, que `gradL` es gradiente distribucional cuando el dominio es abierto, Green para el propio error por densidad, y la cota energética bajo la identidad distribucional sobre funciones de prueba `HasTestLaplacian`.
+El enunciado Lean es `energia_sobolev_plano_volumen`. La igualdad distribucional se expresa por `HasDistributionalLaplacian`; `laplaciano_distribucional_l2_unico` prueba que `r` es único, de modo que su norma representa `‖ΔU‖_{L²}`. La definición de `H01` es el cierre de los grafos de funciones de prueba, que es la representación empleada aquí para la pertenencia a `H₀¹`. El dominio Lipschitz de la tesis cumple las hipótesis de abierto acotado; la prueba usa un supuesto geométrico más débil.
 
-**Pendiente del Lema 3.19 literal:** demostrar que la premisa de la tesis `Δe ∈ L²` y la igualdad distribucional correspondiente implican `HasTestLaplacian`. Falta un lema de laplaciano distribucional en dominio abierto que sume segundas derivadas, use `HasWeakFDerivOn` y convierta la integral de prueba al producto interno `L²`. Esta premisa no se postuló como axioma y no debe confundirse con la hipótesis abstracta `hWeak` entre el error y sí mismo: la nueva identidad se exige solo sobre funciones de prueba y Green para el error se demuestra por continuidad.
+## Demostración y control del signo
 
-**Teorema 3.20:** sigue pendiente. Su parte de trazas, pérdida de PINN, probabilidad y tasas no se infiere del Lema 3.19. Véase `MAPA_VERIFICACION.md` para cada dependencia.
+1. `laplacianoDistribucional` usa `LineDeriv.laplacianCLM` de Mathlib. `laplacianoDistribucional_eq_suma` lo reescribe como `∂₁(∂₁T)+∂₂(∂₂T)` en la base ortonormal de `ℝ²`.
+2. `derivadaPrueba` construye la derivada direccional como función de prueba: suavidad por `ContDiff.fderiv_right`, soporte compacto por `HasCompactSupport.fderiv_apply`, y `tsupport` contenido en el original por `tsupport_fderiv_apply_subset`.
+3. `H01_le_W12` y `mem_W12_iff_hasWeakFDerivOn` identifican `gradL U` con la primera derivada distribucional de `fnL U`. Por ello `laplaciano_ofFun_eq_div_grad` expresa el laplaciano como divergencia de ese gradiente.
+4. La definición de derivada distribucional en Mathlib aplica `∂ᵢ T` a `φ` como `-T(∂ᵢ φ)`. Por tanto `laplaciano_eval_producto` demuestra `⟨ΔU,φ⟩ = -∫ gradL U · ∇φ`. La suma sobre la base se convierte en producto escalar con `OrthonormalBasis.sum_inner_mul_inner`; la integrabilidad necesaria se demuestra localmente.
+5. Los lemas `inner_gradiente_prueba_eq_integral` e `inner_residuo_prueba_eq_integral` convierten las integrales en productos `L²(Ω)`; el soporte de `φ` anula las contribuciones externas. `laplaciano_distribucional_implica_prueba` obtiene `HasTestLaplacian U r` con el signo correcto.
+6. La prueba de la etapa anterior extiende la identidad de las pruebas al propio `U` por densidad, obtiene Poincaré con constante positiva y aplica `energia_norma_par_debil` a la norma del grafo.
 
+## Clasificación y límites
+
+- **Completo y compilado:** el puente distribucional y la estimación analítica del Lema 3.19 para `ℝ²`, `Ω` abierto acotado, `U ∈ H₀¹` representado por el grafo y `ΔU=r∈L²`. No se asumen `hWeak` ni `hPoincare` en el enunciado final.
+- **Condicional previamente verificado:** los lemas hilbertianos de `Energia.lean` conservan sus premisas abstractas; el módulo nuevo las descarga al aplicar el resultado.
+- **Pendiente:** identificar la diferencia concreta de las soluciones del Teorema 3.20 con un elemento de `H01` a partir de sus trazas, y formalizar la convergencia probabilística. Tampoco se ha extendido el puente más allá de `ℝ²`.
+
+No se modificó la tesis. Véase `MAPA_VERIFICACION.md` para la cadena de dependencias y las tareas pendientes.
 
