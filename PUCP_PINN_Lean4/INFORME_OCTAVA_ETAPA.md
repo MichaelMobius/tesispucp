@@ -34,5 +34,5 @@ La tesis escribe `e_m=u*−h_m`, `r_m=f−Δh_m`; Lean usa `h_m−u*` y `Δh_m�
 - `lake build` local: éxito, 3197 trabajos, tras importar `GraphDense` y el módulo nuevo.
 - `#print axioms` de todos los teoremas nuevos: únicamente `propext`, `Classical.choice`, `Quot.sound`.
 - Sin `sorry`, `admit` ni axiomas nuevos en el módulo nuevo. Los módulos previos y el PDF no se modificaron.
-- CI de la base PR #9: éxito, ejecución [42561412158](https://github.com/MichaelMobius/tesispucp/actions/runs/42561412158). El CI de la nueva PR se registra cuando termine.
+- CI de la base PR #9: éxito, ejecución [42561412158](https://github.com/MichaelMobius/tesispucp/actions/runs/42561412158). CI Lean 4 / Mathlib de la PR borrador #10: éxito, ejecución [42563330773](https://github.com/MichaelMobius/tesispucp/actions/runs/42563330773).
 
