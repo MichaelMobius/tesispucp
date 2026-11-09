@@ -24,4 +24,4 @@ La elección `t_m=√m` no introduce logaritmos: `ηr` tiene orden `mr^(-1/4)` y
 
 Versiones fijadas: Lean `v4.35.0`, Mathlib `v4.35.0`, EllipticPDE `c47acceaf985f59e1cf3257ffea077a73ea99dae`. El nuevo módulo no contiene `sorry`, `admit` ni declaraciones de axiomas. Las salidas de `#print axioms` para sus teoremas muestran solo `propext`, `Classical.choice` y `Quot.sound`.
 
-`lake build` local terminó correctamente: **3223 trabajos**. La compilación de `TesisPINN/OcupacionAleatoria.lean` y su importación desde `TesisPINN.lean` pasaron. El estado del CI de la PR se registra tras su ejecución.
+`lake build` local terminó correctamente: **3223 trabajos**. La compilación de `TesisPINN/OcupacionAleatoria.lean` y su importación desde `TesisPINN.lean` pasaron. El CI «Lean 4 / Mathlib» de la [PR #13](https://github.com/MichaelMobius/tesispucp/pull/13) concluyó con éxito en la [ejecución 42668983809](https://github.com/MichaelMobius/tesispucp/actions/runs/42668983809).
