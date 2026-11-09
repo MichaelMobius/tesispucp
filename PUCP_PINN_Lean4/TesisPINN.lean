@@ -8,5 +8,11 @@ import TesisPINN.ResiduoCuadrado
 import TesisPINN.TransferenciaEnergetica
 
 import TesisPINN.PerdidaPoblacional
+
+import TesisPINN.DensidadResidualMinima
+
+import TesisPINN.VariacionalPINN
+
+import TesisPINN.CoberturaPINN
 import TesisPINN.RedCuadratica
 

@@ -1,4 +1,24 @@
-# Mapa de dependencias matemáticas — octava etapa
+# Mapa de dependencias matemáticas — novena etapa
+
+## Estructura variacional y cobertura
+
+Las declaraciones nuevas están en `DensidadResidualMinima.lean`, `VariacionalPINN.lean` y `CoberturaPINN.lean`. Conservan los teoremas de la octava etapa.
+
+| Paso | Declaración | Estado lógico |
+|---|---|---|
+| Densidad medible `ρ≥ρ₀>0` casi en todas partes, sin `ρMax` | `DensidadInferior`, `ResiduoPonderadoIntegrable` | La integrabilidad ponderada del **residuo particular** es hipótesis explícita; de `r∈L²` y solo `ρ≥ρ₀` no se deduce |
+| Comparación ponderada y cota H¹ sin `ρMax` | `cota_densidad_sin_superior`, `cota_perdida_sin_superior`, `estimacion_error_sin_superior` | **Probadas** bajo integrabilidad ponderada y dominación de la pérdida, además de las hipótesis energéticas previas |
+| Pérdida empírica interior/frontera, pérdida poblacional, regularización | `ProblemaPINN`, `perdidaEmpirica`, `perdidaPoblacional`, `funcionalRegularizado` | Definiciones separadas de (3.22); medidas de probabilidad, tamaños positivos, pesos residuales positivos; regularizadores son cuadrados de valores de seminorma parametrizados |
+| Comparación de minimizador con cualquier comparador admisible | `EsMinimizadorGlobal`, `comparacion_global` | **Probada**; la existencia del minimizador es una premisa |
+| Interpolador exacto (3.24), pesos iguales (3.23), cota uniforme de regularidad (3.25) | `ComparadorExacto`, `funcional_pesos_iguales`, `perdidaEmpirica_le_regularidad_uniforme` | **Probadas las implicaciones** `R(hm)≤R(gm)` y `LossEmp(hm)≤a_m R*`; existencia y uniformidad de comparadores siguen como premisas |
+| Paso puntual de cobertura (3.14) | `residuo_puntual_de_cobertura` | **Probado** bajo cobertura y cotas Hölder de operador y dato |
+| Geometría, masa de bolas (3.4), pesos (3.7)/(3.23), objetivo integral (3.13) | `MuestrasCubren`, `MasaBolaSuperior`, `factorCoberturaCuadrado`, `pesoCobertura`, `pesoRegularizacionIgual`, `ObjetivoCoberturaIntegral` | Geometría y desigualdad integral están **formuladas**, no demostradas; falta Voronoi medible, control de masa de celdas e integración |
+
+**Densidad y (3.4).** Matemáticamente, en el cuadrado, la cota `μr(B̄(x,r)∩U)≤Cr r²` junto con `dμr=ρr dx`, `ρr∈L¹(U)` y diferenciación de Lebesgue implica `ρr≤Cr/π` casi en todas partes: para casi todo `x∈U`, tomar `r<dist(x,∂U)` y pasar al límite en las medias sobre `B̄(x,r)`, cuyo volumen es `πr²`. Esa implicación **aún no es un teorema Lean**. El puente pendiente es especializar `IsUnifLocDoublingMeasure.ae_tendsto_average` a bolas de Lebesgue en `ℝ²`, convertir la cota de masa en cota de medias y usar `volume_closedBall`. La nueva comparación ponderada evita necesitar ese puente para residuos con integral ponderada finita.
+
+**Cadena para (3.26):** minimalidad + comparador exacto + regularidad uniforme ⇒ `LossEmp(hm)≤a_m R*` **probado**; cobertura geométrica + Hölder + cota (3.4) ⇒ desigualdad integral (3.13) **pendiente**; pesos y escalas muestrales + (3.13) ⇒ (3.26) **pendiente**. Para cobertura eventual de probabilidad uno faltan ocupación de celdas i.i.d., unión de eventos, sumabilidad de las probabilidades de fallo a lo largo de `mr(n),mb(n)≥n` y Borel–Cantelli sobre un espacio común. (3.27) requiere además pasar de pérdida poblacional a control `C⁰` mediante masa local y regularidad Hölder; (3.28) requiere las cotas cuantitativas de ese paso. Ninguno de estos resultados estadísticos se declara probado.
+
+El informe de la etapa está en `INFORME_NOVENA_ETAPA.md`. Las secciones históricas siguientes conservan su fecha y alcance originales.
 
 ## Pérdida poblacional y transferencia probabilística condicional
 
