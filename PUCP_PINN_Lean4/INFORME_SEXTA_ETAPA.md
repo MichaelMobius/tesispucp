@@ -36,4 +36,4 @@ La tesis, para frontera general `g`, supone que `h` y `u*` tienen la misma traza
 - `#print axioms` de los teoremas nuevos: solo `propext`, `Classical.choice`, `Quot.sound`.
 - Sin `sorry`, `admit` ni axiomas nuevos en el módulo nuevo.
 - Lean 4.35.0, Mathlib v4.35.0, EllipticPDE `c47acceaf985f59e1cf3257ffea077a73ea99dae`; pruebas anteriores y PDF intactos.
-- CI de la PR borrador apilada: pendiente de ejecución remota.
+- CI Lean 4 / Mathlib de la PR borrador #8: éxito, ejecución [42557228273](https://github.com/MichaelMobius/tesispucp/actions/runs/42557228273).
