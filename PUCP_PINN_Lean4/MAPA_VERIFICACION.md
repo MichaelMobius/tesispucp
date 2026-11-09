@@ -1,4 +1,19 @@
-# Mapa de dependencias matemáticas — duodécima etapa
+# Mapa de dependencias matemáticas — decimotercera etapa
+
+## Convergencia y tasas uniformes (3.27)–(3.28), dimensión dos
+
+| Dependencia | Declaraciones |
+|---|---|
+| Particiones de Hipótesis 3.2 a toda escala pequeña | `ParticionesMinimas`, `masa_bola_inferior_de_particiones` |
+| Integral cuadrática, incremento Hölder y masa local | `abs_le_holder_add_de_integral`, `supResiduo_le_radio_truncado` |
+| Elección eventual del radio desde la tasa de energía | `tasa_supResiduo_de_integral` |
+| Minimalidad y cota uniforme del comparador de Hipótesis 3.7 | `holder_residuos_minimizador` |
+| (3.26) y control de los residuos interior y de frontera | `convergencia_y_tasas_uniformes_ae` |
+| Mensurabilidad conjunta de operadores y selección mensurable | `measurable_perdidaPoblacional_seleccion` |
+
+La transferencia mantiene las dimensiones de masa 2 y 1, respectivamente, y usa `mr(n)` en ambas tasas, con exponentes `−α²/[2(2α+2)]` y `−α²/[2(2α+1)]`. Los comparadores, las selecciones y los datos de partición son premisas. La mensurabilidad conjunta para un modelo de candidatos concreto debe comprobarse al instanciar el criterio de mensurabilidad. Véase `INFORME_DECIMOTERCERA_ETAPA.md`.
+
+## Registro anterior — duodécima etapa
 
 ## Tasa poblacional (3.26) del Teorema 3.8, `d=2`
 
