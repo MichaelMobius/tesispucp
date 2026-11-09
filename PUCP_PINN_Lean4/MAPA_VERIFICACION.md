@@ -22,7 +22,7 @@ La cota de área se ha formalizado como control geométrico de la transición. L
 
 **Pendiente:** extender `q` suave en un entorno del cuadrado cerrado a una función global suave; demostrar `h-u*∈H01` para funciones suaves con valores iguales en toda la frontera sin factorización por `ψ`; tratar `C¹` con mollificación si se necesita preservar la regularidad; y para `H¹` general, formalizar la traza y `ker(trace)=H01` en el cuadrado. También faltan la identificación distribucional del residuo concreto, la constante óptima `√2/π` del Corolario 3.23 y las hipótesis PINN y probabilísticas del Teorema 3.20. La penalización finita de frontera sigue siendo un caso distinto.
 
-La auditoría `#print axioms` de los teoremas nuevos contiene solamente `propext`, `Classical.choice` y `Quot.sound`. `lake build` local pasó con Lean 4.35.0, Mathlib v4.35.0 y EllipticPDE `c47acceaf985f59e1cf3257ffea077a73ea99dae`. El CI de esta etapa se registrará en la PR apilada.
+La auditoría `#print axioms` de los teoremas nuevos contiene solamente `propext`, `Classical.choice` y `Quot.sound`. `lake build` local pasó con Lean 4.35.0, Mathlib v4.35.0 y EllipticPDE `c47acceaf985f59e1cf3257ffea077a73ea99dae`. El CI Lean 4 / Mathlib de la PR #7 pasó en la ejecución [42555075750](https://github.com/MichaelMobius/tesispucp/actions/runs/42555075750).
 
 ## Registro de la cuarta etapa
 
