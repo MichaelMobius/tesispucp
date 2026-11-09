@@ -14,5 +14,6 @@ import TesisPINN.DensidadResidualMinima
 import TesisPINN.VariacionalPINN
 
 import TesisPINN.CoberturaPINN
+import TesisPINN.VoronoiMedible
+import TesisPINN.CoberturaIntegral
 import TesisPINN.RedCuadratica
-
