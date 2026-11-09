@@ -1,4 +1,23 @@
-# Mapa de dependencias matemáticas — décima etapa
+# Mapa de dependencias matemáticas — undécima etapa
+
+## Cobertura probabilística del Lema 3.6
+
+El módulo nuevo `TesisPINN/OcupacionAleatoria.lean` usa una sucesión infinita de muestras i.i.d. por medida, particiones finitas medibles que pueden depender del tamaño y el primer lema de Borel–Cantelli. Los tamaños interiores `mr(n)` y de frontera `mb(n)` permanecen separados.
+
+| Paso | Teorema Lean | Estado |
+|---|---|---|
+| Celda vacía, mensurabilidad y probabilidad exacta | `celdaVacia_measurable`, `medida_celdaVacia` | Probado: `P(vacía)=(1-μ(A))^m` |
+| Unión finita y cota exponencial | `medida_falloOcupacion_le_suma`, `medidaReal_falloOcupacion_le_exp` | Probado: `P(fallo)≤K exp(-mp)` bajo masa mínima `p` |
+| Cota del cardinal y escala de la tesis | `cardinal_por_masa_minima`, `escalaAuxiliarRaiz_masa`, `falloOcupacion_le_escala_raiz` | Probado: `K≤√m`, `P(fallo)≤√m exp(-√m)` si cada celda tiene masa al menos `1/√m` |
+| Ocupación geométrica y Borel–Cantelli | `ocupacion_implica_cobertura`, `sumable_escala_raiz_de_tamanos`, `cobertura_eventual_de_particiones_raiz` | Probado, condicional a particiones medibles, masa, diámetro, ley i.i.d. y `m(n)≥n` eventualmente |
+| Interior `s=2` y frontera `s=1` simultáneos | `coberturas_cuadrado_eventuales_casi_seguras` | Cobertura eventual casi segura probada en un mismo espacio probabilístico; no requiere independencia entre los dos muestreos |
+| Aplicación determinista de la ocupación | `perdidaPoblacional_de_ocupacion` | Cota poblacional probada para una realización ocupada, con las hipótesis de regularidad, integración, soporte y comparación explícitas |
+
+La tesis elige `t_m=√m`, `η=(1/(c√m))^(1/s)` y radio `ρ=√2η` en el cuadrado. Esas igualdades y la sumabilidad de `√m exp(-√m)` están formalizadas. Si se eligiera `t_m≈log m`, aparecerían factores logarítmicos en `η`, `C_m`, los pesos y la tasa; esa elección no se utiliza aquí. La condición eventual de radio pequeño `ρ≤ε₀`, necesaria al aplicar las cotas superiores de masa de bolas, sigue como hipótesis de `perdidaPoblacional_de_ocupacion` y no se ha descargado mediante un teorema de límite.
+
+**Estado de (3.26):** la cobertura eventual casi segura y la desigualdad poblacional condicionada a ocupación están probadas, pero su combinación en una cota de tasa aún exige construir los problemas muestrales a partir de las secuencias i.i.d., verificar que las muestras estén en los soportes, obtener comparadores y minimizadores globales mensurables con regularidad uniforme e integrabilidad, y desarrollar el álgebra eventual de `C_m a_m` bajo la relación de tamaños `mr=O(mb²)`. Por ello (3.26), (3.27) y (3.28) no se declaran demostradas. Véase `INFORME_UNDECIMA_ETAPA.md`.
+
+## Registro anterior — décima etapa
 
 ## Desigualdad integral de cobertura (Lema 3.5, ecuación 3.13)
 
