@@ -9,3 +9,10 @@ rev = "v4.35.0"
 
 [[lean_lib]]
 name = "TesisPINN"
+
+[[require]]
+name = "EllipticPdes"
+git = "https://github.com/alejandro-soto-franco/EllipticPDE.git"
+rev = "c47acceaf985f59e1cf3257ffea077a73ea99dae"
+subDir = "lean"
+
