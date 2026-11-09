@@ -1,0 +1,21 @@
+name: Lean 4 / Mathlib
+
+on:
+  push:
+    paths:
+      - 'PUCP_PINN_Lean4/**'
+      - '.github/workflows/lean.yml'
+  pull_request:
+    paths:
+      - 'PUCP_PINN_Lean4/**'
+      - '.github/workflows/lean.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: leanprover/lean-action@v1
+        with:
+          lake-package-directory: PUCP_PINN_Lean4
+          build: true
