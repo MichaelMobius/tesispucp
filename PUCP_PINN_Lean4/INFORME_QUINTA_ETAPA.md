@@ -38,4 +38,4 @@ No se ha sustituido esta identidad por un axioma. La identificación de `r` con 
 - Búsqueda de `sorry`, `admit`, `axiom` en los módulos nuevos: ninguna ocurrencia.
 - Lean `v4.35.0`, Mathlib `v4.35.0`, EllipticPDE `c47acceaf985f59e1cf3257ffea077a73ea99dae`.
 - No se modificaron las pruebas previas ni el PDF de la tesis.
-- CI de la PR de quinta etapa: pendiente de ejecución remota al abrirla.
+- CI Lean 4 / Mathlib de la PR borrador #7: éxito, ejecución [42555075750](https://github.com/MichaelMobius/tesispucp/actions/runs/42555075750).
