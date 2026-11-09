@@ -1,4 +1,25 @@
-# Mapa de dependencias matemáticas — undécima etapa
+# Mapa de dependencias matemáticas — duodécima etapa
+
+## Tasa poblacional (3.26) del Teorema 3.8, `d=2`
+
+El módulo `TesisPINN/TasaPoblacional.lean` cierra la implicación de pérdida poblacional bajo las Hipótesis 3.2 y 3.7 representadas por sus datos geométricos, analíticos y selecciones muestrales. El teorema central `tasa_poblacional_eventual_casi_segura` concluye, para casi toda realización, tanto una cota eventual `Loss_n≤C(ω) mr(n)^(-α/2)` como `Loss_n =O[atTop] mr(n)^(-α/2)`. No se afirma (3.27) ni (3.28).
+
+| Dependencia | Declaración Lean | Estado |
+|---|---|---|
+| Identidad de (3.23)/(3.31), denominador `C_m>0` | `factor_mul_peso_igual` | Probada: `C_m a_m=3 max(λr εr^(2α), λb εb^(2α))` |
+| Escalas `εr≈mr^(-1/4)`, `εb≈mb^(-1/2)` y potencias | `escalaAuxiliarRaiz_eq_potencias`, `radio_cobertura_potencia` | Igualdades exactas probadas con `s=2` y `s=1` |
+| Relación `mr=O(mb²)` | `tasa_frontera_le_tasa_interior`, `tasa_frontera_isBigO_tasa_interior` | Probada la transferencia `mb^(-α)=O(mr^(-α/2))` con tamaños separados |
+| Radio final permitido en (3.4) | `radio_cobertura_eventualmente_pequeno` | Derivado de `mr(n),mb(n)≥n` eventualmente |
+| Puntos empíricos y soportes | `problemaMuestral`, `muestras_en_soporte_ae` | Prefijos exactos y pertenencia simultánea casi segura derivada de concentración de leyes |
+| Integrabilidad poblacional | `poblacionIntegrable_de_holder_acotado`, `aestronglyMeasurable_residuo_sq_de_continuidad` | Derivada de soporte acotado, Hölder y continuidad sobre el soporte; no queda como premisa del teorema central |
+| Cobertura + comparación + escalas | `tasa_de_cota_cobertura`, `tasa_poblacional_eventual_casi_segura` | **(3.26) demostrada** como implicación casi segura bajo las selecciones y regularidad de Hipótesis 3.7; constante eventual explícita |
+| Mensurabilidad del evento de tasa | `measurableSet_eventual_cota_poblacional`, `prob_uno_eventual_cota_poblacional` | Probada si cada pérdida aleatoria es medible; esa propiedad conjunta del modelo abstracto `ProblemaPINN` no se deduce solo de la mensurabilidad de la selección |
+
+**Inventario de premisas restantes:** particiones finitas con masas y diámetros de Hipótesis 3.2; cotas superiores de masa de bolas, concentración y leyes i.i.d.; cotas Hölder y continuidad de operadores y datos de Hipótesis 3.7; comparadores exactos y cota uniforme aleatoria `R*(ω)<∞` en un evento de probabilidad uno; selección mensurable de minimizadores globales y comparadores; igualdad de los pesos con (3.23); `mr(n)≤K mb(n)²` y tamaños `mr(n),mb(n)≥n` eventualmente. El modelo abstracto también exige identificar sus medidas y pesos fijos entre índices. Estas son hipótesis del resultado, no construcciones de arquitectura neuronal. Para asignar probabilidad **exactamente uno** al conjunto de realizaciones que satisface la tasa, debe verificarse adicionalmente la mensurabilidad de `ω↦LossPINN(h_n(ω);λ)` para cada índice. El teorema central en `∀ᵐ` no la presupone; el lema de evento medible especifica el requisito.
+
+El informe detallado de correspondencia y verificación está en `INFORME_DUODECIMA_ETAPA.md`.
+
+## Registro anterior — undécima etapa
 
 ## Cobertura probabilística del Lema 3.6
 
