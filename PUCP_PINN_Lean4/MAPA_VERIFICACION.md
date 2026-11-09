@@ -1,4 +1,24 @@
-# Mapa de dependencias matemáticas — quinta etapa
+# Mapa de dependencias matemáticas — sexta etapa
+
+## Residuo laplaciano concreto en `U=(-1,1)²`
+
+La convención de la tesis es `L=Δ`, `Δu*=f` y `r_h=Δh-f` (páginas PDF 113–116, impresas 100–103). La demostración del Teorema 3.20 define `e_m=u*−h_m` y `Δe_m=f−Δh_m`; nuestros teoremas usan `e=h−u*` y `Δe=Δh−f`. Las dos normas son iguales por el signo. La versión `−Δu=f_num` requiere sustituir `f=−f_num`, como aclara la tesis.
+
+| Paso matemático | Declaración Lean nueva | Correspondencia y estado |
+|---|---|---|
+| `Δf=∂₁²f+∂₂²f` en la base ortonormal de `ℝ²` | `derivadaClásica`, `laplacianoClásico`, `laplacianoClásico_eq_mathlib` | Definición clásica y coincidencia con `Laplacian.laplacian` de Mathlib, probadas |
+| `∂ᵢ ofFun(f)=ofFun(∂ᵢf)` dos veces para `f∈C∞` | `derivada_distribucional_clásica`, `segunda_distribucional_clásica` | Probado con `hasWeakFDerivOn_fderiv` de EllipticPDE; fija el signo positivo tras dos derivadas |
+| `Δ_distribucional ofFun(f)=ofFun(Δ_clásico f)` | `laplaciano_distribucional_eq_clásico` | Probado para función globalmente `C∞` |
+| `Δ_clásico f∈L²(U)` | `laplacianoClásico_suave`, `laplacianoClásico_memLp`, `laplacianoLp`, `laplacianoLp_ae` | Probado por continuidad en la clausura compacta y medida finita del cuadrado |
+| `r=Δ(ψq_h−ψq_u)∈L²(U)` | `errorPsi`, `residuoPsi`, `residuoPsi_ae`, `laplaciano_distribucional_errorPsi` | Probado; la diferencia de grafos tiene representante `fnL=ψq_h−ψq_u` casi en todas partes |
+| Estimación energética sin premisas `hΔ` ni `he` para dos candidatos suaves `ψq` | `estimacion_psi_suave_residuo_concreto` | **Probado** como instancia determinista de (3.71)/(3.74); usa `psiGraph_mem_H01` de la quinta etapa |
+| Candidato `h=ψq`, solución exacta general `u*` con `Δu*=f` | `estimacion_psi_frente_solucion_exacta` | **Condicional** a `u*∈H1Graph.H01` y a la ecuación distribucional; el residuo es `Δh−f` |
+
+La hipótesis `u*∈H01` de la última fila es más fuerte que su pertenencia a `H¹` y su coincidencia de frontera con `h` en el Teorema 3.20. El puente `ker(trace)=H01` no está formalizado. La sexta etapa tampoco formaliza comparadores, minimizadores, muestreo ni tasa probabilística; por tanto **no completa el Teorema 3.20**. Para datos de frontera no homogéneos se necesita además representar una extensión de `g` y probar que el error tiene traza cero. Una penalización finita de frontera no da esta conclusión.
+
+Verificación local: `lake build` (3189 trabajos), `#print axioms` solo `propext`, `Classical.choice`, `Quot.sound`; Lean 4.35.0, Mathlib v4.35.0 y EllipticPDE `c47acceaf985f59e1cf3257ffea077a73ea99dae`. CI de la PR apilada: se registrará al concluir.
+
+## Registro de la quinta etapa
 
 ## Puente nuevo: recorte de `ψ q` y pertenencia a `H₀¹`
 
@@ -20,7 +40,7 @@ Se trabaja exclusivamente en `U=(-1,1)²`, con `ψ(x,y)=(1-x²)(1-y²)` y `q : P
 
 La cota de área se ha formalizado como control geométrico de la transición. La prueba de convergencia `L²` utiliza la cota uniforme y la convergencia puntual eventual mediante `unifIntegrable_of` y `tendsto_Lp_finite_of_tendsto_ae`; no usa el valor numérico del área. La cota `ψ≤4δ` sí interviene en la cancelación del término `ψ∇χδ`.
 
-**Pendiente:** extender `q` suave en un entorno del cuadrado cerrado a una función global suave; demostrar `h-u*∈H01` para funciones suaves con valores iguales en toda la frontera sin factorización por `ψ`; tratar `C¹` con mollificación si se necesita preservar la regularidad; y para `H¹` general, formalizar la traza y `ker(trace)=H01` en el cuadrado. También faltan la identificación distribucional del residuo concreto, la constante óptima `√2/π` del Corolario 3.23 y las hipótesis PINN y probabilísticas del Teorema 3.20. La penalización finita de frontera sigue siendo un caso distinto.
+**Pendiente tras la sexta etapa:** extender `q` suave en un entorno del cuadrado cerrado a una función global suave; demostrar `h-u*∈H01` para funciones suaves con valores iguales en toda la frontera sin factorización por `ψ`; tratar `C¹` con mollificación si se necesita preservar la regularidad; y para `H¹` general, formalizar la traza y `ker(trace)=H01` en el cuadrado. La identidad del residuo concreto ya está probada para dos candidatos suaves `ψq` y, condicionalmente a la ecuación de `u*`, para un candidato `ψq` frente a una solución exacta general. Quedan la constante óptima `√2/π` del Corolario 3.23 y las hipótesis PINN y probabilísticas del Teorema 3.20. La penalización finita de frontera sigue siendo un caso distinto.
 
 La auditoría `#print axioms` de los teoremas nuevos contiene solamente `propext`, `Classical.choice` y `Quot.sound`. `lake build` local pasó con Lean 4.35.0, Mathlib v4.35.0 y EllipticPDE `c47acceaf985f59e1cf3257ffea077a73ea99dae`. El CI Lean 4 / Mathlib de la PR #7 pasó en la ejecución [42555075750](https://github.com/MichaelMobius/tesispucp/actions/runs/42555075750).
 
