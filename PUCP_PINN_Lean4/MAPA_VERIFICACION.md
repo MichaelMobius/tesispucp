@@ -1,35 +1,33 @@
-# Mapa de dependencias matemáticas — segunda etapa
+# Mapa de dependencias matemáticas — tercera etapa
 
-Fuente: tesis adjunta, Lema 3.19 (ecuación 3.71, PDF pp. 111–113) y Teorema 3.20 (PDF pp. 113–115). La primera es una estimación determinista para el error `e ∈ H₀¹(U)` con `Δe ∈ L²(U)`; el segundo incorpora además la estructura probabilística y de residuos del PINN.
+Fuente: Lema 3.19 de la tesis (estimación determinista (3.71)) y Teorema 3.20 (resultado PINN posterior). El código nuevo se limita al caso `Plano := EuclideanSpace ℝ (Fin 2)`.
 
-## Cadena Lean comprobada
+## Cadena formal del Lema 3.19 en ℝ²
 
-| Nodo | Fuente Lean | Estado |
+| Paso | Declaración Lean | Estado |
 |---|---|---|
-| Error `U ∈ H₀¹` representado por el cierre de grafos de prueba, con `fnL U` y `gradL U` | `EllipticPdes.Sobolev.Graph`, `H1Graph.H01` | Compilado |
-| `gradL U` es el gradiente distribucional de `fnL U` para `Ω` abierto | `H01_le_W12`, `mem_W12_iff_hasWeakFDerivOn`, `h01_gradiente_distribucional` | Compilado |
-| Poincaré cuadrático `‖fnL U‖² ≤ C‖gradL U‖²`, `C ≥ 0` | `poincare_H01_of_bounded` | Compilado |
-| Constante de tesis `Cₚ > 0`: tomar `Cₚ = √(C+1)`, por lo que `C ≤ Cₚ²` | `exists_poincare_constant` | Compilado |
-| Norma Sobolev del grafo `‖U‖² = ‖fnL U‖² + ‖gradL U‖²` | `H1Graph.norm_sq_eq`, `norma_sobolev_cuadratica` | Compilado |
-| Green para `U` a partir de la identidad sobre funciones de prueba | `HasTestLaplacian`, `H01_subset_of_isClosed`, `green_por_densidad` | Compilado, condicionado a la identidad distribucional sobre pruebas |
-| Estimación `‖U‖ ≤ Cₚ√(1+Cₚ²)‖r‖` | `energia_norma_par_debil`, `energia_sobolev_de_laplaciano_de_prueba` | Compilado, condicionado a `HasTestLaplacian U r` |
+| Error en `H₀¹(Ω)` como cierre de grafos de prueba, con `fnL U` y `gradL U` | `H1Graph.H01` de EllipticPDE | Definición de biblioteca |
+| `gradL U` es la derivada distribucional de `fnL U` | `h01_gradiente_distribucional`; `H01_le_W12`; `mem_W12_iff_hasWeakFDerivOn` | Compilado |
+| `Δ = ∂₁² + ∂₂²` en distribuciones sobre `Ω` abierto | `laplacianoDistribucional`, `laplacianoDistribucional_eq_suma` | Compilado |
+| Una derivada direccional de prueba conserva suavidad, soporte compacto y `tsupport ⊆ Ω` | `derivadaPrueba` | Compilado |
+| `Δ fnL U = div gradL U` en `𝓓′(Ω)` | `laplaciano_ofFun_eq_div_grad` | Compilado |
+| Signo: `⟨ΔU,φ⟩ = -∫ gradL U · ∇φ` | `laplaciano_eval_suma`, `suma_derivadas_eq_producto`, `laplaciano_eval_producto` | Compilado |
+| Integrales globales = productos internos `L²(Ω)` | `inner_gradiente_prueba_eq_integral`, `inner_residuo_prueba_eq_integral` | Compilado |
+| `ΔU=r` en `𝓓′(Ω)` implica `HasTestLaplacian U r` | `laplaciano_distribucional_implica_prueba` | Compilado |
+| Representante `r ∈ L²` único | `laplaciano_distribucional_l2_unico` | Compilado |
+| Identidad de Green con prueba `U` por densidad | `green_por_densidad` | Compilado |
+| Poincaré con `Cₚ=√(C+1)>0` | `exists_poincare_constant`; `poincare_H01_of_bounded` | Compilado |
+| `‖U‖² = ‖fnL U‖² + ‖gradL U‖²` | `norma_sobolev_cuadratica`; `H1Graph.norm_sq_eq` | Compilado |
+| `‖U‖ ≤ Cₚ√(1+Cₚ²)‖r‖` | `energia_sobolev_de_laplaciano_distribucional`, `energia_sobolev_plano_volumen` | Compilado |
 
-## Puente analítico pendiente para el Lema 3.19 literal
+El enunciado final usa `Ω : Opens Plano` acotado, `U : H1Graph.H01 volume Ω`, `r : Lp ℝ 2 (volume.restrict Ω)` y la igualdad `laplacianoDistribucional Ω (Distribution.ofFun Ω (fnL U) volume ⊤) = Distribution.ofFun Ω r volume ⊤`. Esta igualdad representa con precisión `Δe = r ∈ L²`. La cota usa el `r` único. No requiere hipótesis adicional de Lipschitz: el resultado es válido para el `H01` definido por cierre en cualquier abierto acotado. La tesis asume un dominio Lipschitz, que satisface estas condiciones.
 
-Formalizar un operador laplaciano en distribuciones `𝓓'(Ω)` para el dominio abierto `Ω` y demostrar, para `U : H1Graph.H01 μ Ω` y `r : Lp ℝ 2 (μ.restrict Ω)`, el siguiente puente:
+## Dependencias aún pendientes para el Teorema 3.20
 
-`Distribution.laplacian (Distribution.ofFun Ω (fnL U) μ ⊤) = Distribution.ofFun Ω r μ ⊤` **implica** `HasTestLaplacian U r`.
+- Demostrar que la igualdad de trazas de las funciones PINN concretas implica que su diferencia pertenece al `H01` de EllipticPDE. Esto requiere una caracterización por traza en el dominio Lipschitz o una aproximación directa por pruebas.
+- Formalizar las funciones `u*`, `hₘ`, su laplaciano residual y la cota determinista (3.74) en sus tipos concretos.
+- Formalizar las hipótesis de muestreo, comparadores, minimizadores, densidad y peso residual del Teorema 3.8 para obtener la convergencia y tasa probabilística de 3.20.
+- Extender el nuevo puente a dimensión finita general si se desea fuera de `ℝ²`; la prueba actual usa la base ortonormal de dos elementos.
 
-La formulación de `HasTestLaplacian` es exactamente `⟪gradL U, gradCls φ⟫ = -⟪r, fnCls φ⟫` para toda función de prueba `φ`. La demostración del puente requiere: (1) definir el laplaciano distribucional como suma finita de segundas derivadas direccionales en una base ortonormal; (2) aplicar la identidad de derivada distribucional de `HasWeakFDerivOn` a las derivadas de `φ`; (3) convertir las integrales a productos internos `L²`. `EllipticPDE/Sobolev/WeakDeriv.lean` proporciona la primera derivada distribucional, pero no expone el lema de segunda derivada/laplaciano abierto con esta conclusión. No se introdujo como axioma. Por ello el Lema 3.19, con su premisa literal `Δe ∈ L²`, sigue **pendiente**; la estimación bajo la formulación de prueba está **demostrada condicionalmente**.
-
-También falta probar que la igualdad de trazas del Teorema 3.20 coloca el error en este `H01` definido por cierre; esto puede requerir la caracterización por traza en dominios Lipschitz. La desigualdad energética en `H01` solo requiere que `Ω` sea acotado; la condición Lipschitz de la tesis no se añadió como hipótesis Lean.
-
-## Otros resultados del Capítulo III
-
-| Resultado | Estado |
-|---|---|
-| Teorema 3.8 | Pendiente; `Minimalidad.lean` compila dos pasos condicionales |
-| Teorema 3.20 | Pendiente; requiere además trazas, Teorema 3.8 y cotas de densidad/peso residual |
-| Lema 3.24 | Pendiente; `RedCuadratica.lean` compila tres identidades algebraicas |
-| Teoremas 3.4 y 3.18; Proposiciones 3.15 y 3.25; Corolario 3.26 | Pendientes |
+Otros resultados: Teorema 3.8, Lema 3.24, Teoremas 3.4 y 3.18, Proposiciones 3.15 y 3.25 y Corolario 3.26 siguen pendientes como resultados completos. Sus pasos parciales de `Minimalidad.lean` y `RedCuadratica.lean` permanecen compilados.
 
