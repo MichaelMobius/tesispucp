@@ -47,7 +47,7 @@ theorem masa_bola_inferior_de_particiones
   have hsqrt : 0 < Real.sqrt 2 := by positivity
   have hden : 0 < 2 * Real.sqrt 2 := by positivity
   have hη : 0 < η := div_pos hr hden
-  have hη₀ : η ≤ ε₀ := (div_le_iff₀ hden).2 hr₀
+  have hη₀ : η ≤ ε₀ := (div_le_iff₀ hden).2 (by simpa only [mul_comm ε₀] using hr₀)
   obtain ⟨K, cells, _, _, hcover, hsubset, hmass, hdiam⟩ :=
     hpart η hη hη₀
   obtain ⟨k, hk⟩ := Set.mem_iUnion.mp (hcover hx)
@@ -98,7 +98,7 @@ theorem abs_le_holder_add_de_integral
   have htotal := setIntegral_le_integral (s := S) hInt
     (Eventually.of_forall fun y => sq_nonneg (f y))
   have hconst : (∫ _ in S, D ^ 2 ∂μ) = μ.real S * D ^ 2 := by
-    simp [integral_const, measureReal_def, Measure.restrict_apply, hS]
+    simp [integral_const, measureReal_def, Measure.restrict_apply]
   rw [hconst] at hmono
   have hlow := mul_le_mul_of_nonneg_right hMass (sq_nonneg D)
   have hstrict := mul_lt_mul_of_pos_left ((sq_lt_sq₀ hA hD0).2 hD) hM
@@ -366,7 +366,7 @@ theorem convergencia_y_tasas_uniformes_ae
        (∫ y, eb n y ^ 2 ∂μb) ≤ (C / lambdaB) * (mr n : ℝ) ^ (-(α / 2))) := by
     filter_upwards [hstat, hrate] with n hn hrateN
     obtain ⟨hmin, hg, hgR, hH, hInt, ha, haB⟩ := hn
-    obtain ⟨hμr, hμb, hλr, hλb⟩ := hbase ω n
+    obtain ⟨hμr, hμb, hLambdaR, hLambdaB⟩ := hbase ω n
     have hHolder := holder_residuos_minimizador (Pn ω n) (Hm n) U Γ α Sf Sg
       R (Pn ω n).regularizadorR hR ha rfl haB hH (hm n ω) (g n ω) hmin hg hgR
     have hIr : Integrable (fun x => er n x ^ 2) μr := hμr ▸ hInt.1
@@ -374,7 +374,7 @@ theorem convergencia_y_tasas_uniformes_ae
     have hEr : 0 ≤ ∫ x, er n x ^ 2 ∂μr := integral_nonneg fun _ => sq_nonneg _
     have hEb : 0 ≤ ∫ y, eb n y ^ 2 ∂μb := integral_nonneg fun _ => sq_nonneg _
     unfold ProblemaPINN.perdidaPoblacional at hrateN
-    rw [hμr, hμb, hλr, hλb] at hrateN
+    rw [hμr, hμb, hLambdaR, hLambdaB] at hrateN
     change lambdaR * (∫ x, er n x ^ 2 ∂μr) + lambdaB * (∫ y, eb n y ^ 2 ∂μb) ≤ _ at hrateN
     refine ⟨⟨hIr, hHolder.1, ?_⟩, ⟨hIb, hHolder.2, ?_⟩⟩
     · rw [div_mul_eq_mul_div₀]
