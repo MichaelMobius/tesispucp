@@ -1,4 +1,27 @@
-# Mapa de dependencias matemáticas — novena etapa
+# Mapa de dependencias matemáticas — décima etapa
+
+## Desigualdad integral de cobertura (Lema 3.5, ecuación 3.13)
+
+La nueva cadena está en `TesisPINN/VoronoiMedible.lean` y `TesisPINN/CoberturaIntegral.lean`. El PDF de la tesis y las pruebas de etapas anteriores no se modificaron.
+
+| Dependencia | Teorema Lean | Estado |
+|---|---|---|
+| Cobertura finita, desempate por índice mínimo incluso con muestras repetidas | `celdaVoronoi_cover`, `celdaVoronoi_pairwise`, `celdaVoronoi_measurable` | Probado |
+| Inclusión en bola **cerrada** y cota de masa de (3.4) | `celdaVoronoi_subset_closedBall`, `medida_celdaVoronoi_le`, `medidaReal_celdaVoronoi_le` | Probado, con muestras en el dominio y radio positivo menor que `ε₀` |
+| Concentración de la medida e integral por celdas | `integral_le_suma_celdas`, `suma_masas_celdas` | Probado, con `μ(Uᶜ)=0`, `μ(univ)=1` e integrabilidad explícitas |
+| Estimación puntual (3.14) para el vecino asignado e integración | `residuo_puntual_en_celda`, `integral_residuo_le_cobertura` | Probado para residuos reales; exponentes de masa `2` interior y `1` frontera |
+| Suma ponderada, `C_m=3 max(Cr mr εr²,Cb mb εb)` y pesos (3.7) | `perdidaPoblacional_le_sumas_cobertura`, `objetivoCoberturaIntegral_de_hipotesis` | **(3.13) probada** con hipótesis deterministas explícitas; `ObjetivoCoberturaIntegral` es conclusión, no premisa |
+| Comparador exacto, minimizador global, regularidad uniforme | `perdidaPoblacional_minimizador_bajo_cobertura` | Cota poblacional determinista probada con pesos regulares iguales a (3.23); existencia de comparador/minimizador y cota uniforme son premisas |
+
+`CotasHolder` representa cotas Hölder finitas para `L[h]`, `B[h]`, `f`, `g`. La tesis exige `0<α≤1`; los teoremas solo usan `0<α`, condición matemáticamente más débil para este paso. `ProblemaPINN` usa residuos escalares reales, mientras el texto de (3.14) prueba primero la desigualdad vectorial; la instancia escalar es suficiente para los residuos PINN ya representados. La integrabilidad de los dos residuos al cuadrado es explícita, no se infiere de la mera definición de pérdida. La cota de masa por bolas y la cobertura no se prueban para muestras aleatorias en esta etapa.
+
+**Cadena pendiente para (3.26):** el nuevo teorema da una cota poblacional condicionada a cobertura. Faltan el modelo de muestreo i.i.d., las particiones de ocupación del Lema 3.6, las probabilidades de fallo, la elección de radios según el índice muestral y Borel–Cantelli. No se deduce aquí cobertura eventual casi segura ni la tasa de (3.26). Para (3.27)–(3.28) falta además la conversión de pérdida poblacional a control uniforme.
+
+**Densidad superior:** la prueba secundaria `ρr≤Cr/π` casi en todas partes permanece pendiente. Requiere especializar diferenciación de Lebesgue a `volume` en `ℝ²`, identificar `μr=volume.withDensity ρr` en bolas, dividir por el volumen `πr²` y pasar al límite en puntos interiores. No interviene en la prueba de (3.13).
+
+El informe detallado de esta etapa está en `INFORME_DECIMA_ETAPA.md`. El texto siguiente conserva el registro histórico de la novena etapa.
+
+## Registro anterior — novena etapa
 
 ## Estructura variacional y cobertura
 
@@ -158,4 +181,3 @@ El enunciado final usa `Ω : Opens Plano` acotado, `U : H1Graph.H01 volume Ω`, 
 - Extender el nuevo puente a dimensión finita general si se desea fuera de `ℝ²`; la prueba actual usa la base ortonormal de dos elementos.
 
 Otros resultados: Teorema 3.8, Lema 3.24, Teoremas 3.4 y 3.18, Proposiciones 3.15 y 3.25 y Corolario 3.26 siguen pendientes como resultados completos. Sus pasos parciales de `Minimalidad.lean` y `RedCuadratica.lean` permanecen compilados.
-
