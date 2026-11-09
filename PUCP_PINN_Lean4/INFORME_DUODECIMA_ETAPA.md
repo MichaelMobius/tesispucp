@@ -30,4 +30,4 @@ La implicación (3.26) **está probada** en Lean bajo la representación explíc
 
 Lean `v4.35.0`, Mathlib `v4.35.0`, EllipticPDE `c47acceaf985f59e1cf3257ffea077a73ea99dae`. No se modificaron la tesis ni las pruebas Lean anteriores. El módulo nuevo no contiene `sorry`, `admit` ni axiomas nuevos. Las consultas `#print axioms` de los teoremas nuevos muestran únicamente `propext`, `Classical.choice` y `Quot.sound`.
 
-`lake build` local terminó correctamente: **3224 trabajos**. El resultado del CI de la PR de esta etapa se añadirá tras su ejecución.
+`lake build` local terminó correctamente: **3224 trabajos**. El CI «Lean 4 / Mathlib» de la [PR #14](https://github.com/MichaelMobius/tesispucp/pull/14) concluyó con éxito en la [ejecución 42678212532](https://github.com/MichaelMobius/tesispucp/actions/runs/42678212532).
