@@ -40,7 +40,7 @@ theorem grafoSuaveCuadrado_mem_W12 (G : CandidatoPoisson) :
     grafoSuaveCuadrado G ∈ W12 (volume : Measure Plano) cuadrado := by
   apply (mem_W12_iff_hasWeakFDerivOn cuadrado_abierto _).2
   have h := hasWeakFDerivOn_fderiv (Ω := cuadradoOpens) (μ := volume)
-    (G.property.of_le (by simp : (1 : ℕ∞) ≤ ⊤)).contDiffOn
+    (G.property.of_le (by simp)).contDiffOn
   apply h.congr_ae (grafoSuaveCuadrado_fnL_ae G).symm
   filter_upwards [grafoSuaveCuadrado_gradL_ae G] with x hx
   rw [hx]
@@ -130,8 +130,8 @@ private theorem laplacianoLevantado_eq (G q : CandidatoPoisson) (x : Plano) :
     psiCuadrado_suave.mul q.property
   rw [laplacianoClásico_eq_mathlib _ (aproximacionLevantada_suave G q),
     laplacianoClásico_eq_mathlib _ G.property, laplacianoClásico_eq_mathlib _ hq]
-  exact (G.property.of_le (by simp : (2 : ℕ∞) ≤ ⊤)).contDiffAt.laplacian_add
-    (hq.of_le (by simp : (2 : ℕ∞) ≤ ⊤)).contDiffAt
+  exact (G.property.of_le (by simp)).contDiffAt.laplacian_add
+    (hq.of_le (by simp)).contDiffAt
 
 /-- El cambio de medida del caso homogéneo se aplica al dato `f − ΔG`. -/
 theorem perdidaResidualLevantada_eq (D : DensidadInferior) (G q : CandidatoPoisson)
@@ -155,8 +155,12 @@ theorem perdidaResidualLevantada_eq (D : DensidadInferior) (G q : CandidatoPoiss
     apply Lp.ext
     exact (residuoPoisson_ae f0 hf0 q).trans
       ((EventuallyEq.of_eq heq).trans (residuoLevantado_ae G q f hf).symm)
-  have h := perdidaResidualPoisson_eq D f0 hf0 q lr (by simpa only [heq] using hInt)
-  simpa only [hLp, heq] using h
+  have hsq : (fun x => (laplacianoClásico (aproximacionPoisson q) x - f0 x) ^ 2) =
+      (fun x => (laplacianoClásico (aproximacionLevantada G q) x - f x) ^ 2) :=
+    congrArg (fun r : Plano → ℝ => fun x => r x ^ (2 : ℕ)) heq
+  have h := perdidaResidualPoisson_eq D f0 hf0 q lr (by rw [hsq]; exact hInt)
+  rw [hLp, hsq] at h
+  exact h
 
 theorem energia_de_perdidaLevantada (D : DensidadInferior) (G q : CandidatoPoisson)
     (lr : ℝ) (hlr : 0 < lr) (f : Plano → ℝ) (hf : MemLp f 2 volumenPoisson)
@@ -315,7 +319,10 @@ theorem prob_uno_convergenciaLevantada
   have hnorm (n : ℕ) : Measurable (fun ω => ‖grafoLevantado G (q n ω) - u‖) :=
     hc.measurable.comp (measurable_grafoLevantado G (q n) (hq n))
   have hm : MeasurableSet {ω | Tendsto (fun n => grafoLevantado G (q n ω)) atTop (nhds u)} := by
-    simp only [tendsto_iff_norm_sub_tendsto_zero]
+    have hevent : {ω | Tendsto (fun n => grafoLevantado G (q n ω)) atTop (nhds u)} =
+        {ω | Tendsto (fun n => ‖grafoLevantado G (q n ω) - u‖) atTop (nhds (0 : ℝ))} :=
+      Set.ext fun _ => tendsto_iff_norm_sub_tendsto_zero
+    rw [hevent]
     exact measurableSet_tendsto_fun hnorm
       (show Measurable (fun _ : Ω => (0 : ℝ)) from measurable_const)
   exact ⟨hm, (prob_compl_eq_zero_iff hm).mp (mem_ae_iff.mp hae)⟩
