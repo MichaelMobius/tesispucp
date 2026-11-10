@@ -1,4 +1,10 @@
-# Mapa de dependencias matemáticas — decimocuarta etapa
+# Mapa de dependencias matemáticas — decimoquinta etapa
+
+## Poisson homogéneo exacto en el cuadrado
+
+`teorema320_poisson_de_teorema38` aplica `teorema38_dim2` al laplaciano clásico de `ψq` y a la evaluación de frontera. `perdidaResidualPoisson_eq` identifica el residuo de la pérdida con el representante Sobolev usando el cambio de medida. La cota inferior de densidad y `estimacion_error_sin_superior` dan el control energético, que `transferencia_energiaPoisson_ae` convierte en convergencia y tasa `O(mr(n)^(-α/4))`. El alcance y las premisas de la instancia están en `INFORME_DECIMOQUINTA_ETAPA.md`.
+
+## Registro anterior — decimocuarta etapa
 
 ## Teorema 3.8 integrado, dimensión dos
 
