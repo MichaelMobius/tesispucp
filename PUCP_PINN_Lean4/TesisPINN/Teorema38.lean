@@ -256,7 +256,7 @@ theorem teorema38_dim2
   filter_upwards [h26both, hunif] with ω hpop hu
   obtain ⟨C, _, hC⟩ := hpop
   exact ⟨isBigO_de_cota_eventual _ _ C
-    (hC.mono fun _ hn => ⟨hn.1, by dsimp [t]; positivity, hn.2⟩), hu⟩
+    (hC.mono fun _ hn => ⟨hn.1, by positivity, hn.2⟩), hu⟩
 
 /-- La pérdida de la familia integrada es medible en cada índice con
 mensurabilidad conjunta de los operadores y mensurabilidad de los datos. -/
@@ -304,7 +304,7 @@ theorem measurable_supResiduo_de_denso
     exact ciSup_le fun n =>
       le_csSup hbu (Set.mem_insert_of_mem _ ⟨x n, (x n).2, rfl⟩)
   rw [heq]
-  exact Measurable.iSup (fun n => (hmeas n).abs)
+  exact Measurable.iSup (fun n => continuous_abs.measurable.comp (hmeas n))
 
 /-- Una vez verificada la mensurabilidad de ambos supremos, el conjunto
 exacto de convergencia uniforme es medible y tiene probabilidad uno. -/
