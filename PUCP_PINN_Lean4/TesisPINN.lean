@@ -21,4 +21,5 @@ import TesisPINN.TasaPoblacional
 import TesisPINN.ConvergenciaUniforme
 import TesisPINN.Teorema38
 import TesisPINN.PuentePoisson38_320
+import TesisPINN.DirichletLevantamiento
 import TesisPINN.RedCuadratica
