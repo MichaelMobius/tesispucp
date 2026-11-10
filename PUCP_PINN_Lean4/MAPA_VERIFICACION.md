@@ -1,4 +1,12 @@
-# Mapa de dependencias matemáticas — decimosexta etapa
+# Mapa de dependencias matemáticas — etapa 17
+
+El [inventario del capítulo III](INVENTARIO_FORMAL_CAPITULO_III.md) fija la revisión de la tesis, relaciona las declaraciones con los enunciados y muestra el grafo de todo el capítulo. El [estado central](ESTADO_FORMALIZACION_CAPITULO_III.md) separa los resultados integrados, sus instancias y las obligaciones pendientes.
+
+## Comparadores y minimizadores aproximados
+
+`ComparadoresAproximados.lean` extiende la cadena determinista a la Proposición 3.10. La no negatividad de `funcionalRegularizado` y la pertenencia a la clase permiten caracterizar (3.38) mediante comparación con cada admisible. `funcional_pesos_iguales` y la no negatividad de la pérdida empírica dan (3.39)–(3.40). `objetivoCoberturaIntegral_de_hipotesis` y la monotonía en los dos pesos de regularización dan (3.41) para residuos escalares y exponentes de masa 2 y 1, con los términos de datos en los radios de cobertura. La composición casi segura (3.43) para mínimos aproximados y su conclusión uniforme siguen pendientes. [Informe de correspondencia](INFORME_ETAPA17.md)
+
+## Registro anterior — decimosexta etapa
 
 ## Dirichlet no homogéneo exacto con levantamiento suave
 
