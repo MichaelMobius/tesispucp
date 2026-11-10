@@ -1,4 +1,12 @@
-# Mapa de dependencias matemáticas — decimotercera etapa
+# Mapa de dependencias matemáticas — decimocuarta etapa
+
+## Teorema 3.8 integrado, dimensión dos
+
+`teorema38_dim2` reúne (3.26)–(3.28). Las particiones de la Hipótesis 3.2 se especializan en una cola para la ocupación aleatoria y se reutilizan a todas las escalas para el control de masa local. `tasa_poblacional_eventual_casi_segura` proporciona la cota eventual de pérdida. La continuidad y la integrabilidad se deducen de las cotas Hölder, y `convergencia_y_tasas_uniformes_ae` usa el control variacional de los minimizadores para obtener ambas conclusiones uniformes.
+
+Las selecciones, la minimalidad, la interpolación y la cota uniforme de los comparadores quedan explícitas como premisas. `measurable_perdida_problemaMuestral` separa la mensurabilidad conjunta de los operadores de la mensurabilidad de las selecciones. El alcance exacto se detalla en `INFORME_DECIMOCUARTA_ETAPA.md`.
+
+## Registro anterior — decimotercera etapa
 
 ## Convergencia y tasas uniformes (3.27)–(3.28), dimensión dos
 
