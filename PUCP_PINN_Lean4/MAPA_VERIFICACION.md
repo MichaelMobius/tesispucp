@@ -1,4 +1,10 @@
-# Mapa de dependencias matemáticas — decimoquinta etapa
+# Mapa de dependencias matemáticas — decimosexta etapa
+
+## Dirichlet no homogéneo exacto con levantamiento suave
+
+`grafoSuaveCuadrado_mem_W12` da el grafo Sobolev del levantamiento `G`. La suma con el grafo de `ψq` conserva la pertenencia a `W12` y coincide puntualmente con `G` en la frontera. `errorLevantado_mem_H01` y `laplaciano_errorLevantado` permiten aplicar la estimación uniforme de energía. `teorema320_levantado_de_teorema38` obtiene (3.26) de `teorema38_dim2` y deduce (3.72) y (3.73) con tasa `O(mr(n)^(-α/4))`. El criterio de mensurabilidad del grafo y del evento exacto es separado. Véase `INFORME_DECIMOSEXTA_ETAPA.md`.
+
+## Registro anterior — decimoquinta etapa
 
 ## Poisson homogéneo exacto en el cuadrado
 
