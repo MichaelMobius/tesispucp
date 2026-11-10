@@ -26,8 +26,12 @@ theorem psiCuadrado_cero_frontera (x : Plano) (hx : x ∈ frontier cuadrado) :
   have hcoord (i : Fin 2) : x i ∈ Set.Icc (-1 : ℝ) 1 := by
     have hc : IsClosed ((fun y : Plano => y i) ⁻¹' Set.Icc (-1 : ℝ) 1) :=
       isClosed_Icc.preimage (by fun_prop)
-    exact closure_minimal (fun y hy => ⟨(hy i).1.le, (hy i).2.le⟩) hc
-      (frontier_subset_closure hx)
+    have hsub : cuadrado ⊆ (fun y : Plano => y i) ⁻¹' Set.Icc (-1 : ℝ) 1 := by
+      intro y hy
+      change y i ∈ Set.Icc (-1 : ℝ) 1
+      have hyi : -1 < y i ∧ y i < 1 := hy i
+      exact ⟨hyi.1.le, hyi.2.le⟩
+    exact closure_minimal hsub hc (frontier_subset_closure hx)
   have hn : x ∉ cuadrado := by
     simpa only [cuadrado_abierto.interior_eq] using hx.2
   change ¬ (∀ i : Fin 2, x i ∈ Set.Ioo (-1 : ℝ) 1) at hn
@@ -242,6 +246,7 @@ theorem teorema320_poisson_de_teorema38
         ∂medidaResidualPoisson D) ≤ loss n ω := by
       change _ ≤ _ + lb * (∫ x, (O.B q x - O.g x) ^ 2 ∂μb)
       rw [integral_congr_ae hbzero, integral_zero, mul_zero, add_zero]
+      exact le_rfl
     exact energia_de_perdidaPoisson D lr hlr f hf u hu hsol q hInt.1 _ hdom
   have hEnergy := transferencia_energiaPoisson_ae P
     (fun n ω => (hm n ω : CandidatoPoisson)) loss u mr
