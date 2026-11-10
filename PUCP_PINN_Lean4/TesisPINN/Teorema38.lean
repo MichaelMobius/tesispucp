@@ -1,4 +1,5 @@
 import TesisPINN.ConvergenciaUniforme
+import Mathlib.MeasureTheory.Constructions.Polish.Basic
 
 /-! Integración de (3.26)–(3.28) en dimensión dos. -/
 
@@ -227,7 +228,9 @@ theorem teorema38_dim2
       ∀ᶠ n in atTop, 0 ≤ loss n ω ∧ loss n ω ≤ C * t n :=
     h26tail.mono fun _ ⟨C, hC, htail, _⟩ =>
       ⟨C, hC, eventual_en_cola N htail⟩
-  have h26 := h26both.mono fun _ ⟨C, hC, hb⟩ =>
+  have h26 : ∀ᵐ ω ∂P, ∃ C : ℝ, 0 ≤ C ∧
+      ∀ᶠ n in atTop, loss n ω ≤ C * t n :=
+    h26both.mono fun _ ⟨C, hC, hb⟩ =>
     ⟨C, hC, hb.mono fun _ hn => hn.2⟩
   have hInt (ω : Ω) (n : ℕ) : (Pn ω n).PoblacionIntegrable (hm n ω : H) :=
     poblacionIntegrable_de_holder_acotado (Pn ω n) (Hm n) U Γ
@@ -269,7 +272,60 @@ theorem measurable_perdida_problemaMuestral
     Measurable (fun ω => (problemaMuestral mr mb base Zr Zb ω n).perdidaPoblacional (h n ω)) :=
   measurable_perdidaPoblacional_seleccion (base n) (h n) hh hL hB hf hg
 
+/-- Una enumeración densa reduce el supremo puntual de un residuo
+continuo y acotado a un supremo numerable. -/
+theorem measurable_supResiduo_de_denso
+    {Ω X : Type*} [MeasurableSpace Ω] [TopologicalSpace X]
+    (U : Set X) (x : ℕ → U) (hx : DenseRange x) (f : Ω → X → ℝ)
+    (hcont : ∀ ω, ContinuousOn (f ω) U)
+    (hbound : ∀ ω, ∃ M : ℝ, ∀ y ∈ U, |f ω y| ≤ M)
+    (hmeas : ∀ n, Measurable (fun ω => f ω (x n))) :
+    Measurable (fun ω => supResiduo U (f ω)) := by
+  have heq : (fun ω => supResiduo U (f ω)) = (fun ω => ⨆ n, |f ω (x n)|) := by
+    funext ω
+    obtain ⟨M, hM⟩ := hbound ω
+    let q := ⨆ n, |f ω (x n)|
+    have hbd : BddAbove (Set.range (fun n => |f ω (x n)|)) :=
+      ⟨M, by rintro _ ⟨n, rfl⟩; exact hM (x n) (x n).2⟩
+    have hq (n : ℕ) : |f ω (x n)| ≤ q := le_ciSup hbd n
+    have hq0 : 0 ≤ q := (abs_nonneg _).trans (hq 0)
+    have hc : Continuous (fun y : U => |f ω y|) :=
+      (continuousOn_iff_continuous_domRestrict.1 (hcont ω)).abs
+    have hall (y : U) : |f ω y| ≤ q :=
+      hx.induction_on y (isClosed_le hc continuous_const) hq
+    apply le_antisymm (supResiduo_le U (f ω) q hq0 (fun y hy => hall ⟨y, hy⟩)).2
+    have hbu : BddAbove (insert 0 ((fun y => |f ω y|) '' U)) := by
+      refine ⟨max 0 M, ?_⟩
+      intro y hy
+      rcases Set.mem_insert_iff.mp hy with rfl | hy
+      · exact le_max_left _ _
+      · obtain ⟨z, hz, rfl⟩ := hy
+        exact (hM z hz).trans (le_max_right _ _)
+    exact ciSup_le fun n =>
+      le_csSup hbu (Set.mem_insert_of_mem _ ⟨x n, (x n).2, rfl⟩)
+  rw [heq]
+  exact Measurable.iSup (fun n => (hmeas n).abs)
+
+/-- Una vez verificada la mensurabilidad de ambos supremos, el conjunto
+exacto de convergencia uniforme es medible y tiene probabilidad uno. -/
+theorem prob_uno_convergencia_sup
+    {Ω : Type*} [MeasurableSpace Ω] (P : Measure Ω) [IsProbabilityMeasure P]
+    (r b : ℕ → Ω → ℝ)
+    (hr : ∀ n, Measurable (r n)) (hb : ∀ n, Measurable (b n))
+    (hae : ∀ᵐ ω ∂P, Tendsto (fun n => r n ω) atTop (nhds 0) ∧
+      Tendsto (fun n => b n ω) atTop (nhds 0)) :
+    MeasurableSet {ω | Tendsto (fun n => r n ω) atTop (nhds 0) ∧
+      Tendsto (fun n => b n ω) atTop (nhds 0)} ∧
+    P {ω | Tendsto (fun n => r n ω) atTop (nhds 0) ∧
+      Tendsto (fun n => b n ω) atTop (nhds 0)} = 1 := by
+  have hzero : Measurable (fun _ : Ω => (0 : ℝ)) := measurable_const
+  have hmR := measurableSet_tendsto_fun (l := (atTop : Filter ℕ)) hr hzero
+  have hmB := measurableSet_tendsto_fun (l := (atTop : Filter ℕ)) hb hzero
+  exact ⟨hmR.inter hmB, (prob_compl_eq_zero_iff (hmR.inter hmB)).mp (mem_ae_iff.mp hae)⟩
+
 #print axioms TesisPINN.teorema38_dim2
 #print axioms TesisPINN.measurable_perdida_problemaMuestral
+#print axioms TesisPINN.measurable_supResiduo_de_denso
+#print axioms TesisPINN.prob_uno_convergencia_sup
 
 end TesisPINN
