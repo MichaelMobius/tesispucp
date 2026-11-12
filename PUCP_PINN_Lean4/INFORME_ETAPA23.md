@@ -33,4 +33,4 @@ La existencia clásica usada en la tesis procede del Teorema 6.13 de Gilbarg–T
 
 ## Siguiente etapa
 
-Priorizar la Proposición 3.21. Su barrera cuadrática para Poisson puede reutilizar `OperadorEliptico.maximo_debil`, las identidades de linealidad y los lemas de supremos. La barrera exponencial da estabilidad con una constante general. La cuadrática requiere demostrar su propia acción y el máximo exacto para obtener la constante de P3.21. P3.22 y C3.23 siguen la ruta de la base seno y el control de la serie. Las construcciones de Taylor y Hermite siguen siendo dependencias separadas de los comparadores para las clases neuronales concretas.
+Priorizar la Proposición 3.21. `estabilidad_de_barrera` reúne el argumento para ambos signos y admite directamente la barrera cuadrática de Poisson cuando se demuestre $\Delta\psi=-1$ y $0\le\psi\le1/2$. P3.22 y C3.23 siguen la ruta de la base seno y el control de la serie. Las construcciones de Taylor y Hermite siguen siendo dependencias separadas de los comparadores para las clases neuronales concretas.

@@ -411,15 +411,15 @@ section Estabilidad
 
 variable {d : ℕ} (L : OperadorEliptico d) {U : Set (EspacioEliptico d)} {lam B : ℝ}
 
-/-- (3.67) en forma puntual. La constante se elige antes de la función. -/
-theorem lema317_estabilidad_uniforme (hd : 0 < d) (hU : IsOpen U)
-    (hUb : Bornology.IsBounded U) (hUne : U.Nonempty) (hL : L.Datos U lam B) :
-    ∃ C₀ > 0, ∀ v : EspacioEliptico d → ℝ, ContDiffOn ℝ 2 v U →
-      ContinuousOn v (closure U) →
-      (∃ M : ℝ, ∀ x ∈ U, |L.aplica v x| ≤ M) →
-      supResiduo (closure U) v ≤ supResiduo (frontier U) v + C₀ * supResiduo U (L.aplica v) := by
-  obtain ⟨C₀, hC₀, ψ, hψd, hψ, hψL⟩ := barrera317 L hd hUb hL
-  refine ⟨C₀, hC₀, fun v hv hvc hb => ?_⟩
+/-- Comparación de ambos signos con cualquier barrera no negativa y normalizada. -/
+theorem estabilidad_de_barrera (hd : 0 < d) (hU : IsOpen U)
+    (hUb : Bornology.IsBounded U) (hUne : U.Nonempty) (hL : L.Datos U lam B)
+    (C₀ : ℝ) (hC₀ : 0 ≤ C₀) (ψ : EspacioEliptico d → ℝ) (hψd : ContDiff ℝ 2 ψ)
+    (hψ : ∀ x ∈ closure U, 0 ≤ ψ x ∧ ψ x ≤ C₀)
+    (hψL : ∀ x ∈ U, L.aplica ψ x ≤ -1)
+    (v : EspacioEliptico d → ℝ) (hv : ContDiffOn ℝ 2 v U) (hvc : ContinuousOn v (closure U))
+    (hb : ∃ M : ℝ, ∀ x ∈ U, |L.aplica v x| ≤ M) :
+    supResiduo (closure U) v ≤ supResiduo (frontier U) v + C₀ * supResiduo U (L.aplica v) := by
   let M := supResiduo (frontier U) v
   let F := supResiduo U (L.aplica v)
   obtain ⟨M', hM'⟩ := (hUb.isCompact_closure.of_isClosed_subset isClosed_frontier
@@ -460,8 +460,18 @@ theorem lema317_estabilidad_uniforme (hd : 0 < d) (hU : IsOpen U)
     (fun x hx => by
       rw [L.aplica_neg (hv.contDiffAt (hU.mem_nhds hx))]
       exact neg_le_neg ((abs_le.mp (abs_le_supResiduo hx hb)).2))
-  refine (supResiduo_le _ _ _ (add_nonneg hM (mul_nonneg hC₀.le hF)) fun x hx => ?_).2
+  refine (supResiduo_le _ _ _ (add_nonneg hM (mul_nonneg hC₀ hF)) fun x hx => ?_).2
   exact abs_le.mpr ⟨by linarith only [hneg x hx], hpos x hx⟩
+
+/-- (3.67) en forma puntual. La constante se elige antes de la función. -/
+theorem lema317_estabilidad_uniforme (hd : 0 < d) (hU : IsOpen U)
+    (hUb : Bornology.IsBounded U) (hUne : U.Nonempty) (hL : L.Datos U lam B) :
+    ∃ C₀ > 0, ∀ v : EspacioEliptico d → ℝ, ContDiffOn ℝ 2 v U →
+      ContinuousOn v (closure U) →
+      (∃ M : ℝ, ∀ x ∈ U, |L.aplica v x| ≤ M) →
+      supResiduo (closure U) v ≤ supResiduo (frontier U) v + C₀ * supResiduo U (L.aplica v) := by
+  obtain ⟨C₀, hC₀, ψ, hψd, hψ, hψL⟩ := barrera317 L hd hUb hL
+  exact ⟨C₀, hC₀, estabilidad_de_barrera L hd hU hUb hUne hL C₀ hC₀.le ψ hψd hψ hψL⟩
 
 theorem lema317_estabilidad_Linfty (hd : 0 < d) (hU : IsOpen U)
     (hUb : Bornology.IsBounded U) (hUne : U.Nonempty) (hL : L.Datos U lam B)
@@ -485,6 +495,7 @@ end Estabilidad
 #print axioms derivada_barreraExponencial
 #print axioms segunda_derivada_barreraExponencial
 #print axioms barrera317
+#print axioms estabilidad_de_barrera
 #print axioms lema317_estabilidad_uniforme
 #print axioms lema317_estabilidad_Linfty
 
