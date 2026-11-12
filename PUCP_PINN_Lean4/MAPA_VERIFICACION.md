@@ -293,4 +293,17 @@ El enunciado final usa `Ω : Opens Plano` acotado, `U : H1Graph.H01 volume Ω`, 
 - Formalizar las hipótesis de muestreo, comparadores, minimizadores, densidad y peso residual del Teorema 3.8 para obtener la convergencia y tasa probabilística de 3.20.
 - Extender el nuevo puente a dimensión finita general si se desea fuera de `ℝ²`; la prueba actual usa la base ortonormal de dos elementos.
 
-Otros resultados: Teorema 3.8, Lema 3.24, Teoremas 3.4 y 3.18, Proposiciones 3.15 y 3.25 y Corolario 3.26 siguen pendientes como resultados completos. Sus pasos parciales de `Minimalidad.lean` y `RedCuadratica.lean` permanecen compilados.
+Otros resultados pendientes se detallan en el [estado central](ESTADO_FORMALIZACION_CAPITULO_III.md).
+
+## Proposición 3.15
+
+| Dependencia | Declaración |
+|---|---|
+| Volumen y ley uniforme → masa de bolas y particiones | `GeometriaMuestreoCuadrado.lean`, `volumen_cuadrado`, `masa_bola_uniforme_cuadrado`, `particiones_uniformes_cuadrado` |
+| Certificado numérico → admisibilidad y pesos de (3.64) | `ConstantesLogCuadrado.lean`, `radioLogCuadrado_admisible`, `factorLogInterior_eq`, `pesoLogInterior_eq`, `producto_pesoLogInterior` |
+| Lema 3.13 → ocupación medible, cota de fallo y cobertura eventual | `lema313_cobertura_logaritmica`, `falloLogCuadrado_eq` |
+| Voronoi y Hölder → (3.65) | `integral_residuo_le_cobertura`, `perdidaInterior_le_funcional` |
+| Comparadores y tolerancias → (3.66) | `funcionalInterior_le_de_suboptimalidad`, `proposicion315_perdida` |
+| Dato $L^2$, residuo y energía de Dirichlet → tasa y convergencia $H^1$ | `dato315_memLp`, `perdidaPoissonInterior_eq_norma_residuo`, `energia315_por_perdida`, `proposicion315_poisson` |
+
+La última fila usa la clase $G+\psi q$ y la premisa $u^*-G\in H^1_0$. Véase el [informe de la etapa 21](INFORME_ETAPA21.md).
