@@ -10,6 +10,13 @@ namespace TesisPINN
 
 open MeasureTheory
 
+/-- La suboptimalidad aditiva respecto del ínfimo se transfiere a cualquier
+comparador admisible de un funcional acotado inferiormente. -/
+theorem le_comparador_de_infimo {H : Type*} (J : H → ℝ) (Hm : Set H)
+    (h v : H) (δ : ℝ) (hb : BddBelow (J '' Hm)) (hv : v ∈ Hm)
+    (hh : J h ≤ sInf (J '' Hm) + δ) : J h ≤ J v + δ :=
+  hh.trans (add_le_add_left (csInf_le hb (Set.mem_image_of_mem J hv)) δ)
+
 namespace ProblemaPINN
 
 variable {H X Y : Type*} [MeasurableSpace X] [MeasurableSpace Y] {mr mb : ℕ}
@@ -37,7 +44,7 @@ theorem minimizadorAproximado_iff_le_infimo (Hm : Set H) (h : H) (δ : ℝ) :
     rintro _ ⟨v, hv, rfl⟩
     exact (sub_le_iff_le_add).mpr (hcomp v hv)
   · rintro ⟨hh, hcomp⟩
-    exact ⟨hh, fun v hv => hcomp.trans (add_le_add_left (csInf_le hbounded ⟨v, hv, rfl⟩) δ)⟩
+    exact ⟨hh, fun v hv => le_comparador_de_infimo _ _ _ v δ hbounded hv hcomp⟩
 
 /-- (3.39) y (3.40), antes de usar cobertura. -/
 theorem cotas_minimizador_aproximado (Hm : Set H) (h v : H)

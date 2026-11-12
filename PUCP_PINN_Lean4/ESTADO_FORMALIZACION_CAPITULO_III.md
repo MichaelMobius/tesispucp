@@ -1,5 +1,16 @@
 # Estado verificable de la formalización del capítulo III
 
+## Etapa 21
+
+Base: PR #22, `99223cb99ca288eb751832839499eaf474d83500`. El [informe de la etapa 21](INFORME_ETAPA21.md) compara la ley, la geometría, el umbral 310 y las constantes de (3.64) con sus declaraciones Lean.
+
+| Resultado | Declaración y alcance |
+|---|---|
+| Ley uniforme interior y partición exacta | `medidaUniformeCuadrado`, `particiones_uniformes_cuadrado`, `masa_bola_uniforme_cuadrado`. |
+| (3.64)–(3.66) | `radioLogCuadrado_admisible`, `factorLogInterior_eq`, `pesoLogInterior_eq`, `proposicion315_perdida`. Cobertura eventual y pérdida de población casi segura con comparadores y suboptimalidad de la tesis. |
+| Extensión energética | `proposicion315_poisson`. Convergencia en el grafo $H^1$ y tasa $O((\log m/m)^{1/4})$ con levantamiento suave exacto y solución distribucional dada. |
+| Pendiente | Extender la identificación de $H_0^1$ a toda la clase $C^{2,1/2}(\overline U)$. Instanciar la Proposición 3.11 con su radio de raíz y verificar sus pesos. |
+
 ## Etapa 20
 
 La referencia matemática de esta etapa es el capítulo III del PDF del ZIP `Tesis_PUCP_Resumen_Conectores_20261108.zip`. La [matriz del capítulo](INVENTARIO_FORMAL_CAPITULO_III.md) registra el hash, las 27 entradas numeradas, las 94 ecuaciones, los desarrollos sin número y sus dependencias. La [auditoría de la base](AUDITORIA_MATEMATICA_PR18.md) distingue los alcances de las pruebas heredadas. Los conteos describen el material inventariado.

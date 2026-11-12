@@ -185,7 +185,7 @@ private theorem cota_escalar_poblacional
 
 /-- Un residuo Hölder sobre un soporte acotado tiene cuadrado integrable
 para una medida finita, una vez establecida su mensurabilidad. -/
-private theorem integrable_sq_of_holder_on_bounded
+theorem integrable_sq_of_holder_on_bounded
     {X : Type*} [PseudoMetricSpace X] [MeasurableSpace X]
     (μ : Measure X) [IsFiniteMeasure μ]
     (U : Set X) (hU : Bornology.IsBounded U)

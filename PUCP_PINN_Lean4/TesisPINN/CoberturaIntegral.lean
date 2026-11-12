@@ -219,7 +219,7 @@ theorem perdidaPoblacional_le_sumas_cobertura
   have hb' := mul_le_mul_of_nonneg_left hb P.lambdaB_pos.le
   exact add_le_add hr' hb'
 
-private theorem cuadrado_holder (S ε α : ℝ) (hε : 0 ≤ ε) :
+theorem cuadrado_holder (S ε α : ℝ) (hε : 0 ≤ ε) :
     (S * ε ^ α) ^ 2 = ε ^ (2 * α) * S ^ 2 := by
   calc
     (S * ε ^ α) ^ 2 = S ^ 2 * (ε ^ α) ^ 2 := by ring
