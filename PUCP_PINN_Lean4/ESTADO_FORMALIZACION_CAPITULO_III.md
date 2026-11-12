@@ -1,5 +1,16 @@
 # Estado verificable de la formalización del capítulo III
 
+## Etapa 23
+
+Base en la PR #24, `976fd52bd620695cbb5dfe03a98f105b9e228779`. El [informe de la etapa 23](INFORME_ETAPA23.md) documenta la convención del operador, las normas y la separación entre existencia y estabilidad.
+
+| Resultado | Declaración y alcance |
+|---|---|
+| L3.17 | `lema317_estabilidad_Linfty` verifica (3.67) en dimensión positiva arbitraria con máximo clásico de EllipticPDE y barrera exponencial. |
+| T3.18 | `teorema318_dim2` verifica (3.69)–(3.70) con solución clásica dada, la frontera geométrica y la instancia de T3.8 para 2D. |
+| Pendiente | Existencia clásica general de GT 6.13 y versión probabilística en dimensión general. |
+| Continuidad | P3.21 reutiliza el máximo débil para la barrera cuadrática. P3.22/C3.23 requieren la ruta espectral. Taylor y Hermite suministran comparadores para las clases concretas. |
+
 ## Etapa 22
 
 La base es la PR #23, `1da91cf7fb759e143b3549ef2e96dda4729fe2b7`. El [informe de la etapa 22](INFORME_ETAPA22.md) coteja las ecuaciones (3.44)–(3.55).
