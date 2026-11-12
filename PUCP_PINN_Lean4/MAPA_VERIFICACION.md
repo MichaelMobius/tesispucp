@@ -320,3 +320,16 @@ La última fila usa la clase $G+\psi q$ y la premisa $u^*-G\in H^1_0$. Véase el
 | Densidad uniforme y error de traza nula → (3.55) | `perdidaPoissonInterior_eq_norma_residuo`, `errorLevantado_mem_H01`, `laplaciano_errorLevantado`, `tasaEnergia_de_perdida`, `proposicion311_poisson` |
 
 El [informe de la etapa 22](INFORME_ETAPA22.md) documenta el alcance energético y la ruta de comparadores Hermite y Taylor.
+
+## Lema 3.17 y Teorema 3.18
+
+| Dependencia | Declaración |
+|---|---|
+| Capítulo I → expansión y signo | `OperadorDivergencia.aplica_eq_noDivergente`, `OperadorEliptico.aplica_eq_suma` |
+| Máximo clásico en la convención opuesta → máximo débil de la tesis | `EllipticPdes.Classical.weak_maximum_principle_of_nonneg`, `OperadorEliptico.maximo_debil` |
+| Derivadas y elipticidad → barrera y (3.67) | `aplica_barreraExponencial`, `barrera317`, `lema317_estabilidad_Linfty` |
+| Identidad de los dos residuos → (3.68) | `OperadorEliptico.aplica_resta`, `cota318_error_dirichlet_Linfty` |
+| Masa local y concentración → soporte de frontera | `soporte_de_DatosMasa38` |
+| T3.8 y orden de exponentes → (3.69)–(3.70) | `teorema38_dim2`, `exponente318_orden`, `teorema318_dim2` |
+
+La existencia clásica general sigue siendo la dependencia de GT 6.13. El [informe de la etapa 23](INFORME_ETAPA23.md) precisa el alcance de la instancia verificada.
