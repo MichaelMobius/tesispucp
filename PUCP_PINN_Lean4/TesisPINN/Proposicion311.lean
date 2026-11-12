@@ -46,7 +46,9 @@ private theorem radioRaizCuadrado_sq (m : ℕ) (hm : 0 < m) :
   have h := escalaAuxiliarRaiz_masa (1 / 9) 2 m (by norm_num) (by norm_num) hm
   rw [Real.rpow_two] at h
   rw [radioRaizCuadrado, mul_pow, Real.sq_sqrt (by norm_num)]
-  linarith only [h]
+  calc
+    _ = 18 * ((1 / 9) * escalaAuxiliarRaiz (1 / 9) 2 m ^ 2) := by ring
+    _ = _ := by rw [h]; ring
 
 theorem radioRaizCuadrado_le_uno_iff (m : ℕ) (hm : 0 < m) :
     radioRaizCuadrado m ≤ 1 ↔ 324 ≤ m := by
@@ -67,7 +69,7 @@ theorem escalaRaizCuadrado_admisible (m : ℕ) (hm : 324 ≤ m) :
   have hr : radioRaizCuadrado m ≤ 1 :=
     (radioRaizCuadrado_le_uno_iff m (by omega)).2 hm
   have htwo : 1 ≤ Real.sqrt 2 := by
-    simpa using Real.sqrt_le_sqrt (by norm_num : (1 : ℝ) ≤ 2)
+    simp
   refine ⟨heta, (le_mul_of_one_le_left heta.le htwo).trans hr, by positivity, ?_⟩
   apply (div_le_iff₀ (Real.sqrt_pos.2 hm')).2
   have h : (1 : ℝ) ≤ m := by exact_mod_cast (show 1 ≤ m by omega)
@@ -112,9 +114,11 @@ theorem pesoRaizInterior_eq_potencia (α : ℝ) (m : ℕ) (hm : 0 < m) :
 theorem pesoRaizInterior_medio (m : ℕ) (hm : 0 < m) :
     pesoRaizInterior (1 / 2) m = (2 * Real.sqrt 2 / (3 * Real.pi)) *
       (m : ℝ) ^ (-(3 / 4 : ℝ)) := by
-  rw [pesoRaizInterior_eq_potencia _ m hm]
-  norm_num
-  field_simp [Real.pi_pos.ne'] <;> ring
+  have hc : (3 * (3 * Real.sqrt 2) / (27 * Real.pi / 2)) =
+      2 * Real.sqrt 2 / (3 * Real.pi) := by
+    field_simp [Real.pi_pos.ne'] <;> ring
+  rw [pesoRaizInterior_eq_potencia _ m hm, show 2 * (1 / 2 : ℝ) = 1 by norm_num,
+    Real.rpow_one, hc, show -(((1 / 2 : ℝ) + 1) / 2) = -(3 / 4 : ℝ) by norm_num]
 
 def falloRaizCuadrado (m : ℕ) : ℝ :=
   Real.sqrt (m : ℝ) * (1 - 1 / Real.sqrt (m : ℝ)) ^ m
@@ -156,8 +160,9 @@ theorem ocupacion311 (P : Measure Ω) [IsProbabilityMeasure P]
       exact hp k
     have hcard := cardinal_por_masa_minima medidaUniformeCuadrado cells hc hd p hmin
     have hK : (K : ℝ) ≤ Real.sqrt (m : ℝ) := by
-      apply (div_le_iff₀ hs).1
-      simpa [p, div_eq_mul_inv] using hcard
+      have hdiv : (K : ℝ) / Real.sqrt (m : ℝ) ≤ 1 := by
+        simpa [p, div_eq_mul_inv] using hcard
+      simpa using (div_le_iff₀ hs).1 hdiv
     have hle : p ≤ 1 := (escalaRaizCuadrado_admisible m hm).2.2.2
     refine ⟨K, cells, hc, (todasCeldasOcupadas_measurable Z.Z m cells hc Z.medible).compl, ?_, ?_⟩
     · rw [falloOcupacion_eq_union]
@@ -418,7 +423,7 @@ theorem proposicion311_poisson
   refine ⟨hP, fun ms hm K htol => ?_⟩
   have hlim : Tendsto (fun n => Real.sqrt ((ms n : ℝ) ^ (-(α / 2)))) atTop (𝓝 0) := by
     simp only [escalaEnergia311_eq]
-    exact (Real.tendsto_rpow_neg_atTop (show 0 < α / 4 by positivity)).comp
+    exact (tendsto_rpow_neg_atTop (show 0 < α / 4 by positivity)).comp
       (tendsto_natCast_atTop_atTop.comp hm)
   filter_upwards [hP.tasa ms hm K htol] with ω hω
   let q (n : ℕ) := sel.h (ms n) (prefijoPoisson P Z (ms n) ω)
