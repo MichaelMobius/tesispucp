@@ -1,10 +1,20 @@
-# Mapa de dependencias matemáticas — etapa 17
+# Mapa de dependencias matemáticas — etapa 18
+
+## Proposición 3.10 integrada en dimensión dos
+
+- (3.36)–(3.38) y (3.42) → `cotas_minimizador_aproximado` → cota eventual de regularidad cuadrática $R^*+K$ → `holder_residuos_de_regularidad` → cotas individuales y Hölder de los residuos.
+- Particiones de la Hipótesis 3.2 y prefijos i.i.d. → `DatosMasa38.cobertura_prefijos_ae` → `perdidaPoblacional_aproximada_bajo_cobertura` → cota poblacional eventual → `tasa_de_cota_cobertura` → (3.43).
+- (3.43), cotas Hölder, positividad de los pesos y masa local inferior → `tasa_supResiduo_de_integral` en cada soporte → convergencia uniforme y tasas de (3.27)–(3.28). El teorema `proposicion310_dim2` reúne las conclusiones en una sola afirmación casi segura.
+
+[Informe de correspondencia de la etapa 18](INFORME_ETAPA18.md)
+
+## Registro anterior — etapa 17
 
 El [inventario del capítulo III](INVENTARIO_FORMAL_CAPITULO_III.md) fija la revisión de la tesis, relaciona las declaraciones con los enunciados y muestra el grafo de todo el capítulo. El [estado central](ESTADO_FORMALIZACION_CAPITULO_III.md) separa los resultados integrados, sus instancias y las obligaciones pendientes.
 
 ## Comparadores y minimizadores aproximados
 
-`ComparadoresAproximados.lean` extiende la cadena determinista a la Proposición 3.10. La no negatividad de `funcionalRegularizado` y la pertenencia a la clase permiten caracterizar (3.38) mediante comparación con cada admisible. `funcional_pesos_iguales` y la no negatividad de la pérdida empírica dan (3.39)–(3.40). `objetivoCoberturaIntegral_de_hipotesis` y la monotonía en los dos pesos de regularización dan (3.41) para residuos escalares y exponentes de masa 2 y 1, con los términos de datos en los radios de cobertura. La composición casi segura (3.43) para mínimos aproximados y su conclusión uniforme siguen pendientes. [Informe de correspondencia](INFORME_ETAPA17.md)
+`ComparadoresAproximados.lean` extiende la cadena determinista a la Proposición 3.10. La no negatividad de `funcionalRegularizado` y la pertenencia a la clase permiten caracterizar (3.38) mediante comparación con cada admisible. `funcional_pesos_iguales` y la no negatividad de la pérdida empírica dan (3.39)–(3.40). `objetivoCoberturaIntegral_de_hipotesis` y la monotonía en los dos pesos de regularización dan (3.41) para residuos escalares y exponentes de masa 2 y 1, con los términos de datos en los radios de cobertura. [Informe de correspondencia](INFORME_ETAPA17.md)
 
 ## Registro anterior — decimosexta etapa
 

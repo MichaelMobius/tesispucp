@@ -244,7 +244,7 @@ theorem tasa_supResiduo_de_integral
 #print axioms TesisPINN.supResiduo_le_radio_truncado
 #print axioms TesisPINN.tasa_supResiduo_de_integral
 
-private theorem holder_resta
+theorem holder_resta
     {X : Type*} [PseudoMetricSpace X] (U : Set X) (L f : X → ℝ)
     (A B α : ℝ)
     (hL : ∀ x ∈ U, ∀ y ∈ U, |L x - L y| ≤ A * dist x y ^ α)

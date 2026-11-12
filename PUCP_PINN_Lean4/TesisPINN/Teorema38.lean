@@ -39,13 +39,13 @@ structure Operadores38 (H X Y : Type*) where
   seminormaL : H → ℝ
   seminormaB : H → ℝ
 
-private theorem radio38_pos (c s : ℝ) (m : ℕ) (hc : 0 < c) (hm : 0 < m) :
+theorem radio38_pos (c s : ℝ) (m : ℕ) (hc : 0 < c) (hm : 0 < m) :
     0 < Real.sqrt 2 * escalaAuxiliarRaiz c s m := by
   have hm' : 0 < (m : ℝ) := Nat.cast_pos.mpr hm
   unfold escalaAuxiliarRaiz
   positivity
 
-private theorem peso38_pos (mr mb : ℕ) (Cr Cb r b lr lb α : ℝ)
+theorem peso38_pos (mr mb : ℕ) (Cr Cb r b lr lb α : ℝ)
     (hCr : 0 < Cr) (hmr : 0 < mr) (hr : 0 < r) (hlr : 0 < lr) :
     0 < pesoRegularizacionIgual lr lb r b α (factorCoberturaCuadrado mr mb Cr Cb r b) := by
   have hr' : 0 < Cr * (mr : ℝ) * r ^ 2 := by positivity
@@ -93,7 +93,7 @@ def Operadores38.base {H X Y : Type*} [MeasurableSpace X] [MeasurableSpace Y]
     regularizadorR_nonneg := ha.le
     regularizadorB_nonneg := ha.le }
 
-private theorem continuo_de_cota_holder {X : Type*} [PseudoMetricSpace X]
+theorem continuo_de_cota_holder {X : Type*} [PseudoMetricSpace X]
     (U : Set X) (f : X → ℝ) (A α : ℝ) (hα : 0 < α)
     (h : ∀ x ∈ U, ∀ y ∈ U, |f x - f y| ≤ A * dist x y ^ α) :
     ContinuousOn f U := by
@@ -110,13 +110,13 @@ private theorem continuo_de_cota_holder {X : Type*} [PseudoMetricSpace X]
   rw [Real.dist_eq]
   exact (h y hy x hx).trans_lt (hd hyδ)
 
-private theorem eventual_en_cola {p : ℕ → Prop} (N : ℕ)
+theorem eventual_en_cola {p : ℕ → Prop} (N : ℕ)
     (h : ∀ᶠ n in atTop, p (n + N)) : ∀ᶠ n in atTop, p n := by
   show {n | p n} ∈ (atTop : Filter ℕ)
   rw [← map_add_atTop_eq_nat N]
   exact h
 
-private theorem soporte_no_vacio {X : Type*} [MeasurableSpace X]
+theorem soporte_no_vacio {X : Type*} [MeasurableSpace X]
     (μ : Measure X) [IsProbabilityMeasure μ] (U : Set X) (hμ : μ Uᶜ = 0) :
     U.Nonempty := by
   by_contra h
