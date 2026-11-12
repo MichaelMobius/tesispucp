@@ -307,3 +307,16 @@ Otros resultados pendientes se detallan en el [estado central](ESTADO_FORMALIZAC
 | Dato $L^2$, residuo y energía de Dirichlet → tasa y convergencia $H^1$ | `dato315_memLp`, `perdidaPoissonInterior_eq_norma_residuo`, `energia315_por_perdida`, `proposicion315_poisson` |
 
 La última fila usa la clase $G+\psi q$ y la premisa $u^*-G\in H^1_0$. Véase el [informe de la etapa 21](INFORME_ETAPA21.md).
+
+## Proposición 3.11
+
+| Dependencia | Declaración |
+|---|---|
+| Cuadrícula y escala raíz → (3.46)–(3.48) | `particiones_uniformes_cuadrado`, `radioRaizCuadrado_eq`, `radioRaizCuadrado_le_uno_iff`, `factorRaizInterior_eq`, `pesoRaizInterior_eq_potencia` |
+| Fórmula de celda vacía y cardinal por masa → (3.49) | `medidaReal_celdaVacia`, `cardinal_por_masa_minima`, `ocupacion311` |
+| Serie de fallos y prefijos → cobertura eventual | `cobertura_eventual_de_particiones_raiz`, `ocupacion311` |
+| Funcional interior y comparación con el ínfimo → (3.50)–(3.53) | `funcional311`, `evento311`, `Selecciones311`, `cotas311` |
+| Tolerancias eventuales y potencia del radio → tasa poblacional | `producto_pesoRaizInterior`, `radioRaizCuadrado_potencia`, `proposicion311_perdida` |
+| Densidad uniforme y error de traza nula → (3.55) | `perdidaPoissonInterior_eq_norma_residuo`, `errorLevantado_mem_H01`, `laplaciano_errorLevantado`, `tasaEnergia_de_perdida`, `proposicion311_poisson` |
+
+El [informe de la etapa 22](INFORME_ETAPA22.md) documenta el alcance energético y la ruta de comparadores Hermite y Taylor.
