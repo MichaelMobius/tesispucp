@@ -1,4 +1,14 @@
-# Mapa de dependencias matemáticas — etapa 19
+# Mapa de dependencias matemáticas — etapa 20
+
+## Proposición 3.14 en dimensión dos
+
+- L3.13 en interior y frontera → intersección de eventos medibles y soporte de probabilidad uno → (3.61) y cobertura conjunta eventual.
+- Radios de (3.59) → `Operadores38.baseLog` → pesos iguales de (3.60) → `objetivoCoberturaIntegral_de_hipotesis` → cota simultánea (3.62).
+- Comparador exacto y mínimo global → `perdidaPoblacional_minimizador_bajo_cobertura` → `factor_mul_peso_igual` y `potencia_radioLog` → (3.63) en `proposicion314_dim2`.
+
+[Informe de correspondencia de la etapa 20](INFORME_ETAPA20.md)
+
+## Registro anterior — etapa 19
 
 ## Lema 3.13 y radios logarítmicos
 
