@@ -1,4 +1,14 @@
-# Mapa de dependencias matemáticas — etapa 18
+# Mapa de dependencias matemáticas — etapa 19
+
+## Lema 3.13 y radios logarítmicos
+
+- Límite de `log m / m` → `radioLog_eventualmente_admisible` para los dos umbrales geométricos y la masa mínima.
+- (3.57) → `escalaAuxiliarLog_masa` → `cardinal_por_masa_minima` y `medidaReal_falloOcupacion_le_exp` → (3.58) para el fallo medible.
+- `Real.summable_nat_rpow` y comparación de tamaños → `sumable_mayoranteFalloLog_de_tamanos` → `tsum_fallos_ne_top_de_mayorante` → `cobertura_eventual_casi_segura`. `lema313_cobertura_logaritmica` integra la cota finita y la cobertura eventual.
+
+[Informe de correspondencia de la etapa 19](INFORME_ETAPA19.md)
+
+## Registro anterior — etapa 18
 
 ## Proposición 3.10 integrada en dimensión dos
 
