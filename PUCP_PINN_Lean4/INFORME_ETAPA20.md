@@ -1,0 +1,27 @@
+# Proposición 3.14 y generalización logarítmica en 2D
+
+La fuente es el PDF normativo del [inventario](INVENTARIO_FORMAL_CAPITULO_III.md), pp. impresas 83–85 para (3.59)–(3.63), p. 86 para el cierre de su prueba y pp. 86–88 para la siguiente integración. Su SHA-256 es `c6c612f7141c8c6ab5730fc0853b6d16222b97e5615e306f2e32191a49b686e0`. La base es la PR #21 en `24bdd251953f0c526a7e84aaef9dc7a28ad3e1bb`.
+
+| Paso | Declaraciones y correspondencia |
+|---|---|
+| (3.59) | Dos aplicaciones de `lema313_cobertura_logaritmica` sobre el mismo espacio probabilístico con `D=√2` en ambos radios, `s=2` en el interior y `s=1` en la frontera. Los tamaños son positivos para definir promedios y dominan al índice eventualmente. La admisibilidad eventual contiene la positividad y las dos cotas geométricas de cada radio. |
+| (3.60) | `Operadores38.baseLog` conserva los datos y fija ambos pesos mediante `pesoRegularizacionIgual` evaluado en los radios logarítmicos. `factor_mul_peso_igual` da la identidad exacta del producto. `factor_cobertura_log_dim2` expresa el factor como tres veces el máximo de los términos logarítmicos explícitos. `radioLog_tendsto_cero` y `limites_peso_log_dim2` prueban los límites de los radios, del factor, del peso y del producto, con positividad eventual del factor y del peso. |
+| (3.61) | Para cada par admisible se intersectan los dos eventos medibles de ocupación con el evento medible de pertenencia de todas las muestras a sus soportes. Este último tiene probabilidad uno. La subaditividad para los complementos da la cota inferior exacta, con un término de fallo por cada tamaño. |
+| (3.62) | En el mismo evento vale para todo candidato admisible. `objetivoCoberturaIntegral_de_hipotesis` se aplica a los dos radios y la cota de pesos iguales absorbe los dos pesos mínimos. Quedan explícitos los términos de datos con coeficientes `3 λr ρr^(2α)` y `3 λb ρb^(2α)`. La integrabilidad se deduce de la regularidad Hölder en soportes acotados y de la concentración de las leyes. |
+| (3.63) | En una sola afirmación casi segura, la cobertura eventual y la comparación con un interpolante exacto dan la cota del objetivo regularizado para el mínimo global. La identidad del producto y `potencia_radioLog` convierten esta cota en el orden de la suma `(log(mr)/mr)^α + (log(mb)/mb)^(2α)`. Cada término usa su propio tamaño muestral. |
+
+## Hipótesis y alcance
+
+El teorema `proposicion314_dim2` mantiene selecciones mensurables de minimizador y comparador. La conclusión finita es independiente de la hipótesis variacional. La conclusión de tasa usa una cota finita de regularidad del comparador independiente del índice sobre casi toda realización y admite que la comparación valga a partir de un índice eventual. La hipótesis de la tesis válida simultáneamente para todos los índices implica esta formulación. La estructura de operadores escalares y las cotas Hölder representan la regularidad usada en la prueba. Para recuperar el funcional literal se instancian las cotas de los operadores con sus seminormas exactas.
+
+La independencia interna de cada familia i.i.d. interviene en el Lema 3.13. La unión de fallos y la intersección de los dos eventos casi seguros funcionan para cualquier dependencia entre las familias. La conclusión con `∀ᵐ` usa eventos medibles de ocupación y de soporte. La mensurabilidad del evento exacto de la tasa puede obtenerse si las pérdidas en cada índice son mensurables. Para ello se puede aplicar `measurable_perdida_problemaMuestral` bajo mensurabilidad conjunta de las evaluaciones de los operadores y mensurabilidad de los datos. Los umbrales de la constante de orden y del índice pueden elegirse enteros, lo que expresa el evento mediante operaciones numerables.
+
+La ocupación y `potencia_radioLog` admiten dimensiones de masa arbitrarias. Para generalizar el resultado poblacional, `integral_residuo_le_cobertura` ya recibe el exponente de masa. Hay que parametrizar los exponentes `s_r,s_b` en `perdidaPoblacional_le_sumas_cobertura`, en el factor `3 max(Cr mr ρr^s_r, Cb mb ρb^s_b)` y en el paso que absorbe los promedios empíricos. La comparación variacional se conecta después con ese factor, y los datos geométricos deben usar particiones de diámetro a lo sumo `√d η`. Así se puede reutilizar la prueba por residuo y la cobertura logarítmica. Esta etapa verifica la instancia escalar con dimensiones de masa 2 y 1.
+
+## Ruta para la Proposición 3.15
+
+El enunciado impreso exige **enteros $m\ge310$** junto con las condiciones generales de validez de la partición. En la demostración, `ρ_m≤1` equivale a `54 log(m)≤m`, con cambio de signo entre 309 y 310 para `m−54 log(m)`. El certificado de esos dos valores y la monotonía para `x>54` quedan como obligaciones numéricas.
+
+1. Instanciar la medida de probabilidad de volumen restringido al cuadrado y normalizada por (1/4), con `c_r=1/9`, `C_r=π/4` y el umbral geométrico (1). Instanciar L3.13 con `κ=3` para obtener el fallo `1/(3 m² log m)`.
+2. Definir el funcional de una sola muestra interior y verificar `ρ_m=√(54 log(m)/m)`, `C_m=(81π/2) log(m)` y `a_m=(2√6/(9π))/√(m log(m))`. La identidad de (3.65) usa `C_m a_m=3ρ_m` para `α=1/2`.
+3. Adaptar la comparación aproximada de P3.10 al funcional interior y aplicar la cota bajo cobertura para demostrar (3.66). Para transferirla después a energía, identificar `E(h)=‖Δh−f‖²/4`, usar la condición de traza en el error y aplicar la estimación energética. La tasa de pérdida es de orden `√(log(m)/m)` y su raíz da el orden energético.

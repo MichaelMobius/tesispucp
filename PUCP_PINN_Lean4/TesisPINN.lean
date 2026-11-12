@@ -26,3 +26,4 @@ import TesisPINN.RedCuadratica
 import TesisPINN.ComparadoresAproximados
 import TesisPINN.Proposicion310
 import TesisPINN.OcupacionLogaritmica
+import TesisPINN.Proposicion314
