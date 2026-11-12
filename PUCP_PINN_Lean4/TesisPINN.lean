@@ -24,3 +24,4 @@ import TesisPINN.PuentePoisson38_320
 import TesisPINN.DirichletLevantamiento
 import TesisPINN.RedCuadratica
 import TesisPINN.ComparadoresAproximados
+import TesisPINN.Proposicion310
