@@ -21,13 +21,14 @@ theorem perdidaPoissonInterior_eq (L f : Plano → ℝ) :
 def funcionalPoissonInterior {m : ℕ} (s : Fin m → Plano) (L f : Plano → ℝ) : ℝ :=
   funcionalInterior cuadrado (1 / 2) s L f (pesoLogInterior m)
 
-private theorem perdidaPoissonInterior_integrable (L f : Plano → ℝ)
-    (hL : EsHolderInterior cuadrado (1 / 2) L)
-    (hf : EsHolderInterior cuadrado (1 / 2) f) :
+theorem perdidaPoissonInterior_integrable (L f : Plano → ℝ)
+    (α : ℝ) (hα : 0 < α)
+    (hL : EsHolderInterior cuadrado α L)
+    (hf : EsHolderInterior cuadrado α f) :
     Integrable (fun x => (L x - f x) ^ 2) medidaUniformeCuadrado :=
   residuoInterior_integrable medidaUniformeCuadrado cuadrado cuadrado_abierto.measurableSet
     cuadrado_acotado (soporte_no_vacio _ _ medidaUniformeCuadrado_concentrada)
-    medidaUniformeCuadrado_concentrada L f (1 / 2) (by norm_num) hL hf
+    medidaUniformeCuadrado_concentrada L f α hα hL hf
 
 private theorem cotaPoissonInterior {m : ℕ} (hm : 310 ≤ m)
     (s : Fin m → Plano) (hs : ∀ i, s i ∈ cuadrado)
@@ -51,7 +52,7 @@ private theorem cotaPoissonInterior {m : ℕ} (hm : 310 ≤ m)
     cuadrado_abierto.measurableSet medidaUniformeCuadrado_concentrada s (by omega) hs
     L f (1 / 2) (by norm_num) hL hf (radioLogCuadrado m) 1 (Real.pi / 4) 2
     (pesoLogInterior m) hr hr₀ (by positivity)
-    hc masa_bola_uniforme_cuadrado (perdidaPoissonInterior_integrable L f hL hf) ha
+    hc masa_bola_uniforme_cuadrado (perdidaPoissonInterior_integrable L f _ (by norm_num) hL hf) ha
   rw [Real.rpow_two, hfac] at h
   norm_num at h
   exact h
@@ -197,23 +198,28 @@ theorem proposicion315_perdida {H : Type*} [MeasurableSpace H]
           radioLogCuadrado_eq_escala]
         ring
 
-theorem dato315_memLp (f : Plano → ℝ)
-    (hf : EsHolderInterior cuadrado (1 / 2) f) :
+theorem datoPoissonInterior_memLp (f : Plano → ℝ) (α : ℝ) (hα : 0 < α)
+    (hf : EsHolderInterior cuadrado α f) :
     MemLp f 2 volumenPoisson := by
-  have hcont := continuo_de_cota_holder cuadrado f _ (1 / 2) (by norm_num)
-    (seminormaInterior_cota cuadrado (1 / 2) f hf (by norm_num))
+  have hcont := continuo_de_cota_holder cuadrado f _ α hα
+    (seminormaInterior_cota cuadrado α f hf hα)
   have hmeas : AEStronglyMeasurable f volumenPoisson :=
     hcont.aestronglyMeasurable cuadrado_abierto.measurableSet
   apply (memLp_two_iff_integrable_sq hmeas).2
-  have hzero : EsHolderInterior cuadrado (1 / 2) (0 : Plano → ℝ) := by
+  have hzero : EsHolderInterior cuadrado α (0 : Plano → ℝ) := by
     refine ⟨0, le_rfl, fun x _ y _ => ?_⟩
     simp
-  have hi := perdidaPoissonInterior_integrable 0 f hzero hf
+  have hi := perdidaPoissonInterior_integrable 0 f α hα hzero hf
   have hs : Integrable (fun x => f x ^ 2) medidaUniformeCuadrado := by
     simpa only [Pi.zero_apply, zero_sub, neg_sq] using hi
   rw [medidaUniformeCuadrado, integrable_smul_measure
     (by positivity) ENNReal.ofReal_ne_top] at hs
   exact hs
+
+theorem dato315_memLp (f : Plano → ℝ)
+    (hf : EsHolderInterior cuadrado (1 / 2) f) :
+    MemLp f 2 volumenPoisson :=
+  datoPoissonInterior_memLp f (1 / 2) (by norm_num) hf
 
 private def densidadUniforme315 : DensidadInferior where
   rho := fun _ => 1 / 4
@@ -284,29 +290,30 @@ theorem escalaEnergia315_tendsto : Tendsto escalaEnergia315 atTop (𝓝 0) := by
   simpa only [Function.comp_def, Real.sqrt_zero] using
     (Real.continuous_sqrt.tendsto 0).comp hr
 
-private theorem tasaEnergia315 {V : Type*} [NormedAddCommGroup V]
-    (x : ℕ → V) (u : V) (E : ℕ → ℝ) (A : ℝ) (hA : 0 ≤ A)
+theorem tasaEnergia_de_perdida {V : Type*} [NormedAddCommGroup V]
+    (x : ℕ → V) (u : V) (E t : ℕ → ℝ) (A : ℝ) (hA : 0 ≤ A)
     (hE : ∀ m, 0 ≤ E m) (hbound : ∀ m, ‖x m - u‖ ≤ A * Real.sqrt (E m))
-    (hRate : E =O[atTop] escalaPerdida315) :
-    Tendsto x atTop (𝓝 u) ∧ (fun m => ‖x m - u‖) =O[atTop] escalaEnergia315 := by
+    (ht : ∀ m, 0 ≤ t m) (htend : Tendsto (fun m => Real.sqrt (t m)) atTop (𝓝 0))
+    (hRate : E =O[atTop] t) :
+    Tendsto x atTop (𝓝 u) ∧ (fun m => ‖x m - u‖) =O[atTop] (fun m => Real.sqrt (t m)) := by
   obtain ⟨C, hC, hc⟩ := isBigO_iff'.mp hRate
-  have hv : ∀ᶠ m in atTop, ‖x m - u‖ ≤ (A * Real.sqrt C) * escalaEnergia315 m := by
+  have hv : ∀ᶠ m in atTop, ‖x m - u‖ ≤ (A * Real.sqrt C) * Real.sqrt (t m) := by
     filter_upwards [hc] with m hm
-    have he : E m ≤ C * escalaPerdida315 m := by
-      have hs : 0 ≤ escalaPerdida315 m := Real.sqrt_nonneg _
-      rwa [Real.norm_eq_abs, Real.norm_eq_abs, abs_of_nonneg (hE m), abs_of_nonneg hs] at hm
+    have he : E m ≤ C * t m := by
+      rwa [Real.norm_eq_abs, Real.norm_eq_abs, abs_of_nonneg (hE m), abs_of_nonneg (ht m)] at hm
     calc
       _ ≤ A * Real.sqrt (E m) := hbound m
-      _ ≤ A * Real.sqrt (C * escalaPerdida315 m) :=
+      _ ≤ A * Real.sqrt (C * t m) :=
         mul_le_mul_of_nonneg_left (Real.sqrt_le_sqrt he) hA
-      _ = _ := by rw [Real.sqrt_mul hC.le, escalaEnergia315, mul_assoc]
+      _ = _ := by rw [Real.sqrt_mul hC.le, mul_assoc]
   refine ⟨tendsto_iff_norm_sub_tendsto_zero.mpr ?_, isBigO_de_cota_eventual _ _ _
     (hv.mono fun _ hm => ⟨norm_nonneg _, Real.sqrt_nonneg _, hm⟩)⟩
   apply squeeze_zero' (Eventually.of_forall fun _ => norm_nonneg _) hv
-  simpa using tendsto_const_nhds.mul escalaEnergia315_tendsto
+  simpa using tendsto_const_nhds.mul htend
 
-theorem laplacianoLevantado_holder315 (G q : CandidatoPoisson) :
-    EsHolderInterior cuadrado (1 / 2) (laplacianoClásico (aproximacionLevantada G q)) := by
+theorem laplacianoLevantado_holder (G q : CandidatoPoisson) (α : ℝ)
+    (hα : 0 < α) (hα₁ : α ≤ 1) :
+    EsHolderInterior cuadrado α (laplacianoClásico (aproximacionLevantada G q)) := by
   let L := laplacianoClásico (aproximacionLevantada G q)
   have hs : ContDiff ℝ (⊤ : ℕ∞) L :=
     laplacianoClásico_suave _ (aproximacionLevantada_suave G q)
@@ -314,20 +321,27 @@ theorem laplacianoLevantado_holder315 (G q : CandidatoPoisson) :
   have hd := hs.continuous_fderiv (by simp)
   obtain ⟨M, hM⟩ := (isCompact_closedBall (0 : Plano) r).exists_bound_of_continuousOn
     hd.continuousOn
-  refine ⟨max M 0 * Real.sqrt (Metric.diam cuadrado), by positivity, ?_⟩
+  refine ⟨max M 0 * Metric.diam cuadrado ^ (1 - α), by positivity, ?_⟩
   intro x hx y hy
   have hLip := (convex_closedBall (0 : Plano) r).norm_image_sub_le_of_norm_fderiv_le
     (fun x _ => hs.differentiable (by simp) x)
     (fun x hx => (hM x hx).trans (le_max_left _ 0)) (hr hy) (hr hx)
   rw [Real.norm_eq_abs, ← dist_eq_norm] at hLip
   have hdist := Metric.dist_le_diam_of_mem cuadrado_acotado hx hy
-  have hroot : dist x y ≤ Real.sqrt (Metric.diam cuadrado) * Real.sqrt (dist x y) := by
+  have hroot : dist x y ≤ Metric.diam cuadrado ^ (1 - α) * dist x y ^ α := by
     calc
-      dist x y = Real.sqrt (dist x y) * Real.sqrt (dist x y) := by
-        rw [← pow_two, Real.sq_sqrt dist_nonneg]
-      _ ≤ _ := mul_le_mul_of_nonneg_right (Real.sqrt_le_sqrt hdist) (Real.sqrt_nonneg _)
-  rw [← Real.sqrt_eq_rpow, mul_assoc]
+      dist x y = dist x y ^ (1 - α) * dist x y ^ α := by
+        rcases eq_or_lt_of_le (dist_nonneg (x := x) (y := y)) with heq | hpos
+        · rw [← heq, Real.zero_rpow hα.ne', mul_zero]
+        · rw [← Real.rpow_add hpos, sub_add_cancel, Real.rpow_one]
+      _ ≤ _ := mul_le_mul_of_nonneg_right
+        (Real.rpow_le_rpow dist_nonneg hdist (sub_nonneg.mpr hα₁)) (Real.rpow_nonneg dist_nonneg _)
+  rw [mul_assoc]
   exact hLip.trans (mul_le_mul_of_nonneg_left hroot (le_max_right _ _))
+
+theorem laplacianoLevantado_holder315 (G q : CandidatoPoisson) :
+    EsHolderInterior cuadrado (1 / 2) (laplacianoClásico (aproximacionLevantada G q)) :=
+  laplacianoLevantado_holder G q (1 / 2) (by norm_num) (by norm_num)
 
 /-- Poisson con dato de Dirichlet exacto impuesto por la clase `G + ψq`.
 La tasa H¹ se añade a (3.66), que en el PDF es la tasa de pérdida. -/
@@ -362,10 +376,11 @@ theorem proposicion315_poisson
     (fun _ q _ => laplacianoLevantado_holder315 G q)
   refine ⟨hfinite, hcover, ?_⟩
   filter_upwards [hrate sel] with ω hω
-  exact ⟨hω, tasaEnergia315 _ u _ (2 * constanteEnergiaCuadrado)
+  exact ⟨hω, tasaEnergia_de_perdida _ u _ escalaPerdida315 (2 * constanteEnergiaCuadrado)
     (mul_nonneg (by norm_num) constanteEnergiaCuadrado_pos.le)
     (fun _ => perdidaInterior_nonneg _ _ _)
-    (fun _ => energia315_por_perdida G _ f (dato315_memLp f hf) u hu hsol) hω⟩
+    (fun _ => energia315_por_perdida G _ f (dato315_memLp f hf) u hu hsol)
+    (fun _ => Real.sqrt_nonneg _) escalaEnergia315_tendsto hω⟩
 
 #check proposicion315_perdida
 #check proposicion315_poisson

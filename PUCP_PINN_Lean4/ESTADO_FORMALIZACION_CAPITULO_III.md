@@ -1,5 +1,16 @@
 # Estado verificable de la formalización del capítulo III
 
+## Etapa 22
+
+La base es la PR #23, `1da91cf7fb759e143b3549ef2e96dda4729fe2b7`. El [informe de la etapa 22](INFORME_ETAPA22.md) coteja las ecuaciones (3.44)–(3.55).
+
+| Resultado | Declaración y alcance |
+|---|---|
+| Escala raíz | `radioRaizCuadrado_le_uno_iff`, `factorRaizInterior_eq`, `pesoRaizInterior_medio`. El umbral exacto de admisibilidad del radio es 324. |
+| Ocupación, comparación y pérdida | `ocupacion311` demuestra la cota binomial y la cobertura eventual. `proposicion311_perdida` integra las cotas finitas y la tasa $O(m^{-\alpha/2})$ para clases con operador Hölder y comparadores aproximados. |
+| Energía | `proposicion311_poisson` deduce convergencia $H^1$ y tasa $O(m^{-\alpha/4})$ para $G+\psi q$. La extensión a toda la clase con traza prescrita requiere el puente de trazas. |
+| Continuidad | L3.17 y T3.18 para la estabilidad uniforme. Hermite y Taylor aportan los comparadores para C3.12 y las instancias neuronales de P3.11 y P3.15. |
+
 ## Etapa 21
 
 Base: PR #22, `99223cb99ca288eb751832839499eaf474d83500`. El [informe de la etapa 21](INFORME_ETAPA21.md) compara la ley, la geometría, el umbral 310 y las constantes de (3.64) con sus declaraciones Lean.

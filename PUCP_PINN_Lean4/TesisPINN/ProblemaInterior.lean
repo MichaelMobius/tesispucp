@@ -107,6 +107,31 @@ theorem perdidaInterior_le_funcional (μ : Measure X) [IsProbabilityMeasure μ]
 end Measure
 
 /-- Comparación aditiva con el ínfimo del funcional de una sola muestra. -/
+theorem cotasInterior_de_suboptimalidad {H : Type*}
+    (U : Set X) (α : ℝ) (s : Fin m → X) (L : H → X → ℝ) (f : X → ℝ)
+    (a : ℝ) (ha : 0 < a) (Hm : Set H) (h v : H) (hv : v ∈ Hm)
+    (τ δ R : ℝ)
+    (hδ : funcionalInterior U α s (L h) f a ≤
+      sInf ((fun w => funcionalInterior U α s (L w) f a) '' Hm) + δ)
+    (hτ : perdidaEmpiricaInterior s (L v) f ≤ τ)
+    (hR : seminormaInterior U α (L v) ^ 2 ≤ R) :
+    funcionalInterior U α s (L h) f a ≤ a * (R + (τ + δ) / a) ∧
+      seminormaInterior U α (L h) ^ 2 ≤ R + (τ + δ) / a := by
+  have hb : BddBelow ((fun w => funcionalInterior U α s (L w) f a) '' Hm) := by
+    refine ⟨0, ?_⟩
+    rintro _ ⟨w, _, rfl⟩
+    exact add_nonneg (perdidaEmpiricaInterior_nonneg s (L w) f)
+      (mul_nonneg ha.le (sq_nonneg _))
+  have hJ := le_comparador_de_infimo (fun w => funcionalInterior U α s (L w) f a)
+    Hm h v δ hb hv hδ
+  have hR' := mul_le_mul_of_nonneg_left hR ha.le
+  have hj : funcionalInterior U α s (L h) f a ≤ a * (R + (τ + δ) / a) := by
+    unfold funcionalInterior at hJ
+    unfold funcionalInterior
+    rw [mul_add, mul_div_cancel₀ _ ha.ne']
+    linarith only [hJ, hR', hτ]
+  exact ⟨hj, regularidad_controlada a _ _ _ ha (perdidaEmpiricaInterior_nonneg s (L h) f) hj⟩
+
 theorem funcionalInterior_le_de_suboptimalidad {H : Type*}
     (U : Set X) (α : ℝ) (s : Fin m → X) (L : H → X → ℝ) (f : X → ℝ)
     (a : ℝ) (ha : 0 < a) (Hm : Set H) (h v : H) (hv : v ∈ Hm)
@@ -117,19 +142,9 @@ theorem funcionalInterior_le_de_suboptimalidad {H : Type*}
     (hR : seminormaInterior U α (L v) ^ 2 ≤ R) (htol : τ + δ ≤ K * a) :
     funcionalInterior U α s (L h) f a ≤ a * (R + K) ∧
       seminormaInterior U α (L h) ^ 2 ≤ R + K := by
-  have hb : BddBelow ((fun w => funcionalInterior U α s (L w) f a) '' Hm) := by
-    refine ⟨0, ?_⟩
-    rintro _ ⟨w, _, rfl⟩
-    exact add_nonneg (perdidaEmpiricaInterior_nonneg s (L w) f)
-      (mul_nonneg ha.le (sq_nonneg _))
-  have hJ := le_comparador_de_infimo (fun w => funcionalInterior U α s (L w) f a)
-    Hm h v δ hb hv hδ
-  have hR' := mul_le_mul_of_nonneg_left hR ha.le
-  have hj : funcionalInterior U α s (L h) f a ≤ a * (R + K) := by
-    unfold funcionalInterior at hJ
-    unfold funcionalInterior
-    linarith only [hJ, hR', hτ, htol]
-  exact ⟨hj, regularidad_controlada a _ _ _ ha (perdidaEmpiricaInterior_nonneg s (L h) f) hj⟩
+  obtain ⟨hj, hr⟩ := cotasInterior_de_suboptimalidad U α s L f a ha Hm h v hv τ δ R hδ hτ hR
+  have hk := add_le_add_right ((div_le_iff₀ ha).2 htol) R
+  exact ⟨hj.trans (mul_le_mul_of_nonneg_left hk ha.le), hr.trans hk⟩
 
 #print axioms perdidaInterior_le_funcional
 #print axioms funcionalInterior_le_de_suboptimalidad

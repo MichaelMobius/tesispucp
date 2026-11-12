@@ -28,3 +28,4 @@ import TesisPINN.Proposicion310
 import TesisPINN.OcupacionLogaritmica
 import TesisPINN.Proposicion314
 import TesisPINN.Proposicion315
+import TesisPINN.Proposicion311
