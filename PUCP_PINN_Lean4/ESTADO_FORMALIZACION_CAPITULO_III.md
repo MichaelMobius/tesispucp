@@ -1,6 +1,18 @@
 # Estado verificable de la formalización del capítulo III
 
-## Estado actual · etapa 27
+## Estado actual · etapa 28
+
+La base es la [PR #29](https://github.com/MichaelMobius/tesispucp/pull/29), commit `09a0852e926392bc0f8146ca0105624c9cb486db`. El [informe de la etapa 28](INFORME_ETAPA28.md) registra el alcance del operador y la correspondencia con C3.23.
+
+| Resultado | Declaración y alcance |
+|---|---|
+| Traza de Sobolev | `trazaSobolevCuadrado` es lineal y continua en `W12`; `trazaSobolevCuadrado_clasica` recupera la evaluación en las cuatro caras de las funciones clásicas $C^1$. |
+| Núcleo | `trazaSobolevCuadrado_cero_de_H01` verifica $H_0^1\subseteq\ker(\mathrm{Tr})$. |
+| C3.23 general | Parcial. Falta demostrar la inclusión inversa y verificar la compatibilidad con representantes continuos de elementos Sobolev arbitrarios. Las instancias de la etapa 27 siguen disponibles. |
+
+La compilación raíz importa `TrazaSobolevCuadrado.lean`, que contiene las comprobaciones de tipos y axiomas.
+
+## Etapa 27
 
 La base es la [PR #28](https://github.com/MichaelMobius/tesispucp/pull/28), commit `aa07a52090171dfc4fe650362065086b1eb5fffb`. El [informe de la etapa 27](INFORME_ETAPA27.md) coteja (3.80)–(3.83).
 
