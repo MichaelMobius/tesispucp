@@ -333,3 +333,14 @@ El [informe de la etapa 22](INFORME_ETAPA22.md) documenta el alcance energético
 | T3.8 y orden de exponentes → (3.69)–(3.70) | `teorema38_dim2`, `exponente318_orden`, `teorema318_dim2` |
 
 La existencia clásica general sigue siendo la dependencia de GT 6.13. El [informe de la etapa 23](INFORME_ETAPA23.md) precisa el alcance de la instancia verificada.
+
+## Proposición 3.21
+
+| Dependencia | Declaración |
+|---|---|
+| Operador identidad y datos de máximo | `operadorPoisson_eq_laplacianoClásico`, `operadorPoisson_datos` |
+| Clausura y cálculo de la barrera | `clausura_cuadrado`, `segunda_parcial_barreraCuadratica321`, `laplaciano_barreraCuadratica321`, `cotas_barreraCuadratica321` |
+| Máximo débil y norma esencial | `estabilidad_de_barrera`, `supResiduo_eq_Linfty_soporte`, `proposicion321_Linfty_extendido` |
+| Identidad de residuos y Dirichlet exacto | `error_poisson321`, `error_poisson321_dirichlet_exacto`, `tasa_error_poisson321_dirichlet_exacto` |
+
+El [informe de la etapa 24](INFORME_ETAPA24.md) registra las obligaciones de P3.22 y C3.23.

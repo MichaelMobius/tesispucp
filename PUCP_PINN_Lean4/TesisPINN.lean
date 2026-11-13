@@ -30,3 +30,4 @@ import TesisPINN.Proposicion314
 import TesisPINN.Proposicion315
 import TesisPINN.Proposicion311
 import TesisPINN.Teorema318
+import TesisPINN.Proposicion321
