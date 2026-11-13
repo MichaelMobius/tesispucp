@@ -32,3 +32,4 @@ import TesisPINN.Proposicion311
 import TesisPINN.Teorema318
 import TesisPINN.Proposicion321
 import TesisPINN.Proposicion322
+import TesisPINN.PoincareEspectralCuadrado

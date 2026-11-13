@@ -247,6 +247,10 @@ private theorem senoDirichlet_memLp (j : ℕ) : MemLp (senoDirichlet j) 2 volume
 def senoDirichletLp (j : ℕ) : Lp ℝ 2 volumenIntervaloSeno :=
   (senoDirichlet_memLp j).toLp (senoDirichlet j)
 
+theorem senoDirichletLp_ae (j : ℕ) :
+    ⇑(senoDirichletLp j) =ᵐ[volumenIntervaloSeno] senoDirichlet j :=
+  (senoDirichlet_memLp j).coeFn_toLp
+
 theorem senoDirichletLp_ortonormal : Orthonormal ℝ senoDirichletLp := by
   rw [orthonormal_iff_ite]
   intro j k

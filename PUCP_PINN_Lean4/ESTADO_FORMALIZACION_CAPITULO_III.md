@@ -1,6 +1,24 @@
 # Estado verificable de la formalización del capítulo III
 
-## Estado actual · etapa 25
+## Estado actual · etapa 26
+
+La base es la [PR #27](https://github.com/MichaelMobius/tesispucp/pull/27), commit `9dd6893ec09938af52346828790e65ced3e852d8`. El [informe de la etapa 26](INFORME_ETAPA26.md) documenta la completitud y la representación espectral.
+
+| Resultado | Declaración y alcance |
+|---|---|
+| Completitud | `senoDirichletLp_complete` y `modoSenoLp_complete` cubren todo $L^2$ de Lebesgue en los dos dominios. |
+| Base y expansión | `baseHilbertSenoCuadrado`, `modoSenoLp_expansion` y `modoSenoLp_parseval` establecen la expansión de cualquier clase y (3.78). |
+| P3.22 | `proposicion322_espectral_completa` identifica la serie con el error y demuestra (3.77) para $e\in H_0^1$ con laplaciano distribucional en $L^2$. |
+| C3.23 | `poincare_cuadrado_espectral` y `poincare_cuadrado_constante_minima` verifican (3.80). `energia_cuadrado_poincare_optima` verifica (3.81) para errores dados en $H_0^1$. Quedan el puente de trazas y la tasa simultánea. |
+
+### Reproducción actual
+
+- Ejecutar `lake build` en la raíz del proyecto Lean con Lean `4.35.0`, Mathlib `v4.35.0` y EllipticPDE `c47acceaf985f59e1cf3257ffea077a73ea99dae`.
+- Las comprobaciones de completitud, Parseval, (3.77) y (3.80) se encuentran en `CompletitudSenoCuadrado.lean`, `Proposicion322.lean` y `PoincareEspectralCuadrado.lean`.
+
+## Historial de las etapas 20–25
+
+### Etapa 25
 
 La base es la [PR #26](https://github.com/MichaelMobius/tesispucp/pull/26), commit `9a93fef2c757483319518c4e14f233c75b3c3baf`. El [informe de la etapa 25](INFORME_ETAPA25.md) distingue los avances espectrales de la Proposición 3.22 completa.
 
@@ -11,12 +29,10 @@ La base es la [PR #26](https://github.com/MichaelMobius/tesispucp/pull/26), comm
 | Serie y constante | `serieSeno_convergencia` prueba la convergencia absoluta y uniforme. `serieSeno_suma_L2` identifica el límite con la suma en $L^2$, con los coeficientes de $e$. `constanteEspectralCuadrado_lt` certifica $C_{\mathrm{esp}}<0.26404$. |
 | Pendiente | Densidad del sistema seno en $L^2$ del intervalo y del cuadrado, Parseval, identificación de la suma con el error y estimación integrada de P3.22. C3.23, trazas generales y comparadores de Taylor/Hermite siguen pendientes. |
 
-### Reproducción actual
+#### Reproducción histórica de la etapa 25
 
 - Lean `4.35.0`, Mathlib `v4.35.0` y EllipticPDE `c47acceaf985f59e1cf3257ffea077a73ea99dae`.
 - Ejecutar `lake build` en la raíz del proyecto. Los módulos nuevos `BaseSenoCuadrado`, `EspectroDirichletCuadrado`, `ConstanteEspectralCuadrado` y `Proposicion322` contienen `#check` y `#print axioms` y se construyen mediante la importación de `Proposicion322` desde `TesisPINN.lean`.
-
-## Historial de las etapas 20–24
 
 ### Etapa 24
 
@@ -81,6 +97,6 @@ La referencia matemática de esta etapa es el capítulo III del PDF del ZIP `Tes
 
 ## Siguientes obligaciones
 
-1. Demostrar la completitud seno, identificar la serie con el error y cerrar P3.22. Luego establecer la constante de Poincaré óptima y combinar las cotas con P3.15 para C3.23.
+1. Combinar las cotas de Poincaré y P3.22 con P3.15 para C3.23. Preparar la identificación de igual traza con diferencia en $H_0^1$.
 2. Parametrizar ambos exponentes en la cota integral poblacional para generalizar la Proposición 3.14.
 3. Separar los dos primeros puentes de aproximación. Para Taylor, demostrar extensión entera, estimación de coeficientes y cola diferenciada. Para Hermite, probar existencia y unicidad en los nodos distintos, resto uniforme e identificación boreliana de los coeficientes.
