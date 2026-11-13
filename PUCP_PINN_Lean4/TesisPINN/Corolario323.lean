@@ -1,6 +1,7 @@
 import TesisPINN.PoincareEspectralCuadrado
 import TesisPINN.Proposicion315
 import TesisPINN.TrazaCuadrado
+import TesisPINN.NucleoTrazaCuadrado
 
 /-! Cotas simultáneas de Poisson y transferencia de la tasa de pérdida de P3.15. -/
 
@@ -330,5 +331,74 @@ theorem corolario323_poisson_levantado_frontera
 #print axioms corolario323_frontera_puntual
 #print axioms corolario323_poisson_levantado
 #print axioms corolario323_poisson_levantado_frontera
+
+set_option maxHeartbeats 800000 in
+/-- Cotas de (3.81)–(3.82) para dos elementos Sobolev arbitrarios de igual
+traza. La continuidad del representante se deduce para el error. -/
+theorem cotas_simultaneas323_traza
+    (h u : W12 (volume : Measure Plano) cuadrado)
+    (htr : trazaSobolevCuadrado h = trazaSobolevCuadrado u)
+    (d f : Lp ℝ 2 volumenPoisson)
+    (hΔ : laplacianoDistribucional cuadradoOpens
+      (Distribution.ofFun cuadradoOpens (fnL (h : H1Graph volume cuadrado)) volume ⊤) =
+      Distribution.ofFun cuadradoOpens d volume ⊤)
+    (uΔ : laplacianoDistribucional cuadradoOpens
+      (Distribution.ofFun cuadradoOpens (fnL (u : H1Graph volume cuadrado)) volume ⊤) =
+      Distribution.ofFun cuadradoOpens f volume ⊤) :
+    let e : H1Graph (volume : Measure Plano) cuadrado := (h : H1Graph volume cuadrado) - u
+    ‖e‖ ≤ constanteH1323 * ‖d - f‖ ∧
+      normaEsencial323 e ≤ (26404 / 100000 : ℝ) * ‖d - f‖ ∧
+      ‖e‖ + normaEsencial323 e ≤ constanteSimultanea323 * ‖d - f‖ ∧
+      ∃ g : Plano → ℝ, Continuous g ∧ ⇑(fnL e) =ᵐ[volumenPoisson] g ∧
+        EqOn g 0 (frontier cuadrado) ∧ supResiduo (closure cuadrado) g = normaEsencial323 e := by
+  let e : H1Graph (volume : Measure Plano) cuadrado := (h : H1Graph volume cuadrado) - u
+  have he : e ∈ H01 (volume : Measure Plano) cuadrado :=
+    diferencia_mem_H01_de_trazas_iguales h u htr
+  let E : H01 (volume : Measure Plano) cuadrado := ⟨e, he⟩
+  have hres : HasDistributionalLaplacian cuadradoOpens volume E (d - f) :=
+    laplaciano_diferencia323 h u he d f hΔ uΔ
+  have hc := cotas_simultaneas323 E (d - f) hres
+  change ‖e‖ ≤ constanteH1323 * ‖d - f‖ ∧
+    normaEsencial323 e ≤ (26404 / 100000 : ℝ) * ‖d - f‖ ∧
+    ‖e‖ + normaEsencial323 e ≤ constanteSimultanea323 * ‖d - f‖ ∧
+    ∃ g : Plano → ℝ, Continuous g ∧ (⇑(fnL e) =ᵐ[volumenPoisson] g) ∧
+      EqOn g 0 (frontier cuadrado) ∧ supResiduo (closure cuadrado) g = normaEsencial323 e
+  exact hc
+
+/-- Tasa (3.83) para las selecciones de P3.15 y Dirichlet exacto en el
+sentido de las trazas Sobolev. -/
+theorem corolario323_traza
+    {H : Type*} [MeasurableSpace H] (P : Measure Ω) [IsProbabilityMeasure P]
+    (Z : Muestreo38 P medidaUniformeCuadrado) (L : H → Plano → ℝ) (f : Plano → ℝ)
+    (Hm : ℕ → Set H) (hf : EsHolderInterior cuadrado (1 / 2) f)
+    (hHolder : ∀ m w, w ∈ Hm m → EsHolderInterior cuadrado (1 / 2) (L w))
+    (sel : Selecciones315 P Z L f Hm)
+    (h : H → W12 (volume : Measure Plano) cuadrado) (u : W12 (volume : Measure Plano) cuadrado)
+    (htr : ∀ w, trazaSobolevCuadrado (h w) = trazaSobolevCuadrado u)
+    (d : H → Lp ℝ 2 volumenPoisson) (F : Lp ℝ 2 volumenPoisson)
+    (hd : ∀ w, ⇑(d w) =ᵐ[volumenPoisson] L w) (hF : ⇑F =ᵐ[volumenPoisson] f)
+    (hΔ : ∀ w, laplacianoDistribucional cuadradoOpens
+      (Distribution.ofFun cuadradoOpens (fnL (h w : H1Graph volume cuadrado)) volume ⊤) =
+      Distribution.ofFun cuadradoOpens (d w) volume ⊤)
+    (uΔ : laplacianoDistribucional cuadradoOpens
+      (Distribution.ofFun cuadradoOpens (fnL (u : H1Graph volume cuadrado)) volume ⊤) =
+      Distribution.ofFun cuadradoOpens F volume ⊤) :
+    ∀ᵐ ω ∂P,
+      let w := fun m => sel.h m (prefijoPoisson P Z m ω)
+      let e := fun m => (h (w m) : H1Graph volume cuadrado) - u
+      (fun m => ‖e m‖ + normaEsencial323 (e m)) =O[atTop]
+        (fun m : ℕ => (Real.log (m : ℝ) / m) ^ (1 / 4 : ℝ)) ∧
+      Tendsto (fun m => ‖e m‖) atTop (𝓝 0) ∧
+      Tendsto (fun m => normaEsencial323 (e m)) atTop (𝓝 0) := by
+  have he (w : H) := diferencia_mem_H01_de_trazas_iguales (h w) u (htr w)
+  exact corolario323_escalar P Z L f Hm hf hHolder sel
+    (fun w => ⟨(h w : H1Graph volume cuadrado) - u, he w⟩) (fun w => d w - F)
+    (fun w => laplaciano_diferencia323 (h w) u (he w) (d w) F (hΔ w) uΔ)
+    (fun w => (Lp.coeFn_sub _ _).trans ((hd w).sub hF))
+
+#check cotas_simultaneas323_traza
+#check corolario323_traza
+#print axioms cotas_simultaneas323_traza
+#print axioms corolario323_traza
 
 end TesisPINN

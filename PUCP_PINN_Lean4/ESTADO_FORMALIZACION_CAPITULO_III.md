@@ -1,6 +1,17 @@
 # Estado verificable de la formalización del capítulo III
 
-## Estado actual · etapa 28
+## Estado actual · etapa 29
+
+La base es la [PR #30](https://github.com/MichaelMobius/tesispucp/pull/30), commit `74f2140f7762a2c851aa2038629a37f7dccf9454`. El [informe de la etapa 29](INFORME_ETAPA29.md) documenta el núcleo de la traza y su aplicación.
+
+| Resultado | Declaración y alcance |
+|---|---|
+| Fórmula de frontera | `integral_partes_traza_cuadrado` da los términos de cara para toda función del espacio Sobolev. |
+| Núcleo | `extension_cero_traza_nula` conserva la derivada débil. `nucleo_trazaSobolevCuadrado_eq_H01` prueba la caracterización mediante contracción, convergencia $L^2$ y molificación. |
+| Representantes continuos | `trazaSobolevCuadrado_continua` recupera su restricción en las cuatro caras. |
+| C3.23 | `cotas_simultaneas323_traza` verifica las cotas para dos elementos de $H^1$ de igual traza. `corolario323_traza` integra la tasa y convergencia de ambas normas para las selecciones escalares de P3.15. |
+
+## Etapa 28
 
 La base es la [PR #29](https://github.com/MichaelMobius/tesispucp/pull/29), commit `09a0852e926392bc0f8146ca0105624c9cb486db`. El [informe de la etapa 28](INFORME_ETAPA28.md) registra el alcance del operador y la correspondencia con C3.23.
 

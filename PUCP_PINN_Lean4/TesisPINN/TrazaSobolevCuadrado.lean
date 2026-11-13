@@ -27,13 +27,13 @@ private def parCoordenadas : Plano ≃ᵐ (ℝ × ℝ) :=
   (PiLp.homeomorph 2 (fun _ : Fin 2 => ℝ)).toMeasurableEquiv.trans
     (MeasurableEquiv.finTwoArrow (α := ℝ))
 
-private def parCara (i : Fin 2) : Plano ≃ᵐ (ℝ × ℝ) :=
+def parCara (i : Fin 2) : Plano ≃ᵐ (ℝ × ℝ) :=
   if i = 0 then parCoordenadas else parCoordenadas.trans MeasurableEquiv.prodComm
 
-@[simp] private theorem parCara_fst (i : Fin 2) (x : Plano) : (parCara i x).1 = x i := by
+@[simp] theorem parCara_fst (i : Fin 2) (x : Plano) : (parCara i x).1 = x i := by
   fin_cases i <;> rfl
 
-private theorem parCara_medida (i : Fin 2) :
+theorem parCara_medida (i : Fin 2) :
     MeasurePreserving (parCara i) volumenPoisson (volumenIntervaloSeno.prod volumenIntervaloSeno) := by
   have he : MeasurePreserving parCoordenadas volume volume :=
     (volume_preserving_finTwoArrow ℝ).comp (PiLp.volume_preserving_ofLp (ι := Fin 2))
@@ -330,7 +330,16 @@ private theorem trazaCara_emparejamiento (i : Fin 2) (b : Bool)
   simp only [RCLike.inner_apply, conj_trivial, prolongacionCara, pesoConstante, parCara_fst]
   ring
 
-private theorem parCara_symm_coord (i : Fin 2) (z : ℝ × ℝ) (j : Fin 2) :
+/-- Forma integral del emparejamiento con la traza en una cara. -/
+theorem trazaSobolevCuadrado_emparejamiento (i : Fin 2) (b : Bool)
+    (v : W12 (volume : Measure Plano) cuadrado) (a : L2Cara) :
+    inner ℝ a (trazaSobolevCuadrado v (i, b)) =
+      ∫ x, a (parCara i x).2 *
+        ((1 / 2 : ℝ) * fnL (v : H1Graph volume cuadrado) x + pesoTraza b (x i) *
+          partialL (EuclideanSpace.single i (1 : ℝ)) (v : H1Graph volume cuadrado) x) ∂volumenPoisson :=
+  trazaCara_emparejamiento i b v a
+
+theorem parCara_symm_coord (i : Fin 2) (z : ℝ × ℝ) (j : Fin 2) :
     (parCara i).symm z j = if j = i then z.1 else z.2 := by
   fin_cases i <;> fin_cases j <;> rfl
 
@@ -349,7 +358,7 @@ private theorem seccion_cara_suave (i : Fin 2) (s : ℝ) :
   rw [h]
   fun_prop
 
-private theorem deriv_seccion_cara (i : Fin 2) (v : Plano → ℝ) (hv : ContDiff ℝ 1 v)
+theorem deriv_seccion_cara (i : Fin 2) (v : Plano → ℝ) (hv : ContDiff ℝ 1 v)
     (s t : ℝ) :
     HasDerivAt (fun y => v ((parCara i).symm (y, s)))
       (fderiv ℝ v ((parCara i).symm (t, s)) (EuclideanSpace.single i 1)) t := by
