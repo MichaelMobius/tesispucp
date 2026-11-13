@@ -351,8 +351,19 @@ theorem cotas_simultaneas323_traza
       ‖e‖ + normaEsencial323 e ≤ constanteSimultanea323 * ‖d - f‖ ∧
       ∃ g : Plano → ℝ, Continuous g ∧ ⇑(fnL e) =ᵐ[volumenPoisson] g ∧
         EqOn g 0 (frontier cuadrado) ∧ supResiduo (closure cuadrado) g = normaEsencial323 e := by
-  have he := diferencia_mem_H01_de_trazas_iguales h u htr
-  exact cotas_simultaneas323 _ _ (laplaciano_diferencia323 h u he d f hΔ uΔ)
+  let e : H1Graph (volume : Measure Plano) cuadrado := (h : H1Graph volume cuadrado) - u
+  have he : e ∈ H01 (volume : Measure Plano) cuadrado :=
+    diferencia_mem_H01_de_trazas_iguales h u htr
+  let E : H01 (volume : Measure Plano) cuadrado := ⟨e, he⟩
+  have hres : HasDistributionalLaplacian cuadradoOpens volume E (d - f) :=
+    laplaciano_diferencia323 h u he d f hΔ uΔ
+  have hc := cotas_simultaneas323 E (d - f) hres
+  change ‖e‖ ≤ constanteH1323 * ‖d - f‖ ∧
+    normaEsencial323 e ≤ (26404 / 100000 : ℝ) * ‖d - f‖ ∧
+    ‖e‖ + normaEsencial323 e ≤ constanteSimultanea323 * ‖d - f‖ ∧
+    ∃ g : Plano → ℝ, Continuous g ∧ (⇑(fnL e) =ᵐ[volumenPoisson] g) ∧
+      EqOn g 0 (frontier cuadrado) ∧ supResiduo (closure cuadrado) g = normaEsencial323 e
+  exact hc
 
 /-- Tasa (3.83) para las selecciones de P3.15 y Dirichlet exacto en el
 sentido de las trazas Sobolev. -/
