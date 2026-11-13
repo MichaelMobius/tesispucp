@@ -51,9 +51,15 @@ theorem clausura_cuadrado :
   let e := PiLp.homeomorph 2 (fun _ : Fin 2 => ℝ)
   have he : cuadrado = e ⁻¹' (univ.pi fun _ => Ioo (-1 : ℝ) 1) := by
     ext x
-    simp [cuadrado, EllipticPdes.Poincare.euclBox, e]
+    change (∀ i : Fin 2, x i ∈ Ioo (-1 : ℝ) 1) ↔
+      WithLp.ofLp x ∈ univ.pi (fun _ => Ioo (-1 : ℝ) 1)
+    simp [Set.mem_pi]
   rw [he, ← e.preimage_closure, closure_pi_set]
-  simp [closure_Ioo (by norm_num : (-1 : ℝ) < 1), e, Set.preimage]
+  rw [show closure (Ioo (-1 : ℝ) 1) = Icc (-1 : ℝ) 1 from closure_Ioo (by norm_num)]
+  ext x
+  change WithLp.ofLp x ∈ univ.pi (fun _ => Icc (-1 : ℝ) 1) ↔
+    ∀ i : Fin 2, x i ∈ Icc (-1 : ℝ) 1
+  simp [Set.mem_pi]
 
 def barreraCuadratica321 (x : Plano) : ℝ := (2 - (x 0) ^ 2 - (x 1) ^ 2) / 4
 
@@ -75,10 +81,11 @@ theorem parcial_barreraCuadratica321 (i : Fin 2) :
     rw [barreraCuadratica321_eq_norma]
     ring
   have hd : DifferentiableAt ℝ (fun y : Plano => 2 - ‖y‖ ^ 2) x :=
-    (differentiableAt_const _).sub (differentiableAt_id.norm_sq)
+    (differentiableAt_const _).sub
+      (hasStrictFDerivAt_norm_sq x).hasFDerivAt.differentiableAt
   rw [he, partialD_apply, fderiv_const_mul hd, fderiv_const_sub, fderiv_norm_sq_apply]
-  simp only [ContinuousLinearMap.smul_apply, ContinuousLinearMap.neg_apply, smul_eq_mul,
-    innerSL_apply_apply, EuclideanSpace.inner_single_right, map_one, one_mul]
+  simp only [smul_apply, neg_apply, smul_eq_mul,
+    innerSL_apply_apply, EuclideanSpace.inner_single_right, star_trivial, one_mul]
   ring
 
 theorem segunda_parcial_barreraCuadratica321 (i j : Fin 2) (x : Plano) :
@@ -90,7 +97,10 @@ theorem segunda_parcial_barreraCuadratica321 (i j : Fin 2) (x : Plano) :
     change -(y j) / 2 = -(1 / 2 : ℝ) * y j
     ring
   rw [he, fderiv_const_mul p.differentiableAt, ContinuousLinearMap.fderiv]
-  simp [p, PiLp.single_apply, Pi.single_apply, mul_ite, eq_comm]
+  by_cases hij : i = j
+  · subst j
+    simp [p, PiLp.single_apply]
+  · simp [p, PiLp.single_apply, hij, Ne.symm hij]
 
 theorem laplaciano_barreraCuadratica321 (x : Plano) :
     laplacianoClásico barreraCuadratica321 x = -1 := by
