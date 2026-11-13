@@ -386,3 +386,15 @@ El [informe de la etapa 26](INFORME_ETAPA26.md) registra la correspondencia con 
 | P3.15, raíz de la pérdida y cotas deterministas → tasa y convergencia (3.83) | `transferencia_simultanea323`, `corolario323_escalar`, `corolario323_frontera_puntual`, `corolario323_poisson_levantado_frontera` |
 
 El [informe de la etapa 27](INFORME_ETAPA27.md) distingue el puente de frontera puntual del núcleo de la traza para $H^1$ arbitrario, que sigue pendiente.
+
+## Operador de traza del cuadrado · etapa 28
+
+| Dependencia | Declaración |
+|---|---|
+| Producto con el peso afín y teorema fundamental del cálculo | `extremo_intervalo_de_integral`, `desigualdad_traza_intervalo` |
+| Coordenadas, Fubini, prolongaciones ponderadas y sus adjuntos | `trazaSobolevCuadrado`, `trazaSobolevCuadrado_norma` |
+| Sección clásica en la coordenada normal y fórmula de extremo | `trazaSobolevCuadrado_clasica`, `cara_ignora_vertices` |
+| Anulación de pruebas en la frontera y clausura | `trazaSobolevCuadrado_cero_de_H01` |
+| C3.23 para dos trazas iguales en $H^1$ general | Pendiente. Falta demostrar $\ker(\mathrm{Tr})\subseteq H_0^1$. |
+
+El [informe de la etapa 28](INFORME_ETAPA28.md) detalla la normalización por caras y la ruta de extensión por cero.
