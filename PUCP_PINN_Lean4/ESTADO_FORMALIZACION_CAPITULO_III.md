@@ -1,6 +1,24 @@
 # Estado verificable de la formalización del capítulo III
 
-## Etapa 24
+## Estado actual · etapa 25
+
+La base es la [PR #26](https://github.com/MichaelMobius/tesispucp/pull/26), commit `9a93fef2c757483319518c4e14f233c75b3c3baf`. El [informe de la etapa 25](INFORME_ETAPA25.md) distingue los avances espectrales de la Proposición 3.22 completa.
+
+| Resultado | Declaración y alcance |
+|---|---|
+| Modos seno | Modos ortonormales para Lebesgue, de norma uno y pertenecientes a $H_0^1$ en el cuadrado, con autovalores $\pi^2(j^2+k^2)/4$. |
+| Coeficientes | `coeficiente_laplaciano_modoSeno` establece (3.79) y $F_{jk}=\lambda_{jk}e_{jk}$ desde la identidad distribucional. |
+| Serie y constante | `serieSeno_convergencia` prueba la convergencia absoluta y uniforme. `serieSeno_suma_L2` identifica el límite con la suma en $L^2$, con los coeficientes de $e$. `constanteEspectralCuadrado_lt` certifica $C_{\mathrm{esp}}<0.26404$. |
+| Pendiente | Densidad del sistema seno en $L^2$ del intervalo y del cuadrado, Parseval, identificación de la suma con el error y estimación integrada de P3.22. C3.23, trazas generales y comparadores de Taylor/Hermite siguen pendientes. |
+
+### Reproducción actual
+
+- Lean `4.35.0`, Mathlib `v4.35.0` y EllipticPDE `c47acceaf985f59e1cf3257ffea077a73ea99dae`.
+- Ejecutar `lake build` en la raíz del proyecto. Los módulos nuevos `BaseSenoCuadrado`, `EspectroDirichletCuadrado`, `ConstanteEspectralCuadrado` y `Proposicion322` contienen `#check` y `#print axioms` y se construyen mediante la importación de `Proposicion322` desde `TesisPINN.lean`.
+
+## Historial de las etapas 20–24
+
+### Etapa 24
 
 Base en la PR #25, `c0a86e6ec523dce45bee48e1f81810e408f85ed4`. El [informe de la etapa 24](INFORME_ETAPA24.md) coteja (3.76) y prepara el bloque espectral.
 
@@ -10,7 +28,7 @@ Base en la PR #25, `c0a86e6ec523dce45bee48e1f81810e408f85ed4`. El [informe de la
 | Error de Poisson | `error_poisson321_dirichlet_exacto` y su transferencia de tasas usan una solución clásica dada. |
 | Continuidad | P3.22 y C3.23 requieren base seno, integración por partes con los modos y certificación de constantes. Taylor y Hermite siguen como rutas de comparadores. |
 
-## Etapa 23
+### Etapa 23
 
 Base en la PR #24, `976fd52bd620695cbb5dfe03a98f105b9e228779`. El [informe de la etapa 23](INFORME_ETAPA23.md) documenta la convención del operador, las normas y la separación entre existencia y estabilidad.
 
@@ -21,7 +39,7 @@ Base en la PR #24, `976fd52bd620695cbb5dfe03a98f105b9e228779`. El [informe de la
 | Pendiente | Existencia clásica general de GT 6.13 y versión probabilística en dimensión general. |
 | Continuidad | P3.21 reutiliza el máximo débil para la barrera cuadrática. P3.22/C3.23 requieren la ruta espectral. Taylor y Hermite suministran comparadores para las clases concretas. |
 
-## Etapa 22
+### Etapa 22
 
 La base es la PR #23, `1da91cf7fb759e143b3549ef2e96dda4729fe2b7`. El [informe de la etapa 22](INFORME_ETAPA22.md) coteja las ecuaciones (3.44)–(3.55).
 
@@ -32,7 +50,7 @@ La base es la PR #23, `1da91cf7fb759e143b3549ef2e96dda4729fe2b7`. El [informe de
 | Energía | `proposicion311_poisson` deduce convergencia $H^1$ y tasa $O(m^{-\alpha/4})$ para $G+\psi q$. La extensión a toda la clase con traza prescrita requiere el puente de trazas. |
 | Continuidad | L3.17 y T3.18 para la estabilidad uniforme. Hermite y Taylor aportan los comparadores para C3.12 y las instancias neuronales de P3.11 y P3.15. |
 
-## Etapa 21
+### Etapa 21
 
 Base: PR #22, `99223cb99ca288eb751832839499eaf474d83500`. El [informe de la etapa 21](INFORME_ETAPA21.md) compara la ley, la geometría, el umbral 310 y las constantes de (3.64) con sus declaraciones Lean.
 
@@ -43,7 +61,7 @@ Base: PR #22, `99223cb99ca288eb751832839499eaf474d83500`. El [informe de la etap
 | Extensión energética | `proposicion315_poisson`. Convergencia en el grafo $H^1$ y tasa $O((\log m/m)^{1/4})$ con levantamiento suave exacto y solución distribucional dada. |
 | Pendiente | Extender la identificación de $H_0^1$ a toda la clase $C^{2,1/2}(\overline U)$. Instanciar la Proposición 3.11 con su radio de raíz y verificar sus pesos. |
 
-## Etapa 20
+### Etapa 20
 
 La referencia matemática de esta etapa es el capítulo III del PDF del ZIP `Tesis_PUCP_Resumen_Conectores_20261108.zip`. La [matriz del capítulo](INVENTARIO_FORMAL_CAPITULO_III.md) registra el hash, las 27 entradas numeradas, las 94 ecuaciones, los desarrollos sin número y sus dependencias. La [auditoría de la base](AUDITORIA_MATEMATICA_PR18.md) distingue los alcances de las pruebas heredadas. Los conteos describen el material inventariado.
 
@@ -54,7 +72,7 @@ La referencia matemática de esta etapa es el capítulo III del PDF del ZIP `Tes
 | Parcialmente formalizados | Quedan las versiones en dimensión general de P3.10 y P3.14 y las instancias en clases neuronales concretas. La matriz registra las piezas disponibles de L3.3–T3.8, P3.11, P3.15, T3.18–T3.20 y L3.24–P3.27. |
 | Pendientes de infraestructura o instanciación | Existencia clásica y estabilidad general, trazas Sobolev y dimensiones generales, geometría de las leyes uniformes del cuadrado, pesos y pérdidas interiores de P3.15, Poincaré óptima y base seno, clases MLP concretas, construcción de Hermite/Taylor y selección de mínimos. |
 
-## Reproducción
+### Reproducción histórica de la etapa 20
 
 - Base fijada en `24bdd251953f0c526a7e84aaef9dc7a28ad3e1bb`, cabeza de la [PR #21](https://github.com/MichaelMobius/tesispucp/pull/21).
 - Lean `4.35.0`, Mathlib `v4.35.0` y EllipticPDE `c47acceaf985f59e1cf3257ffea077a73ea99dae`.
@@ -63,6 +81,6 @@ La referencia matemática de esta etapa es el capítulo III del PDF del ZIP `Tes
 
 ## Siguientes obligaciones
 
-1. Separar el funcional interior, verificar la geometría uniforme del cuadrado y certificar el umbral de la Proposición 3.15.
+1. Demostrar la completitud seno, identificar la serie con el error y cerrar P3.22. Luego establecer la constante de Poincaré óptima y combinar las cotas con P3.15 para C3.23.
 2. Parametrizar ambos exponentes en la cota integral poblacional para generalizar la Proposición 3.14.
 3. Separar los dos primeros puentes de aproximación. Para Taylor, demostrar extensión entera, estimación de coeficientes y cola diferenciada. Para Hermite, probar existencia y unicidad en los nodos distintos, resto uniforme e identificación boreliana de los coeficientes.

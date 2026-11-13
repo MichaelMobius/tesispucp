@@ -344,3 +344,18 @@ La existencia clásica general sigue siendo la dependencia de GT 6.13. El [infor
 | Identidad de residuos y Dirichlet exacto | `error_poisson321`, `error_poisson321_dirichlet_exacto`, `tasa_error_poisson321_dirichlet_exacto` |
 
 El [informe de la etapa 24](INFORME_ETAPA24.md) registra las obligaciones de P3.22 y C3.23.
+
+## Proposición 3.22 · etapa 25
+
+| Dependencia | Declaración y estado |
+|---|---|
+| Funciones seno y factorización suave → $H_0^1$ | `modoSeno_suave`, `modoSeno_cero_frontera`, `grafoModoSeno` |
+| Integración en el intervalo y producto de medidas → ortonormalidad | `integral_senoDirichlet_mul`, `senoDirichletLp_ortonormal`, `modoSenoLp_ortonormal`, `modoSenoLp_norma` |
+| Ecuación de los modos y Green por densidad → (3.79) | `modoSeno_ecuacion`, `modoSeno_laplaciano_distribucional`, `green_H01_bilineal`, `coeficiente_laplaciano_modoSeno` |
+| Filas y columnas del truncamiento, cola y certificado → constante | `sumaEspectralFinita_cien`, `sumaEspectral_cola`, `constanteEspectralCuadrado_lt`, `sqrt_suma_inv_autovalorSeno` |
+| Bessel, Cauchy–Schwarz y prueba M → serie continua y control puntual | `suma_coefSeno_acotada`, `serieSeno_convergencia` |
+| Suma en $L^2$ y convergencia uniforme → identificación del límite de la serie | `serieSeno_suma_L2` da igualdad casi en todas partes con la suma en $L^2$ y conserva todos los coeficientes |
+| Completitud → Parseval (3.78) y representante de $e$ | Pendiente. Falta excluir un resto ortogonal a todos los modos. |
+| Primer modo de Dirichlet → igualdad candidata de Poincaré (3.80) | `autovalorSeno_minimo`, `energia_primer_modoSeno`. Falta la desigualdad para todo $H_0^1$. |
+
+El [informe de la etapa 25](INFORME_ETAPA25.md) explica la normalización de Lebesgue, el signo $F=-\Delta e$ y la dependencia restante para cerrar (3.77) y pasar a C3.23.
