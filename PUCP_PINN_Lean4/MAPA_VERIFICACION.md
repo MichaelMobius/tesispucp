@@ -373,3 +373,16 @@ El [informe de la etapa 25](INFORME_ETAPA25.md) explica la normalización de Leb
 | Poincaré óptima y energía débil → (3.81) para errores en $H_0^1$ | `energia_cuadrado_poincare_optima` |
 
 El [informe de la etapa 26](INFORME_ETAPA26.md) registra la correspondencia con el PDF y el alcance de P3.22.
+
+## Corolario 3.23 · etapa 27
+
+| Dependencia | Declaración |
+|---|---|
+| Truncaciones de soporte interior, extensión por cero y molificación → $H_0^1$ | `continuo_cero_frontera_mem_H01`, `frontera_puntual_igual_implica_error_H01` |
+| Laplaciano distribucional lineal → residuo del error | `laplaciano_diferencia323` |
+| Poincaré óptima y P3.22 → cotas simultáneas (3.81)–(3.82) | `cotas_simultaneas323`, `cotas_simultaneas323_frontera_puntual` |
+| Continuidad, soporte de Lebesgue y clausura → supremo del error puntual | `representante323_coincide` |
+| Normalización de la probabilidad uniforme → $2\sqrt E$ | `norma_residuo323_de_perdida`, `norma_residuo323_de_perdida_escalar` |
+| P3.15, raíz de la pérdida y cotas deterministas → tasa y convergencia (3.83) | `transferencia_simultanea323`, `corolario323_escalar`, `corolario323_frontera_puntual`, `corolario323_poisson_levantado_frontera` |
+
+El [informe de la etapa 27](INFORME_ETAPA27.md) distingue el puente de frontera puntual del núcleo de la traza para $H^1$ arbitrario, que sigue pendiente.

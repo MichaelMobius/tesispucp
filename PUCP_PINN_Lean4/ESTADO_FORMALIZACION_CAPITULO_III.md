@@ -1,6 +1,24 @@
 # Estado verificable de la formalización del capítulo III
 
-## Estado actual · etapa 26
+## Estado actual · etapa 27
+
+La base es la [PR #28](https://github.com/MichaelMobius/tesispucp/pull/28), commit `aa07a52090171dfc4fe650362065086b1eb5fffb`. El [informe de la etapa 27](INFORME_ETAPA27.md) coteja (3.80)–(3.83).
+
+| Resultado | Declaración y alcance |
+|---|---|
+| Condición de Dirichlet | `continuo_cero_frontera_mem_H01` y `frontera_puntual_igual_implica_error_H01` descargan $H_0^1$ para representantes Sobolev continuos de valores iguales en la frontera. |
+| Cotas simultáneas | `cotas_simultaneas323` combina (3.81)–(3.82), con representante continuo. La versión de frontera puntual identifica el supremo de la diferencia original con la norma esencial. |
+| Tasa (3.83) | `corolario323_escalar`, `corolario323_frontera_puntual` y `corolario323_poisson_levantado` derivan la tasa simultánea de P3.15 y la convergencia de ambas normas. |
+| Pendiente | Núcleo del operador de traza para todo $H^1$ del cuadrado. Construcción de clases neuronales concretas y sus selecciones. |
+
+### Reproducción actual
+
+- Ejecutar `lake build` en la raíz del proyecto Lean con Lean `4.35.0`, Mathlib `v4.35.0` y EllipticPDE `c47acceaf985f59e1cf3257ffea077a73ea99dae`.
+- Las comprobaciones de la etapa están en `TrazaCuadrado.lean` y `Corolario323.lean`.
+
+## Historial de las etapas 20–26
+
+### Etapa 26
 
 La base es la [PR #27](https://github.com/MichaelMobius/tesispucp/pull/27), commit `9dd6893ec09938af52346828790e65ced3e852d8`. El [informe de la etapa 26](INFORME_ETAPA26.md) documenta la completitud y la representación espectral.
 
@@ -11,12 +29,10 @@ La base es la [PR #27](https://github.com/MichaelMobius/tesispucp/pull/27), comm
 | P3.22 | `proposicion322_espectral_completa` identifica la serie con el error y demuestra (3.77) para $e\in H_0^1$ con laplaciano distribucional en $L^2$. |
 | C3.23 | `poincare_cuadrado_espectral` y `poincare_cuadrado_constante_minima` verifican (3.80). `energia_cuadrado_poincare_optima` verifica (3.81) para errores dados en $H_0^1$. Quedan el puente de trazas y la tasa simultánea. |
 
-### Reproducción actual
+#### Reproducción histórica de la etapa 26
 
 - Ejecutar `lake build` en la raíz del proyecto Lean con Lean `4.35.0`, Mathlib `v4.35.0` y EllipticPDE `c47acceaf985f59e1cf3257ffea077a73ea99dae`.
 - Las comprobaciones de completitud, Parseval, (3.77) y (3.80) se encuentran en `CompletitudSenoCuadrado.lean`, `Proposicion322.lean` y `PoincareEspectralCuadrado.lean`.
-
-## Historial de las etapas 20–25
 
 ### Etapa 25
 
@@ -97,6 +113,6 @@ La referencia matemática de esta etapa es el capítulo III del PDF del ZIP `Tes
 
 ## Siguientes obligaciones
 
-1. Combinar las cotas de Poincaré y P3.22 con P3.15 para C3.23. Preparar la identificación de igual traza con diferencia en $H_0^1$.
+1. Para C3.23 en su formulación general, construir la traza de $H^1$ sobre las caras del cuadrado y demostrar que su núcleo es $H_0^1$.
 2. Parametrizar ambos exponentes en la cota integral poblacional para generalizar la Proposición 3.14.
 3. Separar los dos primeros puentes de aproximación. Para Taylor, demostrar extensión entera, estimación de coeficientes y cola diferenciada. Para Hermite, probar existencia y unicidad en los nodos distintos, resto uniforme e identificación boreliana de los coeficientes.
