@@ -1,5 +1,15 @@
 # Estado verificable de la formalización del capítulo III
 
+## Etapa 24
+
+Base en la PR #25, `c0a86e6ec523dce45bee48e1f81810e408f85ed4`. El [informe de la etapa 24](INFORME_ETAPA24.md) coteja (3.76) y prepara el bloque espectral.
+
+| Resultado | Declaración y alcance |
+|---|---|
+| P3.21 | `proposicion321_barrera_cuadratica` verifica la constante $1/2$. `proposicion321_Linfty_extendido` permite residuo esencial infinito y una ley de frontera de soporte completo. |
+| Error de Poisson | `error_poisson321_dirichlet_exacto` y su transferencia de tasas usan una solución clásica dada. |
+| Continuidad | P3.22 y C3.23 requieren base seno, integración por partes con los modos y certificación de constantes. Taylor y Hermite siguen como rutas de comparadores. |
+
 ## Etapa 23
 
 Base en la PR #24, `976fd52bd620695cbb5dfe03a98f105b9e228779`. El [informe de la etapa 23](INFORME_ETAPA23.md) documenta la convención del operador, las normas y la separación entre existencia y estabilidad.
