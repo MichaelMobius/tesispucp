@@ -398,3 +398,17 @@ El [informe de la etapa 27](INFORME_ETAPA27.md) distingue el puente de frontera 
 | C3.23 para dos trazas iguales en $H^1$ general | Pendiente. Falta demostrar $\ker(\mathrm{Tr})\subseteq H_0^1$. |
 
 El [informe de la etapa 28](INFORME_ETAPA28.md) detalla la normalización por caras y la ruta de extensión por cero.
+
+## Núcleo de la traza y Corolario 3.23 · etapa 29
+
+| Dependencia | Declaración |
+|---|---|
+| Emparejamiento de traza, interpolante afín, recorte y convergencia dominada | `integral_partes_traza_cuadrado` |
+| Fórmula de cara y traza nula | `extension_cero_traza_nula` |
+| Cambio de variables, densidad $L^2$, contracción y molificación interior | `nucleo_trazaSobolevCuadrado_eq_H01` |
+| Linealidad y núcleo de la traza | `diferencia_mem_H01_de_trazas_iguales` |
+| Fórmula de cara, perfiles normales, continuidad uniforme y unicidad distribucional | `trazaSobolevCuadrado_continua` |
+| Laplaciano distribucional, Poincaré óptima y P3.22 | `cotas_simultaneas323_traza` |
+| P3.15, identidad $2\sqrt E$ y transferencia simultánea | `corolario323_traza` |
+
+El [informe de la etapa 29](INFORME_ETAPA29.md) precisa el alcance determinista y casi seguro.
