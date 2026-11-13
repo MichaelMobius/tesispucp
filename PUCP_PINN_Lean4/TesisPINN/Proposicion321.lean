@@ -26,7 +26,7 @@ theorem operadorPoisson_eq_laplacianoClásico (v : Plano → ℝ) :
     operadorPoisson.aplica v = laplacianoClásico v := by
   funext x
   rw [operadorPoisson.aplica_eq_suma]
-  simp [operadorPoisson, laplacianoClásico, parcial_eq_derivadaClásica, ite_mul]
+  simp [operadorPoisson, laplacianoClásico, parcial_eq_derivadaClásica, ite_mul, derivadaClásica]
 
 theorem operadorPoisson_datos : operadorPoisson.Datos cuadrado 1 0 := by
   refine ⟨one_pos, le_rfl, ?_, ?_, ?_, ?_⟩
@@ -49,8 +49,10 @@ private theorem cero_mem_cuadrado : (0 : Plano) ∈ cuadrado := by
 theorem clausura_cuadrado :
     closure cuadrado = {x : Plano | ∀ i, x i ∈ Icc (-1 : ℝ) 1} := by
   let e := PiLp.homeomorph 2 (fun _ : Fin 2 => ℝ)
-  change closure (e ⁻¹' (univ.pi fun _ => Ioo (-1 : ℝ) 1)) = _
-  rw [← e.preimage_closure, closure_pi_set]
+  have he : cuadrado = e ⁻¹' (univ.pi fun _ => Ioo (-1 : ℝ) 1) := by
+    ext x
+    simp [cuadrado, EllipticPdes.Poincare.euclBox, e]
+  rw [he, ← e.preimage_closure, closure_pi_set]
   simp [closure_Ioo (by norm_num : (-1 : ℝ) < 1), e, Set.preimage]
 
 def barreraCuadratica321 (x : Plano) : ℝ := (2 - (x 0) ^ 2 - (x 1) ^ 2) / 4
@@ -75,20 +77,20 @@ theorem parcial_barreraCuadratica321 (i : Fin 2) :
   have hd : DifferentiableAt ℝ (fun y : Plano => 2 - ‖y‖ ^ 2) x :=
     (differentiableAt_const _).sub (differentiableAt_id.norm_sq)
   rw [he, partialD_apply, fderiv_const_mul hd, fderiv_const_sub, fderiv_norm_sq_apply]
-  simp [EuclideanSpace.inner_single_right]
+  simp only [ContinuousLinearMap.smul_apply, ContinuousLinearMap.neg_apply, smul_eq_mul,
+    innerSL_apply_apply, EuclideanSpace.inner_single_right, map_one, one_mul]
   ring
 
 theorem segunda_parcial_barreraCuadratica321 (i j : Fin 2) (x : Plano) :
     partialD i (partialD j barreraCuadratica321) x = if i = j then -(1 / 2 : ℝ) else 0 := by
   rw [parcial_barreraCuadratica321, partialD_apply]
-  have he : (fun y : Plano => -(y j) / 2) =
-      fun y => -(1 / 2 : ℝ) * (PiLp.proj j : Plano →L[ℝ] ℝ) y := by
+  let p : Plano →L[ℝ] ℝ := PiLp.proj 2 (fun _ : Fin 2 => ℝ) j
+  have he : (fun y : Plano => -(y j) / 2) = fun y => -(1 / 2 : ℝ) * p y := by
     funext y
     change -(y j) / 2 = -(1 / 2 : ℝ) * y j
     ring
-  rw [he, fderiv_const_mul ((PiLp.proj j : Plano →L[ℝ] ℝ).differentiableAt),
-    ContinuousLinearMap.fderiv]
-  simp [PiLp.single_apply, Pi.single_apply, mul_ite]
+  rw [he, fderiv_const_mul p.differentiableAt, ContinuousLinearMap.fderiv]
+  simp [p, PiLp.single_apply, Pi.single_apply, mul_ite, eq_comm]
 
 theorem laplaciano_barreraCuadratica321 (x : Plano) :
     laplacianoClásico barreraCuadratica321 x = -1 := by
