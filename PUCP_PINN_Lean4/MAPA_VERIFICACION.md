@@ -359,3 +359,17 @@ El [informe de la etapa 24](INFORME_ETAPA24.md) registra las obligaciones de P3.
 | Primer modo de Dirichlet → igualdad candidata de Poincaré (3.80) | `autovalorSeno_minimo`, `energia_primer_modoSeno`. Falta la desigualdad para todo $H_0^1$. |
 
 El [informe de la etapa 25](INFORME_ETAPA25.md) explica la normalización de Lebesgue, el signo $F=-\Delta e$ y la dependencia restante para cerrar (3.77) y pasar a C3.23.
+
+## Proposición 3.22 · etapa 26
+
+| Dependencia | Declaración |
+|---|---|
+| Recurrencia seno y Stone–Weierstrass en el compacto | `intervalo_seno_mul_polinomio_mem`, `cuadrado_seno_mul_polinomio_mem`, `intervalo_aproxima_soporte_compacto`, `cuadrado_aproxima_soporte_compacto` |
+| Positividad del primer modo y densidad de continuas → complemento ortogonal trivial | `senoDirichletLp_complete`, `modoSenoLp_eq_zero_of_inner_eq_zero`, `modoSenoLp_complete` |
+| Completitud y ortonormalidad → base, expansión y (3.78) | `baseHilbertSenoCuadrado`, `modoSenoLp_expansion`, `modoSenoLp_parseval` |
+| Unicidad por coeficientes y `serieSeno_suma_L2` → identificación casi en todas partes | `serieSeno_representa_error` |
+| Representante, cota uniforme y constante certificada → (3.77) | `proposicion322_espectral_completa` |
+| Green y Bessel para gradientes normalizados, más Parseval → (3.80) | `poincare_cuadrado_espectral`, `poincare_cuadrado_constante_minima` |
+| Poincaré óptima y energía débil → (3.81) para errores en $H_0^1$ | `energia_cuadrado_poincare_optima` |
+
+El [informe de la etapa 26](INFORME_ETAPA26.md) registra la correspondencia con el PDF y el alcance de P3.22.

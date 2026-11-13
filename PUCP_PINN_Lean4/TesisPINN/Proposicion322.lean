@@ -1,4 +1,5 @@
 import TesisPINN.EspectroDirichletCuadrado
+import TesisPINN.CompletitudSenoCuadrado
 import Mathlib.Analysis.Normed.Group.FunctionSeries
 import Mathlib.MeasureTheory.Function.ConvergenceInMeasure
 
@@ -146,10 +147,74 @@ theorem serieSeno_suma_L2
     simp_rw [hh] at h
     exact h.unique (hasSum_ite_eq p (coefSeno z p))
 
+/-- Expansión de cualquier clase de L² como límite de sumas finitas de modos. -/
+theorem modoSenoLp_expansion (z : Lp ℝ 2 volumenPoisson) :
+    HasSum (fun p => coefSeno z p • modoSenoLp p) z := by
+  simpa only [HilbertBasis.repr_apply_apply, coe_baseHilbertSenoCuadrado, coefSeno]
+    using baseHilbertSenoCuadrado.hasSum_repr z
+
+/-- Identidad de Parseval, ecuación (3.78) para `F = -r`. -/
+theorem modoSenoLp_parseval (F : Lp ℝ 2 volumenPoisson) :
+    (∑' p, |coefSeno F p| ^ 2) = ‖F‖ ^ 2 := by
+  simpa only [coe_baseHilbertSenoCuadrado, real_inner_comm F, ← pow_two, sq_abs,
+    coefSeno, real_inner_self_eq_norm_sq] using baseHilbertSenoCuadrado.tsum_inner_mul_inner F F
+
+/-- La suma continua es un representante del error original, para Lebesgue en el cuadrado. -/
+theorem serieSeno_representa_error
+    (e : H01 (volume : Measure Plano) cuadrado) (r : Lp ℝ 2 volumenPoisson)
+    (hr : HasDistributionalLaplacian cuadradoOpens volume e r) :
+    let z := fnL (e : H1Graph volume cuadrado)
+    ⇑z =ᵐ[volumenPoisson] serieSeno z := by
+  intro z
+  obtain ⟨w, _, hrep, hcoef⟩ := serieSeno_suma_L2 e r hr
+  have heq : z = w := sub_eq_zero.mp (modoSenoLp_eq_zero_of_inner_eq_zero (z - w) (fun p => by
+    rw [inner_sub_right]
+    change coefSeno z p - coefSeno w p = 0
+    rw [hcoef p, sub_self]))
+  have hcoe : (⇑z : Plano → ℝ) = ⇑w := congrArg (fun a : Lp ℝ 2 volumenPoisson => ⇑a) heq
+  exact (EventuallyEq.of_eq hcoe).trans hrep
+
+/-- Proposición 3.22. El dato `r` representa el laplaciano con signo positivo.
+La norma esencial se toma respecto de Lebesgue restringida. -/
+theorem proposicion322_espectral_completa
+    (e : H01 (volume : Measure Plano) cuadrado) (r : Lp ℝ 2 volumenPoisson)
+    (hr : HasDistributionalLaplacian cuadradoOpens volume e r) :
+    let z := fnL (e : H1Graph volume cuadrado)
+    ∃ g : Plano → ℝ,
+      Continuous g ∧ (⇑z =ᵐ[volumenPoisson] g) ∧ EqOn g 0 (frontier cuadrado) ∧
+      supResiduo (closure cuadrado) g = (eLpNormEssSup z volumenPoisson).toReal ∧
+      supResiduo (closure cuadrado) g ≤ constanteEspectralCuadrado * ‖r‖ ∧
+      supResiduo (closure cuadrado) g ≤ (26404 / 100000 : ℝ) * ‖r‖ ∧
+      eLpNormEssSup z volumenPoisson ≤ ENNReal.ofReal (constanteEspectralCuadrado * ‖r‖) ∧
+      eLpNormEssSup z volumenPoisson ≤ ENNReal.ofReal ((26404 / 100000 : ℝ) * ‖r‖) := by
+  intro z
+  obtain ⟨_, _, hc, hf, hb⟩ := serieSeno_convergencia e r hr
+  have hrep := serieSeno_representa_error e r hr
+  have hnorm : eLpNormEssSup z volumenPoisson ≤
+      ENNReal.ofReal (constanteEspectralCuadrado * ‖r‖) := by
+    rw [eLpNormEssSup_congr_ae hrep]
+    exact eLpNormEssSup_le_of_ae_bound (Eventually.of_forall fun x => by
+      simpa only [Real.norm_eq_abs] using hb x)
+  have hpos : 0 ≤ constanteEspectralCuadrado * ‖r‖ := (abs_nonneg _).trans (hb 0)
+  have hsup := (supResiduo_le (closure cuadrado) (serieSeno z) _ hpos fun x _ => hb x).2
+  have heq : supResiduo (closure cuadrado) (serieSeno z) =
+      (eLpNormEssSup z volumenPoisson).toReal := by
+    rw [supResiduo_closure hc.continuousOn ⟨_, fun x _ => hb x⟩,
+      eLpNormEssSup_congr_ae hrep]
+    exact supResiduo_eq_Linfty volume cuadrado_abierto hc.continuousOn ⟨_, fun x _ => hb x⟩
+  have hnum := mul_le_mul_of_nonneg_right constanteEspectralCuadrado_lt.le (norm_nonneg r)
+  exact ⟨serieSeno z, hc, hrep, hf, heq, hsup, hsup.trans hnum,
+    hnorm, hnorm.trans (ENNReal.ofReal_le_ofReal hnum)⟩
+
 #check serieSeno_convergencia
 #check serieSeno_suma_L2
+#check proposicion322_espectral_completa
 #print axioms suma_coefSeno_acotada
 #print axioms serieSeno_convergencia
 #print axioms serieSeno_suma_L2
+#print axioms modoSenoLp_expansion
+#print axioms modoSenoLp_parseval
+#print axioms serieSeno_representa_error
+#print axioms proposicion322_espectral_completa
 
 end TesisPINN
