@@ -59,7 +59,7 @@ theorem clausura_cuadrado :
   ext x
   change WithLp.ofLp x ∈ univ.pi (fun _ => Icc (-1 : ℝ) 1) ↔
     ∀ i : Fin 2, x i ∈ Icc (-1 : ℝ) 1
-  simp [Set.mem_pi]
+  exact ⟨fun hx i => hx i (mem_univ i), fun hx i _ => hx i⟩
 
 def barreraCuadratica321 (x : Plano) : ℝ := (2 - (x 0) ^ 2 - (x 1) ^ 2) / 4
 
@@ -84,8 +84,8 @@ theorem parcial_barreraCuadratica321 (i : Fin 2) :
     (differentiableAt_const _).sub
       (hasStrictFDerivAt_norm_sq x).hasFDerivAt.differentiableAt
   rw [he, partialD_apply, fderiv_const_mul hd, fderiv_const_sub, fderiv_norm_sq_apply]
-  simp only [smul_apply, neg_apply, smul_eq_mul,
-    innerSL_apply_apply, EuclideanSpace.inner_single_right, star_trivial, one_mul]
+  simp only [smul_apply, neg_apply, smul_eq_mul, innerSL_apply_apply,
+    EuclideanSpace.inner_single_right, conj_trivial, one_mul]
   ring
 
 theorem segunda_parcial_barreraCuadratica321 (i j : Fin 2) (x : Plano) :
@@ -99,8 +99,8 @@ theorem segunda_parcial_barreraCuadratica321 (i j : Fin 2) (x : Plano) :
   rw [he, fderiv_const_mul p.differentiableAt, ContinuousLinearMap.fderiv]
   by_cases hij : i = j
   · subst j
-    simp [p, PiLp.single_apply]
-  · simp [p, PiLp.single_apply, hij, Ne.symm hij]
+    simp [p]
+  · simp [p, hij, Ne.symm hij]
 
 theorem laplaciano_barreraCuadratica321 (x : Plano) :
     laplacianoClásico barreraCuadratica321 x = -1 := by
@@ -264,6 +264,27 @@ theorem error_poisson321_dirichlet_exacto (u h f g : Plano → ℝ)
   simpa only [supResiduo_congr he, hz, zero_add] using
     error_poisson321 u h f g hu hh huc hhc hEq hDir hb
 
+/-- La cota del error en normas esenciales para la medida de frontera elegida. -/
+theorem error_poisson321_Linfty (μb : Measure Plano) (hμb : μb.support = frontier cuadrado)
+    (u h f g : Plano → ℝ) (hu : ContDiffOn ℝ 2 u cuadrado) (hh : ContDiffOn ℝ 2 h cuadrado)
+    (huc : ContinuousOn u (closure cuadrado)) (hhc : ContinuousOn h (closure cuadrado))
+    (hEq : EqOn (laplacianoClásico u) f cuadrado) (hDir : EqOn u g (frontier cuadrado)) :
+    eLpNormEssSup (fun x => h x - u x) (volume.restrict cuadrado) ≤
+      eLpNormEssSup (fun x => h x - g x) μb +
+        ENNReal.ofReal (1 / 2) *
+          eLpNormEssSup (fun x => laplacianoClásico h x - f x) (volume.restrict cuadrado) := by
+  have hr : laplacianoClásico (fun x => h x - u x) =ᵐ[volume.restrict cuadrado]
+      (fun x => laplacianoClásico h x - f x) := by
+    filter_upwards [ae_restrict_mem cuadrado_abierto.measurableSet] with x hx
+    simp only [← operadorPoisson_eq_laplacianoClásico] at hEq ⊢
+    rw [operadorPoisson.aplica_resta (hh.contDiffAt (cuadrado_abierto.mem_nhds hx))
+      (hu.contDiffAt (cuadrado_abierto.mem_nhds hx)), hEq hx]
+  have hΓ : frontier cuadrado ∈ ae μb := hμb ▸ μb.support_mem_ae
+  have hg : (fun x => h x - u x) =ᵐ[μb] (fun x => h x - g x) :=
+    mem_of_superset hΓ fun x hx => congrArg (fun a => h x - a) (hDir hx)
+  have he := proposicion321_Linfty_extendido μb hμb _ (hh.sub hu) (hhc.sub huc)
+  rwa [eLpNormEssSup_congr_ae hr, eLpNormEssSup_congr_ae hg] at he
+
 /-- Transferencia de una tasa uniforme del residuo para Dirichlet exacto. -/
 theorem tasa_error_poisson321_dirichlet_exacto (u f g : Plano → ℝ)
     (h : ℕ → Plano → ℝ) (t : ℕ → ℝ)
@@ -309,10 +330,13 @@ theorem tasa_poisson321_de_residuo_ae {Ω : Type*} [MeasurableSpace Ω] (P : Mea
 #check proposicion321_barrera_cuadratica
 #check proposicion321_barrera_cuadratica_Linfty
 #check proposicion321_Linfty_extendido
+#check error_poisson321_Linfty
+#check tasa_poisson321_de_residuo_ae
 #print axioms proposicion321_barrera_cuadratica
 #print axioms proposicion321_barrera_cuadratica_Linfty
 #print axioms proposicion321_Linfty_extendido
 #print axioms error_poisson321
+#print axioms error_poisson321_Linfty
 #print axioms error_poisson321_dirichlet_exacto
 #print axioms tasa_error_poisson321_dirichlet_exacto
 #print axioms tasa_poisson321_de_residuo_ae
