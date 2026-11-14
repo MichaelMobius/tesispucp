@@ -394,6 +394,7 @@ theorem lema324 (m : ℕ) (hm : 1 ≤ m) :
   have hc := red324_cotas hD
   refine ⟨red324 hD, ?_, ?_, ?_⟩
   · intro w hw
+    change w ≤ 4 * (D + 1) ^ 2 + 4
     exact (hc.2 w hw).trans (by omega)
   · rw [hc.1]
     have hsq : (D + 1) ^ 2 = D * D + 2 * D + 1 := by ring
