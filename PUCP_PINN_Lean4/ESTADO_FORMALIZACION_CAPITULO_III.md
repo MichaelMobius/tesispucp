@@ -1,6 +1,18 @@
 # Estado verificable de la formalización del capítulo III
 
-## Estado actual · etapa 30
+## Estado actual · etapa 31
+
+La base es la [PR #32](https://github.com/MichaelMobius/tesispucp/pull/32), commit `4165c9c4cc2b43fdf53ba6910cf5f119f0e11f47`.
+
+| Resultado | Declaración y alcance |
+|---|---|
+| Hermite univariado y tensorial | `existe_unico_hermite`, `hermiteMuestra_jet` y `hermite325_jet_mixto` verifican los jets, incluso si la muestra contiene coordenadas repetidas. |
+| Interpolación exacta | `proposicion325_interpolacion_exacta` verifica Dirichlet, realización en la red común, residuo nodal y pérdida empírica cero. |
+| Cota y selección | La prolongación entera, los lemas de contorno y los estratos borelianos están construidos. Quedan (3.89) con numerador $a$, la cota uniforme y la selección global de coeficientes. |
+
+El [informe de la etapa 31](INFORME_ETAPA31.md) delimita las conclusiones de P3.25 y las obligaciones para C3.26.
+
+## Etapa 30
 
 La base es la [PR #31](https://github.com/MichaelMobius/tesispucp/pull/31), commit `aeb8621ab5b9c8e398aaf7607b72961cfdd59a9d`.
 
