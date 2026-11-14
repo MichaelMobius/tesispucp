@@ -424,3 +424,17 @@ El [informe de la etapa 29](INFORME_ETAPA29.md) precisa el alcance determinista 
 | Anchos de capas reales, profundidad y arquitectura común | `red324_dimensiones`, `red324_cotas`, `red324_m_uno`, `lema324` |
 
 El [informe de la etapa 30](INFORME_ETAPA30.md) registra la dependencia con P3.25.
+
+## Comparadores tensoriales de Hermite · etapa 31
+
+| Dependencia | Declaración |
+|---|---|
+| Multiplicidad, coprimalidad y dimensión | `producto_hermite_dvd`, `existe_unico_hermite` |
+| Proyecciones deduplicadas y enumeración creciente | `nodosOrdenadosHermite`, `hermiteMuestra_jet` |
+| Producto tensorial, grado y jets mixtos | `polinomioHermite325_tensor`, `polinomioHermite325_grado_parcial`, `hermite325_jet_mixto` |
+| Prolongación entera y Laplaciano manufacturado | `aManufacturadaCompleja_entera`, `aManufacturada_extension`, `laplaciano_solucionManufacturada` |
+| Jets, Leibniz, Dirichlet y red común | `proposicion325_interpolacion_exacta` |
+| Cociente regularizado, Cauchy y diferenciación del núcleo | `restoContornoHermite_diferencia`, `restoContornoHermite_cota`, `derivadas_nucleo_contorno_hermite` |
+| Patrones borelianos de orden y coincidencia | `estratoHermite_measurable`, `estratoHermite_determina_colisiones` |
+
+El [informe de la etapa 31](INFORME_ETAPA31.md) precisa el paso de contorno que falta para (3.89) y la dependencia boreliana aún pendiente.
