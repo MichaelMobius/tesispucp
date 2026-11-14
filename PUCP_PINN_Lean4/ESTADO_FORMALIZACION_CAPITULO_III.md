@@ -1,6 +1,18 @@
 # Estado verificable de la formalización del capítulo III
 
-## Estado actual · etapa 29
+## Estado actual · etapa 30
+
+La base es la [PR #31](https://github.com/MichaelMobius/tesispucp/pull/31), commit `aeb8621ab5b9c8e398aaf7607b72961cfdd59a9d`.
+
+| Resultado | Declaración y alcance |
+|---|---|
+| L3.24 | `lema324` realiza exactamente la clase polinómica mediante capas cuadráticas fijas y salida lineal variable, con las cotas de la tesis. |
+| Coordenadas polinómicas | `clase324_eq_polinomios` identifica el grado parcial. `mapaCoeficientes324_inyectivo` identifica unívocamente los coeficientes. |
+| Próxima obligación | P3.25 requiere construir comparadores de Hermite, verificar su cota uniforme y probar la selección boreliana. |
+
+El [informe de la etapa 30](INFORME_ETAPA30.md) describe la evaluación y los recuentos.
+
+## Etapa 29
 
 La base es la [PR #30](https://github.com/MichaelMobius/tesispucp/pull/30), commit `74f2140f7762a2c851aa2038629a37f7dccf9454`. El [informe de la etapa 29](INFORME_ETAPA29.md) documenta el núcleo de la traza y su aplicación.
 
@@ -124,7 +136,7 @@ La referencia matemática de esta etapa es el capítulo III del PDF del ZIP `Tes
 |---|---|
 | Verificados en el alcance de la declaración | `lema313_cobertura_logaritmica` demuestra (3.57)–(3.58) y la cobertura eventual casi segura para prefijos con $m(n)\ge n$ eventualmente. `ComparadoresAproximados` establece (3.38)–(3.41) para la instancia escalar 2D. |
 | Verificados bajo hipótesis o en instancias | `proposicion314_dim2` establece (3.59)–(3.63) en 2D escalar. `proposicion310_dim2` usa (3.42) para demostrar (3.43) y las tasas uniformes para mínimos aproximados. `teorema38_dim2` da (3.26)–(3.28) para mínimos exactos. Los puentes de 3.20 dan tasas en el cuadrado con candidatos suaves `ψq` o `G+ψq`. |
-| Parcialmente formalizados | Quedan las versiones en dimensión general de P3.10 y P3.14 y las instancias en clases neuronales concretas. La matriz registra las piezas disponibles de L3.3–T3.8, P3.11, P3.15, T3.18–T3.20 y L3.24–P3.27. |
+| Parcialmente formalizados | Quedan las versiones en dimensión general de P3.10 y P3.14 y las instancias en clases neuronales concretas. La matriz registra las piezas disponibles de L3.3–T3.8, P3.11, P3.15, T3.18–T3.20 y P3.25–P3.27. |
 | Pendientes de infraestructura o instanciación | Existencia clásica y estabilidad general, trazas Sobolev y dimensiones generales, geometría de las leyes uniformes del cuadrado, pesos y pérdidas interiores de P3.15, Poincaré óptima y base seno, clases MLP concretas, construcción de Hermite/Taylor y selección de mínimos. |
 
 ### Reproducción histórica de la etapa 20
