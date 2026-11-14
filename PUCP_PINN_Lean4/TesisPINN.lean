@@ -23,6 +23,7 @@ import TesisPINN.Teorema38
 import TesisPINN.PuentePoisson38_320
 import TesisPINN.DirichletLevantamiento
 import TesisPINN.RedCuadratica
+import TesisPINN.Lema324
 import TesisPINN.ComparadoresAproximados
 import TesisPINN.Proposicion310
 import TesisPINN.OcupacionLogaritmica

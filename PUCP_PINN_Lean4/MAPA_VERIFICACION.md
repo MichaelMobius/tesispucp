@@ -412,3 +412,15 @@ El [informe de la etapa 28](INFORME_ETAPA28.md) detalla la normalización por ca
 | P3.15, identidad $2\sqrt E$ y transferencia simultánea | `corolario323_traza` |
 
 El [informe de la etapa 29](INFORME_ETAPA29.md) precisa el alcance determinista y casi seguro.
+
+## Arquitectura cuadrática común · etapa 30
+
+| Dependencia | Declaración |
+|---|---|
+| Capas afines y activación cuadrática con dimensiones compatibles | `CapaCuadratica`, `CapasCuadraticas` |
+| Decodificación, transporte y polarización | `capaTransporte_banco`, `capaPolarizar_eval`, `bloqueRegistros_eval` |
+| Enumeración, inducción por grado total y factor de frontera | `enumeracion324`, `redMonomios_eval`, `red324_eval`, `red324_dirichlet` |
+| Pesos lineales, clase por grado parcial e inyectividad | `red324_salida`, `clase324_eq_polinomios`, `mapaCoeficientes324_inyectivo` |
+| Anchos de capas reales, profundidad y arquitectura común | `red324_dimensiones`, `red324_cotas`, `red324_m_uno`, `lema324` |
+
+El [informe de la etapa 30](INFORME_ETAPA30.md) registra la dependencia con P3.25.
