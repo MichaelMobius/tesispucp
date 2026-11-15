@@ -1,4 +1,6 @@
 import TesisPINN.GeometriaFronteraCuadrado
+import TesisPINN.Teorema34Dimensional
+import TesisPINN.Proposicion311
 import Mathlib.Probability.Independence.InfinitePi
 
 /-! Espacio común para las dos sucesiones independientes de la Hipótesis 3.2. -/
@@ -82,6 +84,48 @@ theorem muestreosCuadrado_en_soportes :
   filter_upwards [hr, hb] with ω hωr hωb
   exact fun i => ⟨hωr i, hωb i⟩
 
+theorem radioFronteraCuadrado_raiz (m : ℕ) (hm : 0 < m) :
+    radio34 (1 / 12) 1 m = 12 * Real.sqrt 2 / Real.sqrt (m : ℝ) := by
+  have h := escalaAuxiliarRaiz_masa (1 / 12) 1 m (by norm_num) (by norm_num) hm
+  rw [Real.rpow_one] at h
+  rw [radio34, show escalaAuxiliarRaiz (1 / 12) 1 m = (1 / Real.sqrt m) / (1 / 12) from
+    (eq_div_iff (by norm_num)).2 (by simpa [mul_comm] using h)]
+  ring
+
+theorem radioFronteraCuadrado_le_uno (m : ℕ) (hm : 288 ≤ m) :
+    radio34 (1 / 12) 1 m ≤ 1 := by
+  have hmp : 0 < m := by omega
+  have hpos : 0 < Real.sqrt (m : ℝ) := Real.sqrt_pos.2 (Nat.cast_pos.mpr hmp)
+  rw [radioFronteraCuadrado_raiz m hmp, div_le_iff₀ hpos, one_mul]
+  apply (sq_le_sq₀ (by positivity) hpos.le).1
+  rw [mul_pow, Real.sq_sqrt (by norm_num), Real.sq_sqrt (Nat.cast_nonneg _)]
+  norm_num
+  exact hm
+
+/-- T3.4 para las dos leyes del cuadrado y sus prefijos en el espacio producto. -/
+theorem teorema34_cuadrado_dos_familias {H : Type*}
+    (op : Operadores38 H Plano Plano) (Hm : Set H)
+    (mr mb : ℕ) (hr : 324 ≤ mr) (hb : 288 ≤ mb)
+    (lr lb α Sf Sg : ℝ) (hlr : 0 < lr) (hlb : 0 < lb) (hα : 0 < α)
+    (hHolder : op.CotasHolder34 Hm cuadrado (frontier cuadrado) α Sf Sg) :
+    let Pω := fun ω : EspacioMuestrasCuadrado =>
+      op.problema34 medidaUniformeCuadrado medidaUniformeFrontera mr mb
+        (by omega) (by omega) (Real.pi / 4) 1 (1 / 9) (1 / 12) lr lb α
+        (by positivity) (by norm_num) (by norm_num) hlr hlb
+        (fun i => muestreoInteriorCuadrado.Z i ω) (fun i => muestreoFronteraCuadrado.Z i ω)
+    ∃ A : Set EspacioMuestrasCuadrado, MeasurableSet A ∧
+      1 - falloRaiz34 mr - falloRaiz34 mb ≤ probabilidadMuestrasCuadrado.real A ∧
+      ∀ ω ∈ A, ∀ h ∈ Hm, (Pω ω).perdidaPoblacional h ≤
+        factor34 mr mb (Real.pi / 4) 1 (1 / 9) (1 / 12) * (Pω ω).funcionalRegularizado h +
+        constante34 lr lb (1 / 9) (1 / 12) α Sf Sg * ((mr : ℝ) ^ (-(α / 2)) + (mb : ℝ) ^ (-α)) := by
+  have hmr : 0 < mr := by omega
+  have hmb : 0 < mb := by omega
+  exact teorema34_dim2_de_dimensional probabilidadMuestrasCuadrado
+    medidaUniformeCuadrado medidaUniformeFrontera cuadrado (frontier cuadrado) 1
+    datosMasa38_interior_cuadrado datosMasa38_frontera_cuadrado muestreoInteriorCuadrado
+    muestreoFronteraCuadrado op Hm mr mb hmr hmb lr lb α Sf Sg hlr hlb hα
+    ((radioRaizCuadrado_le_uno_iff mr hmr).2 hr) (radioFronteraCuadrado_le_uno mb hb) hHolder
+
 #check muestreoInteriorCuadrado
 #check muestreoFronteraCuadrado
 #check muestreosCuadrado_independientes
@@ -89,5 +133,7 @@ theorem muestreosCuadrado_en_soportes :
 #print axioms muestreoFronteraCuadrado
 #print axioms muestreosCuadrado_independientes
 #print axioms muestreosCuadrado_en_soportes
+#check teorema34_cuadrado_dos_familias
+#print axioms teorema34_cuadrado_dos_familias
 
 end TesisPINN
