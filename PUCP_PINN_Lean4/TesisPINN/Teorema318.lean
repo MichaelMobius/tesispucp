@@ -1,5 +1,6 @@
 import TesisPINN.EstabilidadEliptica
 import TesisPINN.ProblemaInterior
+import TesisPINN.Teorema38Dimensional
 import Mathlib.MeasureTheory.Measure.Support
 
 /-! Transferencia de las tasas del Teorema 3.8 al error de Dirichlet. -/
@@ -133,9 +134,9 @@ private theorem transferencia318
     rw [Real.norm_eq_abs, abs_of_nonneg (he n), Real.norm_eq_abs]
     exact (hc n).trans (le_abs_self _)
 
-def operadores318 {H : Type*} (L : OperadorEliptico 2)
-    (U : Set (EspacioEliptico 2)) (eval : H → EspacioEliptico 2 → ℝ)
-    (f g : EspacioEliptico 2 → ℝ) (α : ℝ) : Operadores38 H (EspacioEliptico 2) (EspacioEliptico 2) where
+def operadores318 {d : ℕ} {H : Type*} (L : OperadorEliptico d)
+    (U : Set (EspacioEliptico d)) (eval : H → EspacioEliptico d → ℝ)
+    (f g : EspacioEliptico d → ℝ) (α : ℝ) : Operadores38 H (EspacioEliptico d) (EspacioEliptico d) where
   L h := L.aplica (eval h)
   B := eval
   f := f
@@ -207,6 +208,73 @@ theorem teorema318_dim2 {Ω H : Type*} [MeasurableSpace Ω] [MeasurableSpace H]
           (seminormaInterior_cota _ _ _ hf hα)⟩
     exact hest _ hh hhc (acotado_por_Holder dr.acotado hne _ α hα hres)
 
+set_option maxHeartbeats 800000 in
+/-- (3.69)–(3.70) en dimensión d ≥ 2 para una solución clásica dada. -/
+theorem teorema318_dimension_ge_dos {Ω H : Type*} [MeasurableSpace Ω] [MeasurableSpace H]
+    (P : Measure Ω) [IsProbabilityMeasure P] (d : ℕ) (hd : 2 ≤ d)
+    (μr μb : Measure (EspacioEliptico d)) [IsProbabilityMeasure μr] [IsProbabilityMeasure μb]
+    (U : Set (EspacioEliptico d)) (hU : IsOpen U) (ε₀ : ℝ) (hε₀ : 0 < ε₀)
+    (dr : DatosMasaDimensional μr U (Real.sqrt d) (d : ℝ) ε₀)
+    (db : DatosMasaDimensional μb (frontier U) (Real.sqrt d) ((d : ℝ) - 1) ε₀)
+    (sr : Muestreo38 P μr) (sb : Muestreo38 P μb)
+    (L : OperadorEliptico d) (lam B : ℝ) (hL : L.Datos U lam B)
+    (eval : H → EspacioEliptico d → ℝ) (u f g : EspacioEliptico d → ℝ)
+    (hu : ContDiffOn ℝ 2 u U) (huc : ContinuousOn u (closure U))
+    (hEq : EqOn (L.aplica u) f U) (hDir : EqOn u g (frontier U))
+    (mr mb : ℕ → ℕ) (hmr : ∀ n, 0 < mr n) (hmb : ∀ n, 0 < mb n)
+    (hgr : ∀ᶠ n in atTop, n ≤ mr n) (hgb : ∀ᶠ n in atTop, n ≤ mb n)
+    (lr lb α K : ℝ) (hlr : 0 < lr) (hlb : 0 < lb)
+    (hα : 0 < α) (hK : 0 < K)
+    (hrel : ∀ᶠ n in atTop, (mr n : ℝ) ≤ K * (mb n : ℝ) ^ ((d : ℝ) / ((d : ℝ) - 1)))
+    (Hm : ℕ → Set H) (hm v : ∀ n, Ω → Hm n)
+    (hMeasHm : ∀ n, Measurable (fun ω => (hm n ω : H)))
+    (hMeasV : ∀ n, Measurable (fun ω => (v n ω : H)))
+    (hf : EsHolderInterior U α f) (hg : EsHolderInterior (frontier U) α g)
+    (hCand : ∀ n h, h ∈ Hm n →
+      ContDiffOn ℝ 2 (eval h) U ∧ ContinuousOn (eval h) (closure U) ∧
+      EsHolderInterior U α (L.aplica (eval h)) ∧ EsHolderInterior (frontier U) α (eval h)) :
+    let D := operadores318 L U eval f g α
+    let Pn := fun ω n => D.problemaRaizDimensional μr μb (hmr n) (hmb n) (Real.sqrt d)
+      (d : ℝ) ((d : ℝ) - 1) dr.C db.C dr.c db.c lr lb α
+      (Real.sqrt_pos.2 (Nat.cast_pos.mpr (by omega))) dr.C_pos dr.c_pos db.c_pos hlr hlb true
+      (fun i => sr.Z i ω) (fun i => sb.Z i ω)
+    (∀ᵐ ω ∂P, ∃ R : ℝ, 0 ≤ R ∧ ∀ n,
+      (Pn ω n).EsMinimizadorGlobal (Hm n) (hm n ω : H) ∧
+      (Pn ω n).ComparadorExacto (Hm n) (v n ω : H) ∧
+      (Pn ω n).regularidadTotal (v n ω : H) ≤ R) →
+    ∀ᵐ ω ∂P,
+      let e := fun n => supResiduo (closure U) (fun x => eval (hm n ω : H) x - u x)
+      Tendsto e atTop (𝓝 0) ∧
+      e =O[atTop] fun n => (mr n : ℝ) ^ (-(α ^ 2 / ((d : ℝ) * (2 * α + (d : ℝ))))) := by
+  intro D Pn hvar
+  have hHolder (n : ℕ) : D.CotasHolder34 (Hm n) U (frontier U) α
+      (seminormaInterior U α f) (seminormaInterior (frontier U) α g) := by
+    refine ⟨seminormaInterior_nonneg _ _ _ hf, seminormaInterior_nonneg _ _ _ hg,
+      fun h hh => ?_, seminormaInterior_cota _ _ _ hf hα, seminormaInterior_cota _ _ _ hg hα⟩
+    obtain ⟨_, _, hr, hb⟩ := hCand n h hh
+    exact ⟨seminormaInterior_nonneg _ _ _ hr, seminormaInterior_nonneg _ _ _ hb,
+      seminormaInterior_cota _ _ _ hr hα, seminormaInterior_cota _ _ _ hb hα⟩
+  have hs := teorema38_dimension_ge_dos P μr μb U (frontier U) d hd ε₀ dr db sr sb D hε₀
+    mr mb hmr hmb hgr hgb lr lb α _ _ K hlr hlb hα hK hrel
+    Hm hm v hMeasHm hMeasV hHolder hvar
+  have hne := soporte_no_vacio μr U dr.concentrada
+  obtain ⟨C, _, hest⟩ := cota318_error_dirichlet L (by omega) hU dr.acotado hne hL u f g
+    hu huc hEq hDir
+  filter_upwards [hs] with ω hω
+  obtain ⟨_, ⟨hr, hb⟩, hrO, hbO⟩ := hω
+  refine transferencia318 mr hmr _ _ _ C _ _ ?_ (fun _ => supResiduo_noNeg _ _)
+    (fun n => ?_) hr hb hrO hbO
+  · simpa only [show 2 * α + ((d : ℝ) - 1) = 2 * α + d - 1 by ring] using
+      exponente318_orden d α (by exact_mod_cast hd) hα
+  · obtain ⟨hh, hhc, hHr, _⟩ := hCand n (hm n ω) (hm n ω).2
+    have hres : EsHolderInterior U α (fun x => L.aplica (eval (hm n ω : H)) x - f x) :=
+      ⟨_, add_nonneg (seminormaInterior_nonneg _ _ _ hHr) (seminormaInterior_nonneg _ _ _ hf),
+        holder_resta U _ _ _ _ α (seminormaInterior_cota _ _ _ hHr hα)
+          (seminormaInterior_cota _ _ _ hf hα)⟩
+    exact hest _ hh hhc (acotado_por_Holder dr.acotado hne _ α hα hres)
+
+#check teorema318_dimension_ge_dos
+#print axioms teorema318_dimension_ge_dos
 #check cota318_error_dirichlet
 #check cota318_error_dirichlet_Linfty
 #check teorema318_dim2

@@ -1,6 +1,19 @@
 # Estado verificable de la formalización del capítulo III
 
-## Estado actual · etapa 38
+## Estado actual · etapa 39
+
+Base [PR #40](https://github.com/MichaelMobius/tesispucp/pull/40), commit `f32acd06d334b1c7618dd035a7d813f61e88cbc1`.
+
+| Resultado | Declaración y alcance |
+|---|---|
+| L3.19 en dimensión positiva | `laplaciano_dimensional_implica_prueba`, `green_dimensional` y `lema319_dimensional` demuestran (3.71) sobre abiertos acotados. `lema319_constante_dada` conserva cualquier constante admisible. |
+| T3.20 determinista | `estimacion320_dimensional` verifica (3.74) para pares Sobolev con error en $H_0^1$. `estimacion320_de_trazas_iguales` usa una traza abstracta con núcleo caracterizado. |
+| T3.20 probabilístico | `teorema320_dimension_ge_dos` deriva (3.72), (3.73) y (3.75) para los mismos mínimos y prefijos de T3.8. `teorema320_unidimensional` usa el modelo con extremos deterministas. Ambas ramas reciben la condición afín en $H_0^1$. |
+| T3.18 | `teorema318_dimension_ge_dos` conecta T3.8 y L3.17 con una solución clásica dada para obtener (3.69)–(3.70). |
+
+El [informe de la etapa 39](INFORME_ETAPA39.md) distingue las premisas de traza, las identificaciones de los representantes y la existencia clásica pendiente.
+
+## Etapa 38
 
 Base [PR #39](https://github.com/MichaelMobius/tesispucp/pull/39), commit `4a9f8a6f15003f0aa425bbe350c0a64de540f5e9`.
 
