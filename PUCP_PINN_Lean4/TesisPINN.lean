@@ -51,3 +51,5 @@ import TesisPINN.Lema39Global
 import TesisPINN.MuestreoDosFamiliasCuadrado
 import TesisPINN.CoberturaDimensional
 import TesisPINN.Proposicion314Dimensional
+import TesisPINN.Proposicion310Dimensional
+import TesisPINN.Teorema38Unidimensional

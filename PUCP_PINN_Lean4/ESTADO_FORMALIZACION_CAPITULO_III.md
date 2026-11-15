@@ -1,6 +1,19 @@
 # Estado verificable de la formalización del capítulo III
 
-## Estado actual · etapa 37
+## Estado actual · etapa 38
+
+Base [PR #39](https://github.com/MichaelMobius/tesispucp/pull/39), commit `4a9f8a6f15003f0aa425bbe350c0a64de540f5e9`.
+
+| Resultado | Declaración y alcance |
+|---|---|
+| T3.4 en d=1 | `teorema34_unidimensional` verifica (3.12) en un evento medible común a todos los candidatos, con un prefijo i.i.d. interior, ambos extremos deterministas y regularización exclusivamente interior. |
+| T3.8 en d=1 | `teorema38_unidimensional_evento` y `teorema38_unidimensional` prueban la cota finita, la tasa poblacional y la convergencia uniforme casi segura de ambos residuos. Las tasas uniformes salen de L3.9 y del control directo de ambos extremos. |
+| P3.10 dimensional | `cotas310_dimensional_bajo_cobertura` obtiene (3.39)–(3.41). `proposicion310_dimensional` usa (3.42) para probar (3.43) y las tasas uniformes con dos exponentes de masa positivos. Recupera d=2 y la fórmula geométrica para todo d≥2. |
+| C3.12 dimensional | `corolario312_premisas310_dimensional` transfiere la aproximación fuerte y la brecha de optimización a las premisas de P3.10 para los mismos prefijos. |
+
+El [informe de la etapa 38](INFORME_ETAPA38.md) coteja las hipótesis normativas y las declaraciones verificadas.
+
+## Etapa 37
 
 Base [PR #38](https://github.com/MichaelMobius/tesispucp/pull/38), commit `4581fd0b2d07b6b6dd36723c3178a69b58660ebb`.
 
@@ -227,7 +240,7 @@ La referencia matemática de esta etapa es el capítulo III del PDF del ZIP `Tes
 |---|---|
 | Verificados en el alcance de la declaración | `lema313_cobertura_logaritmica` demuestra (3.57)–(3.58) y la cobertura eventual casi segura para prefijos con $m(n)\ge n$ eventualmente. `ComparadoresAproximados` establece (3.38)–(3.41) para la instancia escalar 2D. |
 | Verificados bajo hipótesis o en instancias | `proposicion314_dim2` establece (3.59)–(3.63) en 2D escalar. `proposicion310_dim2` usa (3.42) para demostrar (3.43) y las tasas uniformes para mínimos aproximados. `teorema38_dim2` da (3.26)–(3.28) para mínimos exactos. Los puentes de 3.20 dan tasas en el cuadrado con candidatos suaves `ψq` o `G+ψq`. |
-| Parcialmente formalizados | Quedan P3.10 en dimensión general, la rama 1D de T3.4 y T3.8, y las instancias para otras clases neuronales. La matriz distingue las partes pendientes de T3.18–T3.20 y las pruebas de la clase manufacturada. |
+| Parcialmente formalizados | Quedan extensiones de L3.1, T3.18–T3.20 y las instancias para otras clases neuronales o geometrías. La matriz distingue estas obligaciones de las pruebas de la clase manufacturada. |
 | Pendientes de infraestructura o instanciación | Existencia clásica y estabilidad general, trazas Sobolev y dimensiones generales, geometría de las leyes uniformes del cuadrado, pesos y pérdidas interiores de P3.15, Poincaré óptima y base seno, clases MLP concretas, construcción de Hermite/Taylor y selección de mínimos. |
 
 ### Reproducción histórica de la etapa 20
