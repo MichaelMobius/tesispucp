@@ -196,7 +196,7 @@ private def senoManufacturado (t : ℝ) : ℝ := Real.sin (Real.pi * t)
 
 private def pesoHermite (t : ℝ) : ℝ := 1 - t ^ 2
 
-private theorem eval_polynomial_contDiff {K : Type*} [NontriviallyNormedField K]
+theorem eval_polynomial_contDiff {K : Type*} [NontriviallyNormedField K]
     (p : K[X]) (n : WithTop ℕ∞) : ContDiff K n p.eval := by
   have h : (fun x : K => aeval x p) = p.eval := by
     funext x
@@ -242,7 +242,7 @@ private theorem senoManufacturado_segunda (t : ℝ) :
   unfold senoManufacturado
   ring
 
-private theorem laplaciano_separable325 (p q : ℝ → ℝ)
+theorem laplaciano_separable325 (p q : ℝ → ℝ)
     (hp : ContDiff ℝ 2 p) (hq : ContDiff ℝ 2 q) (x : Plano) :
     laplacianoClásico (fun y => p (y 0) * q (y 1)) x =
       deriv (deriv p) (x 0) * q (x 1) + p (x 0) * deriv (deriv q) (x 1) := by
@@ -321,7 +321,7 @@ theorem hermite325_jet_mixto {m : ℕ} (z : Fin m → Plano) (i j : Fin m)
     (by simpa only [jetHermite_eval] using factorHermite325_jet z 0 i r)
     (by simpa only [jetHermite_eval] using factorHermite325_jet z 1 j s)
 
-private theorem iteratedDeriv_eje_real (f : ℂ → ℂ) (g : ℝ → ℝ)
+theorem iteratedDeriv_eje_real (f : ℂ → ℂ) (g : ℝ → ℝ)
     (hf : ContDiff ℂ ⊤ f) (hg : ContDiff ℝ ⊤ g)
     (he : ∀ t : ℝ, f t = (g t : ℂ)) (n : ℕ) (t : ℝ) :
     iteratedDeriv n f t = ((iteratedDeriv n g t : ℝ) : ℂ) := by

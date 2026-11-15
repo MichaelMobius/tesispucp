@@ -438,3 +438,17 @@ El [informe de la etapa 30](INFORME_ETAPA30.md) registra la dependencia con P3.2
 | Patrones borelianos de orden y coincidencia | `estratoHermite_measurable`, `estratoHermite_determina_colisiones` |
 
 El [informe de la etapa 31](INFORME_ETAPA31.md) precisa el paso de contorno que falta para (3.89) y la dependencia boreliana aún pendiente.
+
+## Etapa 32 · regularidad y selección de P3.25
+
+| Dependencia | Declaración Lean | Resultado |
+|---|---|---|
+| Teorema de Cauchy en un anillo, grado y decaimiento | `restoContornoHermite_polinomio_cero`, `factorHermite325_formula` | Cancelación y (3.89) con numerador $a$. |
+| Compacidad, cociente nodal y estimación de Cauchy | `factorHermite325_resto_uniforme`, `factorHermite325_derivadas_resto_uniforme`, `factorHermite325_c3_uniforme` | Cota univariada uniforme hasta orden tres. |
+| Leibniz, producto, valor medio y diámetro | `comparador325_c3_uniforme`, `laplaciano_comparador325_holder_uniforme`, `datosPoisson325_regulares` | Cota mixta $C^3$, seminorma Hölder de exponente $1/2$ y regularidad de los datos fijos. |
+| Estratos, representantes mínimos, matriz confluente e inversa | `coeficientesHermite325_continuos_estrato`, `coeficientesHermite325_borel`, `pesosSalidaHermite325_borel` | Selección boreliana para toda muestra, con colisiones. |
+| Interpolación exacta, regularidad y L3.24 | `proposicion325_arquitectura_comun` | Arquitectura común, grados, Dirichlet, laplaciano nodal, pérdida empírica cero y cotas uniformes. |
+
+La red particular de ancho ocho y la tasa geométrica específica de (3.90) quedan pendientes. El [informe de la etapa 32](INFORME_ETAPA32.md) explica su alcance.
+
+
