@@ -178,14 +178,14 @@ Los siguientes bloques agrupan definiciones y pasos contiguos de una misma demos
 
 | Dependencia externa | Uso | Biblioteca fijada o trabajo por hacer |
 |---|---|---|
-| Composición y derivación iterada, MVT, Faà di Bruno, compacidad de bolas y convergencia en normas de derivadas | L3.1, C3.12, P3.25/P3.27 | Mathlib dispone de `ContDiff`, derivadas iteradas y compacidad finita dimensional. Falta identificar una representación uniforme de jets y de la norma sobre la clausura. |
+| Composición y derivación iterada, MVT, Faà di Bruno, compacidad de bolas y convergencia en normas de derivadas | L3.1, C3.12, P3.25/P3.27 | Las instancias manufacturadas controlan las derivadas parciales y los seminormas en la clausura. Queda el criterio de C3.12 para operadores generales. |
 | Medidas, soporte, i.i.d., integración, sumabilidad y Borel–Cantelli | H3.2–T3.8, P3.10–P3.15 | Mathlib, `iIndepFun`, `ae_eventually_notMem`, integrales paramétricas. Se usan directamente en módulos verificados. |
 | Existencia clásica Gilbarg–Trudinger 6.13 y principio máximo débil | §3.8, L3.17, T3.18, P3.21, C3.26 | `EllipticPdes.Classical.weak_maximum_principle_of_nonneg` se adapta mediante el signo opuesto. La existencia clásica con esfera exterior es una obligación separada. |
 | Teorema de trazas y núcleo H₀¹ para dominios Lipschitz, (1.4) | T3.20, C3.23 | `trazaSobolevCuadrado` construye la traza por caras en todo $H^1$ del cuadrado. `nucleo_trazaSobolevCuadrado_eq_H01` identifica su núcleo. |
 | Poincaré, distribuciones y Green, normas Sobolev | L3.19 y T3.20 | EllipticPDE `poincare_H01_of_bounded`, `H01_le_W12`, `H1Graph.norm_sq_eq`; Mathlib `Distribution.ofFun`. Green se demuestra por densidad en el repositorio. |
 | Fourier seno en intervalo y producto tensorial, bases de Hilbert, prueba M | P3.22, C3.23 | Completitud y Parseval verificados mediante Stone–Weierstrass. |
-| Singularidades removibles, Cauchy y coeficientes, series normalmente convergentes | P3.25/P3.27 | Teoría compleja de Mathlib es candidata. Requiere verificar normalización del contorno, anulación de polos, unicidad y diferenciación uniforme del resto. |
-| Rango–nulidad, multiplicidad de raíces, inversa matricial y compacidad convexa | P3.25, C3.26 | La inversa continua y el pegado por estratos verifican el selector de Hermite. C3.26 requiere la existencia del mínimo y el límite de los selectores regularizados. |
+| Singularidades removibles, Cauchy y coeficientes, series normalmente convergentes | P3.25/P3.27 | `HermiteResto.lean` construye la prolongación entera y la fórmula del resto. `TaylorManufacturada.lean` combina la serie geométrica y las cotas de Cauchy en discos de radio variable para las derivadas de orden hasta tres. |
+| Rango–nulidad, multiplicidad de raíces, inversa matricial y compacidad convexa | P3.25, C3.26 | La inversa continua y el pegado por estratos verifican el selector de Hermite. `Corolario326.lean` demuestra la existencia del mínimo y construye el selector boreliano mediante regularización. |
 
 ## Orden lógico y mapa
 
@@ -251,7 +251,6 @@ Las flechas de C3.12 hacia P3.10/P3.11 suministran la **instanciación** de las 
 
 1. **A.** Instanciar el régimen con peso raíz de (3.94) para la clase manufacturada. El [informe de la etapa 34](INFORME_ETAPA34.md) registra la instancia logarítmica y las dos realizaciones de P3.25.
 2. **A/B.** Formalizar el criterio fuerte C3.12, usando las cotas de operador en espacios funcionales precisos. L3.17 y P3.21 permiten una ruta de estabilidad independiente de Fourier.
-3. **C.** Generalizar energía y preparar la traza. Separar el uso de existencia clásica en T3.18 de la estabilidad para una solución dada.
-4. **D.** Definir polinomios y jets del manufacturado. Formalizar primero la extensión entera, Hermite univariado y la cola de Taylor como obligaciones independientes. Después ensamblar los productos tensoriales, realizar la arquitectura y demostrar selección y coercividad en coeficientes.
+3. **C.** Delimitar la extensión de la energía y la traza del cuadrado a otros dominios. Separar el uso de existencia clásica en T3.18 de la estabilidad para una solución dada.
 
 Para una aplicación concreta, los datos de masa y el operador, la pertenencia a la clase, las selecciones mensurables y su minimalidad son obligaciones de instanciación. En P3.25/C3.26 son además conclusiones matemáticas propias de la familia manufacturada. Las hipótesis de traza, densidad y tolerancias no se reemplazan por identidades o axiomas. El [estado central](ESTADO_FORMALIZACION_CAPITULO_III.md) registra qué declaraciones de cada etapa han sido verificadas.
