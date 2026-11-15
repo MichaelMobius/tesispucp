@@ -37,3 +37,7 @@ import TesisPINN.Proposicion322
 import TesisPINN.PoincareEspectralCuadrado
 import TesisPINN.Corolario323
 import TesisPINN.TrazaSobolevCuadrado
+
+import TesisPINN.TeoremasShin
+import TesisPINN.Corolario326
+import TesisPINN.Puente326_315

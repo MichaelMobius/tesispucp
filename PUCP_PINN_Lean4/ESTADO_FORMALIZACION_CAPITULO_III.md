@@ -1,6 +1,21 @@
 # Estado verificable de la formalización del capítulo III
 
-## Estado actual · etapa 32
+## Estado actual · etapa 33
+
+La base es la [PR #34](https://github.com/MichaelMobius/tesispucp/pull/34), commit `715345fb5ccea89aa8f7d5b22a699db631b0b1f6`.
+
+| Resultado | Declaración y alcance |
+|---|---|
+| Redes de arquitectura fija | `lema31_regularidad`, `lema31_cotas_direccionales` y `lema31_precompacidad` en la formulación de Fréchet. |
+| Ocupación y generalización | `lema36_fallo_parametro` y `lema36_shin` recuperan las cotas de ocupación. `teorema34_dim2_explicito` da un evento medible simultáneo para el caso escalar 2D. |
+| Dos escalas del Teorema 3.8 | `teorema38_apartado1_dim2` da la cota de muestra finita. `teorema38_dim2` da las conclusiones casi seguras de la familia. |
+| Convergencia de la clase manufacturada | `perdida_minimizadores326_logaritmica` aplica P3.15 a los mínimos borelianos con el peso logarítmico. |
+| Corolario 3.26 | `corolario326` selecciona pesos borelianos para un mínimo global del funcional original y demuestra las cotas de (3.91). |
+
+El [informe de la etapa 33](INFORME_ETAPA33.md) registra las diferencias respecto de los enunciados de Shin y la tesis, y el estado de (3.90) y de la red de ancho ocho.
+
+
+## Etapa 32
 
 La base es la [PR #33](https://github.com/MichaelMobius/tesispucp/pull/33), commit `14451ed0184e91ad51cb42d56bd498bcd7a00c55`.
 

@@ -452,3 +452,19 @@ El [informe de la etapa 31](INFORME_ETAPA31.md) precisa el paso de contorno que 
 La red particular de ancho ocho y la tasa geométrica específica de (3.90) quedan pendientes. El [informe de la etapa 32](INFORME_ETAPA32.md) explica su alcance.
 
 
+
+## Etapa 33 · integración de Shin y mínimos de la clase polinómica
+
+| Dependencia | Declaraciones verificadas |
+|---|---|
+| Suavidad conjunta y compacidad de parámetros | `contDiff_red_conjunta` → `lema31_cotas_direccionales` y `lema31_precompacidad` |
+| Celda vacía, unión y masa mínima | `medidaReal_celdaVacia` → `lema36_probabilidad_cobertura`, `lema36_fallo_parametro` y `lema36_shin` |
+| Cobertura, soporte y desigualdad integral | `objetivoCoberturaIntegral_de_hipotesis`, `evento_cobertura34_dim2` → `teorema34_dim2` |
+| Cobertura finita, pesos iguales y minimalidad | `tasa38_de_cobertura_dim2` → `teorema38_apartado1_dim2`; `teorema38_dim2` conserva la cadena asintótica |
+| Núcleo, continuidad y compacidad | `seminorma326_eq_zero_iff`, `seminorma326_domina_norma` → `subnivel326_compacto` y `existe_minimizador326` |
+| Grafo boreliano, Hermite y red común | `existe_minimizador_borel326`, `cotas_minimizador326`, `lema324` → `corolario326` |
+| C3.26 y cobertura logarítmica de P3.15 | `perdida_minimizadores326_logaritmica` obtiene la tasa poblacional casi segura de la clase manufacturada. |
+
+El [informe de la etapa 33](INFORME_ETAPA33.md) delimita las hipótesis geométricas, estadísticas y de clase que conserva cada enunciado.
+
+
