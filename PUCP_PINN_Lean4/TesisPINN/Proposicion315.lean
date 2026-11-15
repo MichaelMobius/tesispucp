@@ -30,7 +30,7 @@ theorem perdidaPoissonInterior_integrable (L f : Plano → ℝ)
     cuadrado_acotado (soporte_no_vacio _ _ medidaUniformeCuadrado_concentrada)
     medidaUniformeCuadrado_concentrada L f α hα hL hf
 
-private theorem cotaPoissonInterior {m : ℕ} (hm : 310 ≤ m)
+theorem cotaPoissonInterior {m : ℕ} (hm : 310 ≤ m)
     (s : Fin m → Plano) (hs : ∀ i, s i ∈ cuadrado)
     (hc : MuestrasCubren cuadrado s (radioLogCuadrado m))
     (L f : Plano → ℝ)

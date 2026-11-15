@@ -100,7 +100,7 @@ private theorem laplaciano_comparador325_forma {m : ℕ} (s : Fin m → Plano) (
     (factorComparador325_suave s 0 2) (factorComparador325_suave s 1 2)]
   simp only [show (2 : ℕ) = 1 + 1 from rfl, iteratedDeriv_succ, iteratedDeriv_zero]
 
-private theorem dist_le_dos_raiz_cuadrado {x y : Plano}
+theorem dist_le_dos_raiz_cuadrado {x y : Plano}
     (hx : x ∈ closure cuadrado) (hy : y ∈ closure cuadrado) :
     dist x y ≤ 2 * √(dist x y) := by
   rw [clausura_cuadrado] at hx hy
