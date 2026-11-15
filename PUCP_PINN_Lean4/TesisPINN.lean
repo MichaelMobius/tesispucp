@@ -45,3 +45,5 @@ import TesisPINN.ConvergenciaManufacturada
 import TesisPINN.Proposicion327
 import TesisPINN.HermiteRestoExacto
 import TesisPINN.HornerHermite
+import TesisPINN.ConvergenciaManufacturadaRaiz
+import TesisPINN.Corolario312

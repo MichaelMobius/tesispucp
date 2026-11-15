@@ -66,7 +66,7 @@ private theorem funcional326_punto_medio {D m : ℕ} (s : Fin m → Plano)
   refine (add_le_add hE (mul_le_mul_of_nonneg_left hp2 hp)).trans_eq ?_
   ring
 
-private def normaEuclideaCuad326 {D : ℕ} (a : Coeficientes324 D) : ℝ := ∑ i, (a i) ^ 2
+def normaEuclideaCuad326 {D : ℕ} (a : Coeficientes324 D) : ℝ := ∑ i, (a i) ^ 2
 
 private theorem normaEuclideaCuad326_continua (D : ℕ) :
     Continuous (normaEuclideaCuad326 (D := D)) :=
@@ -152,9 +152,11 @@ private theorem subnivelNormaEuclidea326_compacto (D : ℕ) (t : ℝ) :
 
 /-- El minimizador de menor norma euclídea se selecciona mediante un grafo
 boreliano. El criterio de desempate se aplica dentro del conjunto de mínimos. -/
-theorem existe_minimizador_borel326 (D m : ℕ) (peso : ℝ) (hp : 0 < peso) :
+theorem existe_minimizador_borel_menorNorma326 (D m : ℕ) (peso : ℝ) (hp : 0 < peso) :
     ∃ a : (Fin m → Plano) → Coeficientes324 D, Measurable a ∧
-      ∀ s, IsMinOn (funcional326 s peso) univ (a s) := by
+      ∀ s, IsMinOn (funcional326 s peso) univ (a s) ∧
+        ∀ b : Coeficientes324 D, IsMinOn (funcional326 s peso) univ b →
+          normaEuclideaCuad326 (a s) ≤ normaEuclideaCuad326 b := by
   classical
   have hUnique (s : Fin m → Plano) := unico_menorNorma326 (D := D) s peso hp
   choose a ha huniq using hUnique
@@ -200,10 +202,17 @@ theorem existe_minimizador_borel326 (D m : ℕ) (peso : ℝ) (hp : 0 < peso) :
         (hEmbed.leftInverse_invFun ⟨(s, a s), hmem s⟩)).symm
     rw [funext hA]
     exact (measurable_snd.comp measurable_subtype_coe).comp hEmbed.measurable_invFun
-  exact ⟨a, hMeas, fun s => (ha s).1⟩
+  exact ⟨a, hMeas, ha⟩
+
+theorem existe_minimizador_borel326 (D m : ℕ) (peso : ℝ) (hp : 0 < peso) :
+    ∃ a : (Fin m → Plano) → Coeficientes324 D, Measurable a ∧
+      ∀ s, IsMinOn (funcional326 s peso) univ (a s) := by
+  obtain ⟨a, hmeas, hmin⟩ := existe_minimizador_borel_menorNorma326 D m peso hp
+  exact ⟨a, hmeas, fun s => (hmin s).1⟩
 
 #check existe_minimizador_borel326
 #print axioms existe_minimizador_borel326
+#print axioms existe_minimizador_borel_menorNorma326
 
 
 end TesisPINN

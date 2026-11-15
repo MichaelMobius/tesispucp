@@ -482,4 +482,17 @@ El [informe de la etapa 33](INFORME_ETAPA33.md) delimita las hipótesis geométr
 
 Alcance de las instancias y constantes en el [informe de la etapa 34](INFORME_ETAPA34.md).
 
+## Etapa 35 · régimen raíz, aproximación fuerte y auditoría
+
+| Resultado | Declaración | Dependencias directas |
+|---|---|---|
+| Selector boreliano de menor norma | `existe_minimizador_borel_menorNorma326` | Mínimo de C3.26, norma euclídea cuadrada, coercividad, unicidad del desempate y grafo boreliano. |
+| (3.91), (3.94) en el peso raíz | `perdida_minimizadores326_raiz` | Hermite exacto vía `cotas_minimizador326`, concentración, `ocupacion311`, `perdida311_bajo_cobertura`, `producto_pesoRaizInterior`, `radioRaizCuadrado_eq`. |
+| Convergencia manufacturada y tasa conjunta raíz | `convergencia_neuronal_manufacturada_raiz` | Selector raíz, `redManufacturada326_eq`, `minimo326_equiv_clase`, `estimacion_simultanea_manufacturada` y raíz de la tasa poblacional. |
+| C3.12, de (3.56) a (3.36)–(3.37) | `corolario312` | Linealidad de los operadores y de la evaluación, norma de operador, seminorma Hölder exacta y promedio ponderado de cuadrados. |
+| C3.12 → P3.10 | `corolario312_premisas310` | `operadores312`, `Operadores38.base`, `problemaMuestral`, soporte de los prefijos y tolerancia de optimización $O(a_m)$. |
+| Taylor → criterio de comparación de Poisson | `corolario312_taylor` | `proposicion327`, `comparadorTaylor327_cotas_Poisson` y `comparadorTaylor327_tolerancia_empirica`. |
+
+El [inventario auditado](INVENTARIO_FORMAL_CAPITULO_III.md) relaciona los 27 rótulos y las ecuaciones con sus declaraciones, cuantificadores y alcance. El [informe de la etapa 35](INFORME_ETAPA35.md) documenta el umbral $m\ge324$, la contribución de la fuente y las extensiones pendientes.
+
 
