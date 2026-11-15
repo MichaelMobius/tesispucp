@@ -1,6 +1,20 @@
 # Estado verificable de la formalización del capítulo III
 
-## Estado actual · etapa 31
+## Estado actual · etapa 32
+
+La base es la [PR #33](https://github.com/MichaelMobius/tesispucp/pull/33), commit `14451ed0184e91ad51cb42d56bd498bcd7a00c55`.
+
+| Resultado | Declaración y alcance |
+|---|---|
+| Resto de Hermite | `restoContornoHermite_polinomio_cero` y `factorHermite325_formula` demuestran (3.89) con numerador $a$. |
+| Regularidad | `factorHermite325_derivadas_resto_uniforme`, `comparador325_c3_uniforme` y `laplaciano_comparador325_holder_uniforme` verifican cotas uniformes en la clausura. La tasa del resto usa $(5/6)^N$. |
+| Mensurabilidad e integración | `coeficientesHermite325_borel` y `proposicion325_arquitectura_comun` verifican la selección y la realizan en la arquitectura común de L3.24. |
+| Pendientes | Quedan la red particular de ancho ocho y la tasa específica de (3.90) con base $2/3$. C3.26 requiere existencia y selección boreliana de minimizadores. |
+
+El [informe de la etapa 32](INFORME_ETAPA32.md) registra las constantes, la matriz de Vandermonde confluente y la correspondencia exacta con la tesis.
+
+
+## Etapa 31
 
 La base es la [PR #32](https://github.com/MichaelMobius/tesispucp/pull/32), commit `4165c9c4cc2b43fdf53ba6910cf5f119f0e11f47`.
 
