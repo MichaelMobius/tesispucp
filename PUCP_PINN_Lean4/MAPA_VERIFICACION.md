@@ -468,3 +468,18 @@ La red particular de ancho ocho y la tasa geométrica específica de (3.90) qued
 El [informe de la etapa 33](INFORME_ETAPA33.md) delimita las hipótesis geométricas, estadísticas y de clase que conserva cada enunciado.
 
 
+
+## Etapa 34 · convergencia manufacturada, Taylor y Horner
+
+| Cadena | Declaraciones verificadas |
+|---|---|
+| C3.26, P3.15, núcleo de la traza, P3.22 y C3.23 | `laplaciano_errorSobolevManufacturado` y `norma_residuoManufacturado326` → `estimacion_simultanea_manufacturada` y `convergencia_neuronal_manufacturada` |
+| Prolongación entera y serie compleja | `taylorManufacturada_coef` y `cota_cauchy_radio_grado` → `resto_taylorManufacturada_c3` |
+| Leibniz, derivadas mixtas, grado y escalas | `tensorTaylor_error_c3`, `tensorTaylor_grados_parciales` y `escalaTaylor_grado327` → `proposicion327` |
+| Laplaciano y comparación con ambos pesos | `comparadorTaylor327_cotas_Poisson` y `comparadorTaylor327_tolerancia_empirica` verifican el criterio de comparador en la instancia interior. |
+| (3.89), cociente nodal y radio de Cauchy dependiente del grado | `factorHermite325_resto_c3_base_dos_tercios` verifica (3.90). |
+| Capas cuadráticas, transporte y polarización de cuatro registros | `comparador325_horner` verifica la arquitectura particular de P3.25. |
+
+Alcance de las instancias y constantes en el [informe de la etapa 34](INFORME_ETAPA34.md).
+
+

@@ -41,3 +41,7 @@ import TesisPINN.TrazaSobolevCuadrado
 import TesisPINN.TeoremasShin
 import TesisPINN.Corolario326
 import TesisPINN.Puente326_315
+import TesisPINN.ConvergenciaManufacturada
+import TesisPINN.Proposicion327
+import TesisPINN.HermiteRestoExacto
+import TesisPINN.HornerHermite
