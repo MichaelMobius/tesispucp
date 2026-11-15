@@ -32,7 +32,7 @@ El máximo con 1 absorbe exactamente la contribución determinista de los extrem
 
 La pérdida poblacional es $O(m_r^{-\alpha})$. El término interior da energía $L^2$ cuadrática del mismo orden y la regularidad del minimizador da una constante Hölder $\sqrt R+S_f$ para el residuo. L3.3 con exponente 1 aporta masa local $(c_r/2)r$, válida hasta radio $2\varepsilon_0$. La aplicación de L3.9 demuestra convergencia uniforme interior y tasa $O(m_r^{-\alpha^2/(2\alpha+1)})$.
 
-Para la frontera, `max_residuo_extremos_le_raiz` usa la positividad de los dos cuadrados y obtiene
+El supremo interior se toma en $(a,b)$, como en la demostración unidimensional del PDF. Para la frontera, `max_residuo_extremos_le_raiz` usa la positividad de los dos cuadrados y obtiene
 
 \[
 \max(|B[h](a)-g(a)|,|B[h](b)-g(b)|)
