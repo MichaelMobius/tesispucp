@@ -495,4 +495,19 @@ Alcance de las instancias y constantes en el [informe de la etapa 34](INFORME_ET
 
 El [inventario auditado](INVENTARIO_FORMAL_CAPITULO_III.md) relaciona los 27 rótulos y las ecuaciones con sus declaraciones, cuantificadores y alcance. El [informe de la etapa 35](INFORME_ETAPA35.md) documenta el umbral $m\ge324$, la contribución de la fuente y las extensiones pendientes.
 
+## Etapa 36 · interpolación global y ley de frontera
+
+| Resultado | Declaración | Dependencias directas |
+|---|---|---|
+| Energía cero implica cero puntual | `lema39_eq_zero` | Masa abierta positiva, cota a radio fijado y límite de radios. |
+| (3.34) para medida finita y para funciones acotadas | `lema39_global`, `lema39_global_acotado` | Cota a radio truncado, caso cero, optimización de la potencia, continuidad Hölder y concentración. |
+| Tasa suprema desde energía | `lema39_tasa` | L3.9 global y potencias de cotas asintóticas. |
+| Ley de frontera | `medidaUniformeFrontera_densidad`, `medidaUniformeFrontera_apply` | Isometrías de las caras, Hausdorff unidimensional en la recta, intersecciones de medida cero. |
+| H3.2 en ambas mitades del cuadrado | `datosMasa38_interior_cuadrado`, `datosMasa38_frontera_cuadrado` | Cuadrícula interior, proyección de bolas sobre cada cara y malla unidimensional con vértices asignados. |
+| Modelo común independiente | `muestreoInteriorCuadrado`, `muestreoFronteraCuadrado`, `muestreosCuadrado_independientes` | Productos infinito y binario de medidas y proyecciones mensurables. |
+| L3.3 y L3.6 con factor de diámetro libre | `masa_bola_inferior_dimensional`, `lema36_cobertura_dimensional` | Particiones a todas las escalas, ocupación, recuento con solapamientos nulos y cotas binomial y exponencial. |
+| Dos exponentes de masa en L3.5 | `perdidaPoblacional_le_sumas_dimensional` | Integración sobre las celdas de Voronoi de cada soporte. |
+
+El [informe de la etapa 36](INFORME_ETAPA36.md) precisa la especialización a $d$ y $d-1$ y las obligaciones de los teoremas integrados.
+
 
