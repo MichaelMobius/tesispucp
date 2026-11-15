@@ -1,6 +1,18 @@
 # Estado verificable de la formalización del capítulo III
 
-## Estado actual · etapa 34
+## Estado actual · etapa 35
+
+Base [PR #36](https://github.com/MichaelMobius/tesispucp/pull/36), commit `1b3fe97bbbba79ebb599a6e96280c92e7b365179`.
+
+| Resultado | Declaración y alcance |
+|---|---|
+| Régimen raíz (3.94) | `convergencia_neuronal_manufacturada_raiz` prueba selección boreliana, mínimo global, Dirichlet exacto y las tasas casi seguras $m^{-1/4}$ de pérdida y $m^{-1/8}$ de error conjunto $H^1+L^\infty$. El selector minimiza la norma euclídea de coeficientes entre mínimos. |
+| C3.12 | `corolario312` deduce (3.36)–(3.37) de la aproximación fuerte con operadores lineales continuos entre espacios normados y evaluaciones Hölder. `corolario312_premisas310` entrega las premisas variacionales de P3.10 para la instancia escalar 2D. Taylor cumple las tolerancias para los dos pesos. |
+| Auditoría | El inventario de los 27 rótulos separa los resultados del cuadrado de las extensiones del capítulo. Los regímenes manufacturados están demostrados con los respectivos funcionales. |
+
+Los detalles de las hipótesis y la correspondencia están en el [informe de la etapa 35](INFORME_ETAPA35.md).
+
+## Etapa 34
 
 La base es la [PR #35](https://github.com/MichaelMobius/tesispucp/pull/35), commit `5fc6be834faffad9121aade7bdd52ce994801514`.
 
