@@ -1,5 +1,20 @@
 # Mapa de dependencias matemáticas
 
+## Etapa 39 · Energía dimensional de Poisson
+
+| Dependencia matemática | Declaración Lean | Conclusión |
+|---|---|---|
+| Mathlib `LineDeriv.laplacianCLM`, caracterización de `W12` y pruebas compactas | `laplaciano_dimensional_eval_producto`, `laplaciano_dimensional_implica_prueba` | Evaluación de $\Delta e$ con el signo negativo de Green. |
+| Densidad en `H01` y Poincaré de EllipticPDE | `green_dimensional`, `lema319_constante_dada`, `lema319_dimensional` | (3.71) para la misma clase residual $L^2$. |
+| Linealidad de las distribuciones y condición afín | `laplaciano_dimensional_resta`, `estimacion320_dimensional` | (3.74) para candidatos Sobolev. |
+| Igualdad de trazas bajo un operador con núcleo caracterizado | `diferencia_mem_H01_de_traza`, `estimacion320_de_trazas_iguales` | Reducción a (3.74). La construcción Lipschitz general queda pendiente. |
+| Densidad inferior y dominancia del término residual | `cota_L2_cambio_medida`, `estimacion320_de_perdida` | Cota del error por la raíz de la pérdida. |
+| Volumen finito y residuo puntual acotado | `cota_L2_de_supremo_puntual`, `estimacion320_de_supremo` | Cota alternativa por el supremo interior. |
+| T3.8 y las dos cotas anteriores | `teorema320_dimension_ge_dos`, `teorema320_unidimensional` | Convergencia $H^1$ y tasas casi seguras (3.73) y (3.75). En un intervalo se usa el funcional con ambos extremos deterministas. |
+| T3.8 dimensional y L3.17 | `teorema318_dimension_ge_dos` | Convergencia y tasa uniforme para una solución clásica dada. |
+
+El [informe de la etapa 39](INFORME_ETAPA39.md) detalla las fórmulas normativas y la comparación entre leyes.
+
 ## Etapa 38 · Frontera determinista en d=1 y P3.10 dimensional
 
 | Dependencia matemática | Declaración Lean | Conclusión |
