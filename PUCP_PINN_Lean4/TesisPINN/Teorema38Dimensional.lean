@@ -101,6 +101,34 @@ def constante38Dimensional (D cr cb sr sb lr lb α Sf Sg R K : ℝ) : ℝ :=
   3 * (lr * (D * cr ^ (-(1 / sr))) ^ (2 * α) * (R + Sf ^ 2) +
     lb * (D * cb ^ (-(1 / sb))) ^ (2 * α) * (R + Sg ^ 2) * K ^ (α / sr))
 
+/-- Conversión de una cota en radios a la tasa de (3.26) o (3.43). -/
+theorem cota_dimensional_de_radios
+    (D cr cb sr sb lr lb α Sf Sg R K L : ℝ) (mr mb : ℕ)
+    (hD : 0 ≤ D) (hcr : 0 < cr) (hcb : 0 < cb)
+    (hsr : 0 < sr) (hsb : 0 < sb) (hlb : 0 ≤ lb) (hα : 0 < α) (hR : 0 ≤ R)
+    (hK : 0 < K) (hmr : 0 < mr) (hmb : 0 < mb)
+    (hrel : (mr : ℝ) ≤ K * (mb : ℝ) ^ (sr / sb))
+    (hsum : L ≤ 3 * lr * radioRaizDimensional D cr sr mr ^ (2 * α) * (R + Sf ^ 2) +
+      3 * lb * radioRaizDimensional D cb sb mb ^ (2 * α) * (R + Sg ^ 2)) :
+    L ≤ constante38Dimensional D cr cb sr sb lr lb α Sf Sg R K * (mr : ℝ) ^ (-(α / sr)) := by
+  let rr := radioRaizDimensional D cr sr mr
+  let rb := radioRaizDimensional D cb sb mb
+  change L ≤ 3 * lr * rr ^ (2 * α) * (R + Sf ^ 2) + 3 * lb * rb ^ (2 * α) * (R + Sg ^ 2) at hsum
+  have ht := mul_le_mul_of_nonneg_left
+    (tasa_frontera_dimensional_le mr mb sr sb K α hmr hmb hsr hsb hK hα hrel)
+    (show 0 ≤ 3 * lb * (D * cb ^ (-(1 / sb))) ^ (2 * α) * (R + Sg ^ 2) by positivity)
+  have hpr : rr ^ (2 * α) = (D * cr ^ (-(1 / sr))) ^ (2 * α) * (mr : ℝ) ^ (-(α / sr)) := by
+    rw [radioRaizDimensional_potencia _ _ _ _ _ hD hcr hsr hmr]
+    congr 2
+    ring
+  have hpb : rb ^ (2 * α) = (D * cb ^ (-(1 / sb))) ^ (2 * α) * (mb : ℝ) ^ (-(α / sb)) := by
+    rw [radioRaizDimensional_potencia _ _ _ _ _ hD hcb hsb hmb]
+    congr 2
+    ring
+  rw [hpr, hpb] at hsum
+  unfold constante38Dimensional
+  linarith only [hsum, ht]
+
 theorem cota38_dimensional_bajo_cobertura
     {H X Y : Type*} [PseudoMetricSpace X] [PseudoMetricSpace Y]
     [MeasurableSpace X] [MeasurableSpace Y] [OpensMeasurableSpace X] [OpensMeasurableSpace Y]
@@ -145,22 +173,8 @@ theorem cota38_dimensional_bajo_cobertura
   have hsum : P.perdidaPoblacional h ≤
       3 * lr * rr ^ (2 * α) * (R + Sf ^ 2) + 3 * lb * rb ^ (2 * α) * (R + Sg ^ 2) := by
     linarith only [hcota, hJ']
-  have hcr := dr.c_pos
-  have hcb := db.c_pos
-  have ht := mul_le_mul_of_nonneg_left
-    (tasa_frontera_dimensional_le mr mb sr sb K α hmr hmb hsr hsb hK hα hrel)
-    (show 0 ≤ 3 * lb * (D * db.c ^ (-(1 / sb))) ^ (2 * α) * (R + Sg ^ 2) by positivity)
-  have hpr : rr ^ (2 * α) = (D * dr.c ^ (-(1 / sr))) ^ (2 * α) * (mr : ℝ) ^ (-(α / sr)) := by
-    rw [radioRaizDimensional_potencia _ _ _ _ _ hD.le hcr hsr hmr]
-    congr 2
-    ring
-  have hpb : rb ^ (2 * α) = (D * db.c ^ (-(1 / sb))) ^ (2 * α) * (mb : ℝ) ^ (-(α / sb)) := by
-    rw [radioRaizDimensional_potencia _ _ _ _ _ hD.le hcb hsb hmb]
-    congr 2
-    ring
-  rw [hpr, hpb] at hsum
-  unfold constante38Dimensional
-  linarith only [hsum, ht]
+  exact cota_dimensional_de_radios D dr.c db.c sr sb lr lb α Sf Sg R K _ mr mb hD.le
+    dr.c_pos db.c_pos hsr hsb hlb.le hα hR hK hmr hmb hrel hsum
 
 /-- (3.26) en un evento medible común de muestra finita. -/
 theorem teorema38_evento_dimensional
@@ -194,7 +208,7 @@ theorem teorema38_evento_dimensional
     lr lb α Sf Sg R K hlr hlb hα (zero_lt_one.trans_le hD) hsr hsb hR hK
     hrel hradR hradB hHolder _ _ h v (hc ω hω) hmin hv hreg
 
-private theorem energia_isBigO_de_perdida {X : Type*} [MeasurableSpace X]
+theorem energia_isBigO_de_perdida {X : Type*} [MeasurableSpace X]
     (μ : Measure X) (r : ℕ → X → ℝ) (w C : ℝ) (hw : 0 < w)
     (loss b : ℕ → ℝ) (hb : ∀ n, 0 ≤ b n) (hLos : ∀ᶠ n in atTop, loss n ≤ C * b n)
     (hE : ∀ n, w * (∫ x, r n x ^ 2 ∂μ) ≤ loss n) :

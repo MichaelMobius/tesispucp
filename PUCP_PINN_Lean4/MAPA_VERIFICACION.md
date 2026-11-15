@@ -1,4 +1,17 @@
-# Mapa de dependencias matemáticas — etapa 20
+# Mapa de dependencias matemáticas
+
+## Etapa 38 · Frontera determinista en d=1 y P3.10 dimensional
+
+| Dependencia matemática | Declaración Lean | Conclusión |
+|---|---|---|
+| Ocupación interior, masa superior de bolas y evaluación determinista en ambos extremos | `teorema34_unidimensional`, `factor34Unidimensional_eq` | (3.12) para todos los candidatos escalares sobre un mismo evento medible. |
+| T3.4 y comparación con interpolador exacto | `teorema38_unidimensional_evento` | Cota poblacional en muestra finita. |
+| Cobertura eventual, minimalidad, L3.9 y pérdida discreta de frontera | `teorema38_unidimensional` | Pérdida de orden $m_r^{-\alpha}$, convergencia uniforme del residuo diferencial en $(a,b)$ y convergencia del residuo de frontera en ambos extremos, con sus tasas. |
+| Cobertura integral dimensional, tolerancias y peso común | `cotas310_dimensional_bajo_cobertura`, `proposicion310_dimensional` | (3.39)–(3.43) y tasas uniformes con dos exponentes de masa positivos. |
+| Especialización geométrica y recuperación del problema muestral 2D | `proposicion310_dimension_ge_dos`, `proposicion310_dim2_de_dimensional` | Exponentes $d$ y $d-1$. En $d=2$ se conservan los pesos y prefijos de la declaración anterior. |
+| C3.12 y decaimiento del peso en el régimen raíz | `pesoRaizDimensional_tendsto`, `corolario312_premisas310_dimensional` | Criterio fuerte suficiente para las premisas de comparación y tolerancias de P3.10. |
+
+El [informe de la etapa 38](INFORME_ETAPA38.md) detalla los radios, tasas y supuestos de instanciación.
 
 ## Proposición 3.14 en dimensión dos
 

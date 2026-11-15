@@ -4,6 +4,8 @@ import TesisPINN.Teorema318
 import TesisPINN.DirichletLevantamiento
 import TesisPINN.GeometriaMuestreoCuadrado
 import TesisPINN.Proposicion314Dimensional
+import TesisPINN.Proposicion310Dimensional
+import TesisPINN.Teorema38Unidimensional
 
 /-!
 # Capítulo III: índice de los resultados que proceden de Shin–Darbon–Karniadakis
@@ -20,16 +22,19 @@ verificar los datos del registro `DatosMasaDimensional`.
 |                  |                | `lema31_equicontinuidad`, `lema31_precompacidad`   |
 | Assumption 3.1   | Hipótesis 3.2  | `DatosMasaDimensional`, `Muestreo38`                 |
 | (consecuencia)   | Lema 3.3       | `masa_bola_inferior_dimensional`                   |
-| Theorem 3.1      | Teorema 3.4    | `teorema34_dimensional`, `teorema34_dim2_de_dimensional` |
+| Theorem 3.1      | Teorema 3.4, d≥2 | `teorema34_dimensional`, `teorema34_dim2_de_dimensional` |
+| Theorem 3.1      | Teorema 3.4, d=1 | `teorema34_unidimensional` (3.12) |
 | Lemma B.1        | Lema 3.5       | `perdidaPoblacional_le_sumas_dimensional`          |
 | Lemma B.2        | Lema 3.6       | `lema36_probabilidad_cobertura`,                   |
 |                  |                | `lema36_fallo_parametro`, `lema36_shin`,           |
 |                  |                | `lema36_cobertura_dimensional`                    |
 | Assumption 3.2   | Hipótesis 3.7  | `ProblemaPINN.EsMinimizadorGlobal`,                |
 |                  |                | `ProblemaPINN.ComparadorExacto` (premisas)         |
-| Theorem 3.2      | Teorema 3.8    | `teorema38_evento_dimensional` (muestra finita)     |
+| Theorem 3.2      | Teorema 3.8, d≥2 | `teorema38_evento_dimensional` (muestra finita)     |
 |                  |                | `teorema38_dimension_ge_dos` (tasas casi seguras)  |
+| Theorem 3.2      | Teorema 3.8, d=1 | `teorema38_unidimensional_evento`, `teorema38_unidimensional` |
 | (ruta propia)    | Lema 3.9       | `lema39_global_acotado`, `lema39_tasa`             |
+| (ruta propia)    | Prop. 3.10     | `proposicion310_dimension_ge_dos`, `cotas310_dimensional_bajo_cobertura` |
 | (ruta propia)    | Prop. 3.14     | `proposicion314_evento_dimensional`, `proposicion314_dimensional` |
 | Lemma D.1        | Lema 3.17      | `lema317_estabilidad_uniforme`                     |
 | Theorem 3.3      | Teorema 3.18   | `teorema318_dim2`                                  |
@@ -37,8 +42,11 @@ verificar los datos del registro `DatosMasaDimensional`.
 | Theorem 3.4      | Teorema 3.20   | `teorema320_poisson_de_teorema38`,                 |
 |                  |                | `teorema320_levantado_de_teorema38`                |
 
-La rama unidimensional de los Teoremas 3.4 y 3.8 requiere un tratamiento
-separado de la frontera completamente observada.
+T3.4 cuantifica sobre todos los candidatos admisibles dentro de un mismo
+evento medible. Las ramas de T3.8 cuantifican sobre selecciones de mínimos
+y comparadores exactos. En d=1 se emplea un solo prefijo aleatorio y los
+dos valores deterministas de frontera. P3.10 usa comparadores y mínimos
+aproximados con tolerancias explícitas. P3.14 usa el funcional logarítmico.
 
 Este archivo solo reúne los enunciados y audita sus axiomas; no añade
 matemática, salvo la instancia `datosMasa38_interior_cuadrado`.
@@ -74,6 +82,7 @@ def datosMasa38_interior_cuadrado :
 -- Shin, Theorem 3.1 y Appendix B.
 #check @teorema34_dim2
 #check @teorema34_dimensional
+#check @teorema34_unidimensional
 #check @lema35_dim2
 #check @lema36_probabilidad_cobertura
 #check @lema36_fallo_parametro
@@ -84,6 +93,9 @@ def datosMasa38_interior_cuadrado :
 #check @teorema38_dim2
 #check @teorema38_evento_dimensional
 #check @teorema38_dimension_ge_dos
+#check @teorema38_unidimensional_evento
+#check @teorema38_unidimensional
+#check @proposicion310_dimension_ge_dos
 #check @proposicion314_dimensional
 -- Shin, Lemma D.1 y Theorem 3.3.
 #check @lema317_estabilidad_uniforme
@@ -108,5 +120,8 @@ def datosMasa38_interior_cuadrado :
 #print axioms TesisPINN.teorema320_poisson_de_teorema38
 #print axioms TesisPINN.teorema320_levantado_de_teorema38
 #print axioms TesisPINN.datosMasa38_interior_cuadrado
+#print axioms TesisPINN.teorema34_unidimensional
+#print axioms TesisPINN.teorema38_unidimensional
+#print axioms TesisPINN.proposicion310_dimension_ge_dos
 
 end TesisPINN
