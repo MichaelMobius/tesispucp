@@ -1,6 +1,19 @@
 # Estado verificable de la formalización del capítulo III
 
-## Estado actual · etapa 33
+## Estado actual · etapa 34
+
+La base es la [PR #35](https://github.com/MichaelMobius/tesispucp/pull/35), commit `5fc6be834faffad9121aade7bdd52ce994801514`.
+
+| Resultado | Declaración y alcance |
+|---|---|
+| Minimización neuronal manufacturada | `convergencia_neuronal_manufacturada` verifica la tasa casi segura logarítmica en $H^1+L^\infty$ para el selector de C3.26. |
+| Taylor | `resto_taylorManufacturada_c3` y `proposicion327` verifican (3.92), (3.93), admisibilidad y los dos criterios de tolerancia. |
+| Hermite | `factorHermite325_resto_c3_base_dos_tercios` verifica (3.90) y `comparador325_horner` certifica ancho ocho y profundidad $8\max(r_x,r_y)+4$. |
+
+El [informe de la etapa 34](INFORME_ETAPA34.md) documenta la normalización de la pérdida, la constante espectral y el alcance de las tasas.
+
+
+## Etapa 33
 
 La base es la [PR #34](https://github.com/MichaelMobius/tesispucp/pull/34), commit `715345fb5ccea89aa8f7d5b22a699db631b0b1f6`.
 
