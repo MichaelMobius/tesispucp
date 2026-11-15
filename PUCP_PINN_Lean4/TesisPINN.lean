@@ -47,3 +47,6 @@ import TesisPINN.HermiteRestoExacto
 import TesisPINN.HornerHermite
 import TesisPINN.ConvergenciaManufacturadaRaiz
 import TesisPINN.Corolario312
+import TesisPINN.Lema39Global
+import TesisPINN.MuestreoDosFamiliasCuadrado
+import TesisPINN.CoberturaDimensional

@@ -1,6 +1,18 @@
 # Estado verificable de la formalización del capítulo III
 
-## Estado actual · etapa 35
+## Estado actual · etapa 36
+
+Base [PR #37](https://github.com/MichaelMobius/tesispucp/pull/37), commit `d6d84bfe06d8bf55109af3b5a86452d3168bc8f9`.
+
+| Resultado | Declaración y alcance |
+|---|---|
+| L3.9 global, (3.34) | `lema39_global_acotado` incluye el caso de energía nula y ambos regímenes de radio, con constante geométrica independiente de la función. `lema39_tasa` recupera los exponentes de (3.28). |
+| H3.2 en el cuadrado | `datosMasa38_frontera_cuadrado` usa la longitud Hausdorff normalizada y las constantes impresas $c_b=1/12$ y $C_b=1$. Los dos registros `Muestreo38` viven en un espacio común con sucesiones completas independientes. |
+| Cobertura dimensional | `masa_bola_inferior_dimensional`, `lema36_cobertura_dimensional` y `perdidaPoblacional_le_sumas_dimensional` parametrizan diámetro y exponentes de masa. La integración de T3.4 y T3.8 sigue en 2D. |
+
+El [informe de la etapa 36](INFORME_ETAPA36.md) registra las constantes, los resultados de biblioteca y el alcance que queda pendiente.
+
+## Etapa 35
 
 Base [PR #36](https://github.com/MichaelMobius/tesispucp/pull/36), commit `1b3fe97bbbba79ebb599a6e96280c92e7b365179`.
 

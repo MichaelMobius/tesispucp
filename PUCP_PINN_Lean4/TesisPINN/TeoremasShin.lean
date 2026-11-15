@@ -52,9 +52,8 @@ open MeasureTheory
 
 /-- Mitad interior de la Hipótesis 3.2 para el ejemplo de la tesis: la ley
 uniforme en el cuadrado `(-1,1)²` la satisface con `ε₀ = 1`, `c_r = 1/9` y
-`C_r = π/4`, las constantes del ejemplo que sigue al Lema 3.3. Es un testigo de
-que `DatosMasa38` no es una hipótesis vacía en el interior. La mitad de
-frontera (`c_b = 1/12`, `C_b = 1` para `∂U`) no está instanciada. -/
+`C_r = π/4`, las constantes del ejemplo que sigue al Lema 3.3. Los datos
+de frontera se construyen en `GeometriaFronteraCuadrado.lean`. -/
 def datosMasa38_interior_cuadrado :
     DatosMasa38 medidaUniformeCuadrado cuadrado 2 1 where
   c := 1 / 9
