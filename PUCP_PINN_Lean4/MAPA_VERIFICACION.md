@@ -510,4 +510,18 @@ El [inventario auditado](INVENTARIO_FORMAL_CAPITULO_III.md) relaciona los 27 ró
 
 El [informe de la etapa 36](INFORME_ETAPA36.md) precisa la especialización a $d$ y $d-1$ y las obligaciones de los teoremas integrados.
 
+## Etapa 37 · T3.4, T3.8 y P3.14 dimensionales
+
+| Resultado | Declaración | Dependencias directas |
+|---|---|---|
+| (3.5)–(3.10) | `radioRaizDimensional_eq`, `factorCoberturaDimensional_raiz`, `constante34Dimensional_eq`, `evento_cobertura34_dimensional` | Masa mínima de la escala raíz, L3.6 dimensional, concentración y cota de unión. |
+| (3.11) en d≥2 | `teorema34_dimensional` | L3.5 dimensional, absorción de los dos promedios y regularizadores, evento común. |
+| (3.23), (3.26), (3.29)–(3.31) | `producto_peso_igual_dimensional`, `tasa_frontera_dimensional_le`, `teorema38_evento_dimensional` | Pesos iguales, comparación con interpolador y relación $m_r\le K m_b^{d/(d-1)}$. |
+| (3.26)–(3.28) casi seguramente | `teorema38_dimension_ge_dos` | Fallos sumables, Borel–Cantelli, cota de pérdida y L3.9 global. |
+| Identificación 2D | `teorema34_dim2_de_dimensional`, `teorema38_dim2_de_dimensional` | Igualdades de funcionales, radios y constantes al especializar la dimensión. |
+| Muestreo uniforme del cuadrado | `teorema34_cuadrado_dos_familias` | Datos de masa interior y frontera, modelo producto, umbrales 324 y 288. |
+| (3.59)–(3.63) | `proposicion314_evento_dimensional`, `proposicion314_dimensional` | L3.13, pesos logarítmicos, cotas de ambos residuos y comparación con interpoladores. |
+
+El [informe de la etapa 37](INFORME_ETAPA37.md) coteja el alcance normativo y conserva la rama de frontera discreta como obligación independiente.
+
 
